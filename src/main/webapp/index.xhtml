@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/skin/default/template.xhtml">
+
+	<ui:define name="coreinnersection">
+
+            <h:form>
+            <table>
+                <tr>
+                    <td>
+                        <p>
+                            <h2>
+                                This is the HR Avatar Batch Reporting System.
+                            </h2>
+                        </p>
+
+                        <div style="text-align: center"><h:outputLink value="https://www.hravatar.com" title="Visit HR Avatar">Visit HRAvatar.com</h:outputLink>
+                            &#160;&#160;&#160;
+                            <h:commandLink action="/tools/admin/admintools.xhtml">Admins (logon required)</h:commandLink>
+                        </div>
+
+                    </td>
+                </tr>
+        </table>
+        </h:form>
+
+        </ui:define>
+
+</ui:composition>
+
+</html>
+

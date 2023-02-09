@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:session="http://xmlns.jcp.org/jsf/composite/session">
+
+<ui:composition template="/skin/default/template.xhtml">
+
+    <ui:define name="coreinnersection">
+
+        <session:idle-monitor />
+        <div style="width:900px;margin-left: auto;margin-right: auto">
+
+            <div style="text-align:center"><h2>HR Avatar Batch Reporting System</h2>
+            </div>
+
+	<br />
+
+        <ui:fragment rendered="#{not userBean.userLoggedOnAsAdmin}">
+
+        <h:form id="logonform1" prependId="false">
+
+        <p:panel header="Logon Form" style="width:900px;margin-left:auto;margin-right:auto">
+
+        <p:focus for="username"/>
+
+        <h:panelGrid columns="3">
+            <h:outputText styleClass="titletext1" value="Please Sign In:" escape="false"/>
+            <h:panelGroup></h:panelGroup>
+            <h:panelGroup></h:panelGroup>
+
+             <h:outputLabel for="username" value="Email/Username:" />
+
+             <p:inputText id="username" value="#{userUtils.logonName}" autocomplete="username" label="username" validatorMessage="Username is required.">
+                <f:validateLength minimum="2" />
+            </p:inputText>
+            <h:panelGroup></h:panelGroup>
+
+             <h:outputLabel for="password" value="Password:" />
+             <p:password id="password"
+                         value="#{userUtils.logonKey}" label="password" autocomplete="current-password"  validatorMessage="Password is required." feedback="false">
+                <f:validateLength minimum="4" maximum="20" />
+            </p:password>
+            <h:panelGroup></h:panelGroup>
+
+            <h:panelGroup></h:panelGroup>
+            <p:commandButton ajax="false" action="#{userUtils.processLogonAttempt}" title="Sign In" value="Sign In">
+	    </p:commandButton>
+            <h:panelGroup></h:panelGroup>
+
+        </h:panelGrid>
+
+        </p:panel>
+
+	<br />&#160;
+
+        </h:form>
+        </ui:fragment>
+
+        <ui:fragment rendered="#{userBean.userLoggedOnAsAdmin}">
+
+            
+            
+            <p:panel header="Links and Functions" toggleable="true" closable="true" style="width:900px">
+                <h:form prependId="false">
+
+                    <h:panelGrid cellpadding="5"
+                                 cellspacing="0"
+                                 border="0"
+                                 columns="3">
+
+                        <p:commandLink ajax="false" action="#{adminAutoReportUtils.processStopAutoScores}">Stop Auto Report Batches</p:commandLink>
+                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup></h:panelGroup>
+                        <p:commandLink ajax="false" action="#{adminAutoReportUtils.processStartAutoScores}">Start Auto Report Batches</p:commandLink>
+                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup></h:panelGroup>
+                        <p:commandLink ajax="false" action="#{adminAutoReportUtils.processStartBatchNow}">Start A Report Batch Now</p:commandLink>
+                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup></h:panelGroup>
+
+                        <p:commandLink ajax="false" action="#{adminAutoReportUtils.processClearDmbsCache}" title="Clear dbms cache">Clear DBMS Cache</p:commandLink>
+                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup></h:panelGroup>
+                        
+                        <h:panelGroup>&#160;</h:panelGroup>
+                        <h:panelGroup></h:panelGroup>
+                        <h:panelGroup></h:panelGroup>
+
+                        <h:outputText value="BatchReportId"/>
+                        <p:inputText size="6" value="#{adminAutoReportBean.batchReportId}"/>
+                        <p:commandButton ajax="false" action="#{adminAutoReportUtils.processExecuteBatchReport}" value="Run Batch Report"/>
+                                                   
+                        <h:panelGroup rendered="#{fn:length(adminAutoReportBean.reportBytes) gt 0}">Download Report:</h:panelGroup>
+                        <h:panelGroup rendered="#{fn:length(adminAutoReportBean.reportBytes) gt 0}">
+                            <p:commandLink value="Download File">
+                                <p:fileDownload value="#{adminAutoReportBean.excelFileForDownload}" />
+                            </p:commandLink>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{fn:length(adminAutoReportBean.reportBytes) gt 0}"></h:panelGroup>
+                        
+                    </h:panelGrid>
+
+                </h:form>
+
+                    <br />
+
+            </p:panel>
+
+	<br />
+
+        <h:form>
+        <p:panel header="System Status"  toggleable="true" closable="true">
+            <f:facet name="header">
+
+                System Status
+                &#160;&#160;
+                <p:commandLink ajax="false" action="/tools/admin/admintools.xhtml">Refresh</p:commandLink>
+
+
+            </f:facet>
+
+	<table cellpadding="2" cellspacing="0" width="900">
+
+		<ui:repeat value="#{adminAutoReportUtils.statusList}" var="stat">
+		<tr>
+			<td width="50%"><h:outputText value="#{stat[0]}"/></td>
+			<td width="50%"><h:outputText value="#{stat[1]}"/></td>
+		</tr>
+		</ui:repeat>
+
+	</table>
+
+        </p:panel>
+        </h:form>
+
+        </ui:fragment>
+
+	</div>
+
+	</ui:define>
+
+</ui:composition>
+
+</html>
+

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:p="http://primefaces.org/ui">
+
+<ui:insert name="headsection">
+    <h:head>
+
+	<ui:insert name="titletag">
+            <title>HR Avatar Batch Reporting App</title>
+	</ui:insert>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+	<meta http-equiv="Pragma" content="no-cache"/>
+	<meta http-equiv="Expires" content="0"/>
+
+        <h:outputStylesheet library="css" name="default.css"/>
+
+        <ui:debug />
+	<link rel="shortcut icon" href="/td/favicon.ico" type="image/x-icon"/>
+
+
+	<ui:insert name="headspec">
+	</ui:insert>
+
+        <style>
+
+            #wrapper
+            {
+                margin-top:10px;
+                width:960px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hdrleft
+            {
+                width:200px;
+            }
+
+            .hdrmid
+            {
+                width:560px;
+            }
+
+            .hdrright
+            {
+                width:200px;
+                text-align: right;
+            }
+
+
+        </style>
+
+    </h:head>
+</ui:insert>
+
+
+    <f:view contentType="text/html">
+    <h:body>
+
+        <ui:insert name="metadata">
+	</ui:insert>
+
+        <div id="wrapper">
+
+        <ui:insert name="headersection">
+
+            <h:form prependId="false" >
+            <h:panelGrid columns="3" cellpadding="3" columnClasses="hdrleft,hdrmid,hdrright" style="width:700px;margin-left: auto;margin-right: auto; border-bottom: 1px solid #c0c0c0">
+
+                <h:outputLink value="/td/index.xhtml">
+                <h:graphicImage library="images" name="logox50.png"/>
+                </h:outputLink>
+
+                <h:panelGroup></h:panelGroup>
+                <h:panelGroup>
+                    <ui:fragment rendered="#{userBean.userLoggedOnAsAdmin}">
+                    <br />
+                    <h:outputText styleClass="bodysmallbold" value="#{userBean.user.lastName}"/>
+                    </ui:fragment>
+                    <ui:fragment rendered="#{userBean.userLoggedOnAsAdmin}">
+                    <br />
+                    <h:commandLink action="#{userUtils.processUserLogOff}" title="Sign Off">Sign Off</h:commandLink>
+                    </ui:fragment>
+                </h:panelGroup>
+
+            </h:panelGrid>
+            </h:form>
+
+            <br />&#160;
+
+        </ui:insert>
+
+            <div style="width:600px;margin-left: auto;margin-right: auto"><p:messages showDetail="false"><p:autoUpdate /></p:messages>
+            </div>
+
+
+
+        <ui:insert name="coreinnersection">
+                CORE PAGE SHOULD BE HERE!
+        </ui:insert>
+
+
+        <ui:insert name="footersection">
+
+            <br />
+
+            <h:panelGrid columns="3" cellpadding="3" style="width:700px;margin-left: auto;margin-right: auto; border-top: 1px solid #c0c0c0">
+
+                <h:panelGroup>
+                    <div style="text-align: center">Copyright <h:outputLink value="https://www.hravatar.com" title="">HR Avatar.com</h:outputLink>, All Rights Reserved.
+                    </div>
+                </h:panelGroup>
+
+            </h:panelGrid>
+
+
+        </ui:insert>
+
+
+        </div>
+
+
+    </h:body>
+</f:view>
+
+</html>
