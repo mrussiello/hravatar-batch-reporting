@@ -20,7 +20,7 @@ import jakarta.persistence.Transient;
 @Table( name="emailblock" )
 @NamedQueries({
     @NamedQuery ( name="EmailBlock.findForEmail", query="SELECT o FROM EmailBlock AS o WHERE o.email = :email" ),
-    @NamedQuery ( name="EmailBlock.findFullBlockForEmail", query="SELECT o FROM EmailBlock AS o WHERE o.email = :email AND o.fullBlock=1" )
+    @NamedQuery ( name="EmailBlock.findFullBlockForEmail", query="SELECT o FROM EmailBlock AS o WHERE o.email = :email AND (o.fullBlock=1 OR o.emailBlockReasonId=98 OR o.emailBlockReasonId=99)" )
 })
 public class EmailBlock implements Serializable
 {
