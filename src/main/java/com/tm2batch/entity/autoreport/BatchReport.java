@@ -453,7 +453,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
             
             if( daysBack>0 )
             {
-                cal.set( Calendar.HOUR_OF_DAY, 0);
+                // cal.set( Calendar.HOUR_OF_DAY, 0);
                 cal.set( Calendar.MINUTE, 0);
                 cal.set( Calendar.SECOND, 0);                
             }

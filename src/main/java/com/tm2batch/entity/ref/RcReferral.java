@@ -5,6 +5,7 @@
 package com.tm2batch.entity.ref;
 
 import com.tm2batch.entity.user.User;
+import com.tm2batch.ref.RcReferralStatusType;
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.Column;
@@ -18,6 +19,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
+import java.util.Locale;
 
 /**
  *
@@ -40,6 +42,13 @@ public class RcReferral  implements Comparable<RcReferral>, Serializable
     @Column( name = "rcreferralid" )
     private long rcReferralId;
 
+    @Column( name = "rcreferraltypeid" )
+    private int rcReferralTypeId;
+        
+    @Column( name = "rcreferralstatustypeid" )
+    private int rcReferralStatusTypeId;
+        
+    
     @Column( name = "rcCheckId" )
     private long rcCheckId;
 
@@ -58,10 +67,25 @@ public class RcReferral  implements Comparable<RcReferral>, Serializable
     @Column(name="rcscriptid")
     private int rcScriptId;
     
+    @Column(name="targetrole")
+    private String targetRole;
+    
+    @Column(name="referrernotes")
+    private String referrerNotes;
+    
+    @Column(name="notes")
+    private String notes;    
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
     private Date createDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="lastupdate")
+    private Date lastUpdate;
+
+    
+    
     @Override
     public String toString() {
         return "RcReferral{" + "rcReferralId=" + rcReferralId + ", rcCheckId=" + rcCheckId + ", rcRaterId=" + rcRaterId + ", userId=" + userId + '}';
@@ -88,6 +112,25 @@ public class RcReferral  implements Comparable<RcReferral>, Serializable
     }
     
     
+    public String getRoleName()
+    {
+        if( targetRole!=null && !targetRole.isBlank() )
+            return targetRole;
+        
+        if( rcScript !=null )
+            return rcScript.getName();
+        return "";
+    }
+    
+    public RcReferralStatusType getRcReferralStatusType()
+    {
+        return RcReferralStatusType.getValue(this.rcReferralStatusTypeId);
+    }
+    
+    public String getStatusName(Locale locale)
+    {
+        return getRcReferralStatusType().getName(locale==null ? Locale.US : locale );
+    }
     
     
     public long getRcReferralId() {
@@ -176,6 +219,54 @@ public class RcReferral  implements Comparable<RcReferral>, Serializable
 
     public void setRcScript(RcScript rcScript) {
         this.rcScript = rcScript;
+    }
+
+    public int getRcReferralTypeId() {
+        return rcReferralTypeId;
+    }
+
+    public void setRcReferralTypeId(int rcReferralTypeId) {
+        this.rcReferralTypeId = rcReferralTypeId;
+    }
+
+    public int getRcReferralStatusTypeId() {
+        return rcReferralStatusTypeId;
+    }
+
+    public void setRcReferralStatusTypeId(int rcReferralStatusTypeId) {
+        this.rcReferralStatusTypeId = rcReferralStatusTypeId;
+    }
+
+    public String getTargetRole() {
+        return targetRole;
+    }
+
+    public void setTargetRole(String targetRole) {
+        this.targetRole = targetRole;
+    }
+
+    public String getReferrerNotes() {
+        return referrerNotes;
+    }
+
+    public void setReferrerNotes(String referrerNotes) {
+        this.referrerNotes = referrerNotes;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     

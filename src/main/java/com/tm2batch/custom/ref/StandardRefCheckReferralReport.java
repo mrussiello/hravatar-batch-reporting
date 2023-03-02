@@ -7,10 +7,8 @@ package com.tm2batch.custom.ref;
 
 import com.tm2batch.autoreport.ExecutableReport;
 import com.tm2batch.custom.BaseExecutableReport;
-import com.tm2batch.entity.ref.RcCheck;
+import com.tm2batch.entity.ref.RcReferral;
 import com.tm2batch.global.BatchReportException;
-import com.tm2batch.ref.RcCheckStatusType;
-import com.tm2batch.ref.RcCheckType;
 import com.tm2batch.ref.RcCheckUtils;
 import com.tm2batch.ref.RcFacade;
 import com.tm2batch.ref.RcScriptFacade;
@@ -93,28 +91,15 @@ public class StandardRefCheckReferralReport extends BaseExecutableReport impleme
             if( rcFacade==null )
                 rcFacade=RcFacade.getInstance();
             
-            List<RcCheck> rcl = rcFacade.findRcCheckList( batchReport.getIntParam1()==1 ? batchReport.getUserId() : 0, // long adminUserId, 
-                                                0, // long userId, 
-                                                batchReport.getOrgId(), // int orgId, 
-                                                batchReport.getSuborgId(), // int suborgId, 
-                                                null, //String lastNameKey,
-                                                null, //String emailKey,
+            List<RcReferral> rfl = rcFacade.findRcReferralList(  batchReport.getOrgId(), 
+                                                batchReport.getIntParam1()==1 ? batchReport.getUserId() : 0,
                                                 dates[0], //Date startDate,
-                                                dates[1], //Date endDate,
-                                                null, // String candidateAccessCode, 
-                                                RcCheckType.PREHIRE.getRcCheckTypeId(), // int rcCheckTypeId, 
-                                                -1, // int rcCheckStatusTypeId,
-                                                RcCheckStatusType.STARTED.getRcCheckStatusTypeId(), // int minRcCheckStatusTypeId, 
-                                                -1, // int maxRcCheckStatusTypeId, 
-                                                0, // int rcScriptId,
-                                                0, // int maxRows,
-                                                0 // int sortTypeId
-                                            );
-
+                                                dates[1] );
             
-            LogService.logIt( "StandardRefCheckReferralReport.executeReport() BBB Have " + rcl.size() + " Reference Checks to include. batchReportId=" + this.batchReport.getBatchReportId() );
             
-            if( rcl.size()<=0 )
+            LogService.logIt( "StandardRefCheckReferralReport.executeReport() BBB Have " + rfl.size() + " RcReferrals to include. batchReportId=" + this.batchReport.getBatchReportId() );
+            
+            if( rfl.size()<=0 )
                 return out;
             
             if( batchReport.getOrg()==null )
@@ -126,28 +111,13 @@ public class StandardRefCheckReferralReport extends BaseExecutableReport impleme
             
             if( batchReport.getOrg().getRcOrgPrefs()==null )
                 batchReport.getOrg().setRcOrgPrefs( rcFacade.getRcOrgPrefsForOrgId( batchReport.getOrgId() ));
-            
-            
-            for( RcCheck rc : rcl )
-            {
-                if( rc.getOrg()==null )
-                    rc.setOrg( batchReport.getOrg() );
-                
-                if( rc.getRcOrgPrefs()==null )
-                    rc.setRcOrgPrefs( batchReport.getOrg().getRcOrgPrefs() );
-                
-                rc.setLocale( batchReport.getLocaleToUseDefaultUS() );
-                
-                // loadRcCheck( rc );
-            }
+                       
                         
-            int records = rcl.size();
+            int records = rfl.size();
             
-            RcCheckExporter rce = new RcCheckExporter( true );
+            RcReferralExporter rce = new RcReferralExporter();
             
-            bytes = rce.getRcCheckExcelFile(rcl, batchReport.getLocaleToUseDefaultUS(), batchReport.getTimeZone(), batchReport.getOrg(), dates[0], dates[1] );
-            
-       // tre.getTestResultExcelFile( trl, batchReport.getLocaleToUseDefaultUS(), batchReport.getUser().getTimeZone(), batchReport.getUser().getUserReportOptions(), batchReport.getOrg() );
+            bytes = rce.getRcReferralExcelFile(rfl, batchReport.getLocaleToUseDefaultUS(), batchReport.getTimeZone(), batchReport.getOrg(), dates[0], dates[1], batchReport.getIntParam1()==1 );
             
             if( bytes==null )
                 throw new BatchReportException( batchReport.getBatchReportId(), "Bytes is null." );

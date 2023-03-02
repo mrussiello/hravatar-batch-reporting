@@ -5,6 +5,7 @@ import com.tm2batch.entity.ref.RcOrgPrefs;
 import com.tm2batch.entity.ref.RcRater;
 import com.tm2batch.entity.ref.RcRating;
 import com.tm2batch.entity.ref.RcReferral;
+import com.tm2batch.entity.ref.RcScript;
 import com.tm2batch.entity.ref.RcSuspiciousActivity;
 import com.tm2batch.global.Constants;
 import com.tm2batch.global.STException;
@@ -330,6 +331,126 @@ public class RcFacade
             throw new STException( e );
         }        
     }
+    
+    public RcScript getRcScript( int rcScriptId ) throws Exception
+    {
+        try
+        {
+            return em.find(RcScript.class, rcScriptId );
+        }
+        catch( NoResultException e )
+        {
+            return null;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RcScriptFacade.getRcScript( " + rcScriptId + " ) " );
+            throw new STException( e );
+        }
+    }       
+    
+    
+    
+    public List<RcReferral> findRcReferralList(  int orgId, 
+                                                 long rcCheckAdminUserId,
+                                                  Date startDate,
+                                                 Date endDate ) throws Exception
+    {        
+        String sqlStr = "SELECT rc.rcreferralid FROM rcreferral AS rc ";
+        
+        if( rcCheckAdminUserId>0 )
+            sqlStr += " INNER JOIN rccheck as rcc ON rcc.rccheckid=rc.rccheckid ";
+        
+        String whereStr = "";
+                        
+        if( orgId>0 )
+        {
+            if( !whereStr.isBlank() )
+                whereStr += " AND ";            
+            whereStr += " rc.orgid=" + orgId + " ";
+        }
+        
+        if( rcCheckAdminUserId > 0 )
+        {
+            if( !whereStr.isBlank() )
+                whereStr += " AND ";
+            
+            whereStr += " rcc.adminuserid=" + rcCheckAdminUserId + " ";            
+        }
+                
+        if( startDate != null )
+        {
+            if( whereStr.length() > 0 )
+                whereStr += " AND ";
+
+            java.sql.Timestamp ts = new java.sql.Timestamp( startDate.getTime() );            
+            whereStr += " rc.createdate IS NOT NULL AND rc.createdate >='" + ts.toString() + "' ";
+        }
+
+        if( endDate != null )
+        {
+            if( whereStr.length() > 0 )
+                whereStr += " AND ";
+
+            java.sql.Timestamp ts = new java.sql.Timestamp( endDate.getTime() );
+            whereStr += " (rc.createdate IS NULL OR rc.createdate <='" + ts.toString() + "') ";
+        }
+        
+        DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2mirror" );
+        if( pool == null )
+            throw new Exception( "Can not find Datasource" );
+        
+        List<Long> idlst = new ArrayList<>();
+        try (Connection con = pool.getConnection();
+             Statement stmt = con.createStatement() )
+        {
+            if( whereStr.isBlank() )
+                throw new Exception( "No Search Criteria found.");
+        
+            sqlStr += " WHERE " + whereStr + " LIMIT " + Constants.DEFAULT_MAX_RESULT_ROWS;
+            
+            // LogService.logIt( "RCFacade.findRcReferralList() orgId=" + orgId + ", sqlStr=" + sqlStr );
+        
+            ResultSet rs = stmt.executeQuery( sqlStr );            
+            while( rs.next() )
+            {
+                idlst.add( rs.getLong(1));
+            }
+            rs.close();
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RcFacade.findRcReferralList() orgId=" + orgId + ", " + sqlStr );
+            throw new STException(e);
+        }
+        
+        List<RcReferral> out = new ArrayList<>();        
+        for( Long lvid : idlst )
+        {
+            out.add( (RcReferral)(getRcReferral( lvid)) );
+        }        
+        return out;
+    }
+    
+    
+    public RcReferral getRcReferral( long rcReferralId ) throws Exception
+    {
+        try
+        {
+            return em.find(RcReferral.class, rcReferralId );
+        }
+        catch( NoResultException e )
+        {
+            return null;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "RcFacade.getRcReferral( " + rcReferralId + " ) " );
+            throw new STException( e );
+        }
+    }       
+    
+    
     
     
     
