@@ -69,12 +69,12 @@
             username="${prod.username}"
             keyfile="${prod.keyfile}"
                 trust="true"
-                command="/usr/pgms/payara6.2023.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2batch2-1.0"/>
+                command="/usr/pgms/payara6.2023.2/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2batch2-1.0"/>
 		<sshexec host="${imo.hravatar.com}"
             username="${prod.username}"
             keyfile="${prod.keyfile}"
 			      trust="true"
-			      command="/usr/pgms/payara6.2023.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot td --force=true --deploymentorder 150 ${prod.bu.dir}/${today.date}${today.month}${today.year}/tm2batch2-1.0.war"/>
+			      command="/usr/pgms/payara6.2023.2/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot td --force=true --deploymentorder 150 ${prod.bu.dir}/${today.date}${today.month}${today.year}/tm2batch2-1.0.war"/>
 			<antcall target="datetime" />
 	</target>
 
@@ -94,7 +94,7 @@
             username="${prod.username}"
             keyfile="${prod.keyfile}"
 			      trust="true"
-			      command="/usr/pgms/payara6.2023.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot td --force=true --deploymentorder 150 ${prod.bu.dir}/${today.date}${today.month}${today.year}/tm2batch2-1.0.war"/>
+			      command="/usr/pgms/payara6.2023.2/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot td --force=true --deploymentorder 150 ${prod.bu.dir}/${today.date}${today.month}${today.year}/tm2batch2-1.0.war"/>
 			<antcall target="datetime" />
 	</target>
 
@@ -151,12 +151,12 @@
             username="${prod.username}"
             keyfile="${prod.keyfile}"
                 trust="true"
-                command="/usr/pgms/payara6.2023.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2batch2"/>
+                command="/usr/pgms/payara6.2023.2/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf undeploy tm2batch2"/>
 		<sshexec host="stage.hravatar.com"
             username="${prod.username}"
             keyfile="${prod.keyfile}"
 			      trust="true"
-			      command="/usr/pgms/payara6.2023.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot td --force=true --deploymentorder 150 ${prod.bu.dir}/${today.date}${today.month}${today.year}/tm2batch2-1.0.war"/>
+			      command="/usr/pgms/payara6.2023.2/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot td --force=true --deploymentorder 150 ${prod.bu.dir}/${today.date}${today.month}${today.year}/tm2batch2-1.0.war"/>
 			<antcall target="datetime" />
 	</target>
 
@@ -175,7 +175,7 @@
             username="${prod.username}"
             keyfile="${prod.keyfile}"
 			      trust="true"
-			      command="/usr/pgms/payara6.2023.1/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot td --force=true --deploymentorder 150 ${prod.bu.dir}/${today.date}${today.month}${today.year}/tm2batch2-1.0.war"/>
+			      command="/usr/pgms/payara6.2023.2/payara6/glassfish/bin/asadmin --user admin --passwordfile /home/payara/passwd.gf deploy --virtualservers server --contextroot td --force=true --deploymentorder 150 ${prod.bu.dir}/${today.date}${today.month}${today.year}/tm2batch2-1.0.war"/>
 			<antcall target="datetime" />
 	</target>
 
