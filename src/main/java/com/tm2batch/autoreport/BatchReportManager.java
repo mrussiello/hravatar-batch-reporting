@@ -145,7 +145,7 @@ public class BatchReportManager
             // boolean success;             
             for( BatchReport batchReport : brl )
             {
-                LogService.logIt("BatchReportManager.reportBatch() AAA.3 Starting BatchReport " + batchReport.getTitle() + " (" + batchReport.getBatchReportId() + ")" );
+                // LogService.logIt("BatchReportManager.reportBatch() AAA.3 Starting BatchReport " + batchReport.getTitle() + " (" + batchReport.getBatchReportId() + ")" );
 
                 if( !readyForExecution(batchReport) )
                     continue;
@@ -179,7 +179,7 @@ public class BatchReportManager
     {
         if( br.getBatchReportStatusTypeId()!=BatchReportStatusType.ACTIVE.getBatchReportStatusTypeId() )
         {
-            LogService.logIt( "BatchReportManager.readyForExecution() Not Ready because status is not ACTIVE. batchReportId=" + br.getBatchReportId() + ", " + br.getTitle() );
+            // LogService.logIt( "BatchReportManager.readyForExecution() Not Ready because status is not ACTIVE. batchReportId=" + br.getBatchReportId() + ", " + br.getTitle() );
             return false;
         }
         
@@ -198,7 +198,7 @@ public class BatchReportManager
         
         if( !freqType.isTodayOkToSend( br.getTimeZone() ) )
         {
-            LogService.logIt( "BatchReportManager.readyForExecution() Not Ready because freq type returned NOT OK to send. TimeZone=" + br.getTimeZoneId() +", batchReportId=" + br.getBatchReportId() + ", " + br.getTitle() );
+            // LogService.logIt( "BatchReportManager.readyForExecution() Not Ready because freq type returned NOT OK to send. TimeZone=" + br.getTimeZoneId() +", batchReportId=" + br.getBatchReportId() + ", " + br.getTitle() );
             return false;
         }
         

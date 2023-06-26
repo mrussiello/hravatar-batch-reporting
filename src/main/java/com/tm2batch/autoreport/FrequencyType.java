@@ -14,8 +14,17 @@ public enum FrequencyType
     QUARTERLY(5,"Quarterly",0,3,0,0 ),
     MONTHLY(10,"Monthly",0,1,0,0),
     BIWEEKLY(15,"Bi-Weekly",0,0,2,0),
-    WEEKLY(20,"Weekly",0,0,1,0),
-    DAILY(25,"Daily",0,0,0,1);
+    WEEKLY_SAT(18,"Weekly-Saturdays",0,0,1,0),
+    WEEKLY_S(19,"Weekly-Sundays",0,0,1,0),
+    WEEKLY_M(20,"Weekly-Mondays",0,0,1,0),
+    WEEKLY_T(21,"Weekly-Tuesdays",0,0,1,0),
+    WEEKLY_W(22,"Weekly-Wednesdays",0,0,1,0),
+    WEEKLY_TH(23,"Weekly-Thursdays",0,0,1,0),
+    WEEKLY_F(24,"Weekly-Fridays",0,0,1,0),
+    DAILY(25,"Daily",0,0,0,1),
+    DAILY_MWF(26,"Daily-MonWedFri",0,0,0,2),
+    DAILY_TTH(27,"Daily-TueThurs",0,0,0,2),
+    ;
 
     private final int frequencyTypeId;
 
@@ -61,9 +70,34 @@ public enum FrequencyType
         if( equals(BIWEEKLY) )
             return weekOfYear%2 == 0 && dayOfWeek == Calendar.SUNDAY;
 
-        if( equals(WEEKLY) )
+        if( equals(WEEKLY_SAT) )
+            return dayOfWeek == Calendar.SATURDAY;
+
+        if( equals(WEEKLY_S) )
             return dayOfWeek == Calendar.SUNDAY;
         
+        if( equals(WEEKLY_M) )
+            return dayOfWeek == Calendar.MONDAY;
+        
+        if( equals(WEEKLY_T) )
+            return dayOfWeek == Calendar.TUESDAY;
+        
+        if( equals(WEEKLY_W) )
+            return dayOfWeek == Calendar.WEDNESDAY;
+        
+        if( equals(WEEKLY_TH) )
+            return dayOfWeek == Calendar.THURSDAY;
+        
+        if( equals(WEEKLY_F) )
+            return dayOfWeek == Calendar.FRIDAY;
+        
+        if( equals(DAILY_MWF) )
+            return dayOfWeek==Calendar.MONDAY || dayOfWeek==Calendar.WEDNESDAY || dayOfWeek==Calendar.FRIDAY;
+        
+        if( equals(DAILY_TTH) )
+            return dayOfWeek == Calendar.TUESDAY || dayOfWeek==Calendar.THURSDAY;
+        
+        // Must be daily!
         return true;
     }
     
