@@ -5,7 +5,7 @@
  */
 package com.tm2batch.custom.activity;
 
-import com.tm2batch.account.results.TestResultUtils;
+import com.tm2batch.account.results.TestReportingUtils;
 import com.tm2batch.autoreport.ExecutableReport;
 import com.tm2batch.custom.BaseExecutableReport;
 import com.tm2batch.global.BatchReportException;
@@ -42,7 +42,7 @@ public class StandardActivityReport extends BaseExecutableReport implements Exec
     
     private void init()
     {
-        testResultUtils = new TestResultUtils();
+        testReportingUtils = new TestReportingUtils();
         
         TimeZone tz = batchReport.getTimeZone();
         Locale loc = batchReport.getLocaleToUseDefaultUS();

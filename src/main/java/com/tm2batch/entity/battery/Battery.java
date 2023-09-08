@@ -2,6 +2,7 @@ package com.tm2batch.entity.battery;
 
 
 import com.tm2batch.battery.BatteryScoreType;
+import com.tm2batch.service.LogService;
 import java.io.Serializable;
 
 
@@ -13,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -131,7 +134,7 @@ public class Battery implements Serializable, Comparable<Battery>
         if( name != null && !name.isEmpty() && o.getName() != null && !o.getName().isEmpty()  )
             return name.compareTo( o.getName() );
 
-        return new Integer( batteryId ).compareTo( (Integer)( o.getBatteryId() ) );
+        return Integer.valueOf(batteryId).compareTo( (Integer)( o.getBatteryId() ) );
     }
 
 
@@ -163,6 +166,49 @@ public class Battery implements Serializable, Comparable<Battery>
         return true;
     }
 
+    public List<Integer> getProductIdList()
+    {
+        List<Integer> out = new ArrayList<>();
+
+        if( productIds == null || productIds.isBlank() )
+            return out;
+
+        String[] pids = productIds.split( "," );
+
+        int id=0;
+
+        for( String pid : pids )
+        {
+            if( pid == null )
+                continue;
+
+            pid = pid.trim();
+
+            if( pid.isBlank() )
+                continue;
+
+            id = 0;
+
+            try
+            {
+                id = Integer.parseInt( pid );
+
+                // if real and not a duplicate.
+                if( id > 0 && !out.contains( id ) )
+                    out.add( id );
+            }
+
+            catch( NumberFormatException e )
+            {
+                LogService.logIt( e, "Battery.getProductIdList() productIds=" + productIds + ", pid=" + pid + ", id=" + id );
+            }
+        }
+
+        return out;
+    }
+    
+    
+    
     public int getBatteryId() {
         return batteryId;
     }

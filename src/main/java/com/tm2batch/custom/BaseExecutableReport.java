@@ -5,7 +5,7 @@
  */
 package com.tm2batch.custom;
 
-import com.tm2batch.account.results.TestResultUtils;
+import com.tm2batch.account.results.TestReportingUtils;
 import com.tm2batch.autoreport.AutoReportFacade;
 import com.tm2batch.autoreport.BatchReportStatusType;
 import com.tm2batch.autoreport.FrequencyType;
@@ -36,7 +36,7 @@ public class BaseExecutableReport {
     public BatchReport batchReport;
     public boolean overrideSendFreq;
     
-    public TestResultUtils testResultUtils;
+    public TestReportingUtils testReportingUtils;
     
     public UserFacade userFacade;
     public EmailBlockFacade emailBlockFacade;

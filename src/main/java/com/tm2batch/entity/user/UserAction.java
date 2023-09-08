@@ -9,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -18,6 +20,14 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table( name="useraction" )
+@NamedQueries({
+    @NamedQuery ( name="UserAction.findByLongParam1And4AndUserActionType", query="SELECT o FROM UserAction AS o WHERE o.userActionTypeId=:userActionTypeId AND o.userId=:userId AND o.longParam1=:longParam1 AND o.longParam4=:longParam4" ),
+    @NamedQuery ( name="UserAction.findByLongParam1UserIdAndUserActionType", query="SELECT o FROM UserAction AS o WHERE o.userActionTypeId = :userActionTypeId AND o.userId=:userId AND o.longParam1=:longParam1" ),
+    @NamedQuery ( name="UserAction.findByLongParam4UserIdAndUserActionType", query="SELECT o FROM UserAction AS o WHERE o.userActionTypeId = :userActionTypeId AND o.userId=:userId AND o.longParam4=:longParam4" ),
+    @NamedQuery ( name="UserAction.findByLongParam1AndUserActionType", query="SELECT o FROM UserAction AS o WHERE o.userActionTypeId = :userActionTypeId AND o.longParam1=:longParam1" ),
+    @NamedQuery ( name="UserAction.findByLongParam4AndUserActionType", query="SELECT o FROM UserAction AS o WHERE o.userActionTypeId = :userActionTypeId AND o.longParam4=:longParam4" ),
+    @NamedQuery ( name="UserAction.findByUserIdAndUserActionType", query="SELECT o FROM UserAction AS o WHERE o.userActionTypeId = :userActionTypeId AND o.userId=:userId" )
+})
 public class UserAction implements Serializable
 {
     @Transient
@@ -102,6 +112,9 @@ public class UserAction implements Serializable
     @Column(name="bot")
     private int bot;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="eventdate")
+    private Date eventDate;
 
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -335,6 +348,14 @@ public class UserAction implements Serializable
 
     public void setLongParam4(long longParam4) {
         this.longParam4 = longParam4;
+    }
+
+    public Date getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(Date eventDate) {
+        this.eventDate = eventDate;
     }
 
 

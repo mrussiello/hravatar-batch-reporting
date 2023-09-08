@@ -8,6 +8,7 @@ import com.tm2batch.entity.user.LogonHistory;
 import com.tm2batch.entity.user.Org;
 import com.tm2batch.entity.user.Suborg;
 import com.tm2batch.entity.user.User;
+import com.tm2batch.entity.user.UserAction;
 import com.tm2batch.entity.user.UserNote;
 import com.tm2batch.global.RuntimeConstants;
 import com.tm2batch.global.STException;
@@ -519,5 +520,71 @@ public class UserFacade
             throw new STException( e );
         }
     }
+    
+    public List<UserAction> getUserActionEmails( long longParam1, long longParam4, long userId, int userActionTypeId) throws Exception
+    {
+        try
+        {
+            if( longParam1 <= 0 && longParam4 <= 0 && userId <= 0 )
+                throw new Exception( "longParam1 or longParam4 or userId are all invalid. Need at least one of them." );
+
+            TypedQuery<UserAction> q = null;
+            
+            if( longParam1>0 && longParam4>0 && userId>0 )
+                q = em.createNamedQuery("UserAction.findByLongParam1And4AndUserActionType" , UserAction.class );
+            else if( longParam1>0 && userId>0 )
+                q = em.createNamedQuery("UserAction.findByLongParam1UserIdAndUserActionType" , UserAction.class );
+            else if( longParam4>0 && userId>0 )
+                q = em.createNamedQuery("UserAction.findByLongParam4UserIdAndUserActionType" , UserAction.class );
+            else if( longParam1>0 )
+                q = em.createNamedQuery("UserAction.findByLongParam1AndUserActionType" , UserAction.class );
+            else if( longParam4>0 )
+                q = em.createNamedQuery("UserAction.findByLongParam4AndUserActionType" , UserAction.class );
+            else
+                q = em.createNamedQuery("UserAction.findByUserIdAndUserActionType" , UserAction.class );
+
+            q.setParameter( "userActionTypeId", userActionTypeId );
+
+            if( longParam1>0 && longParam4>0 && userId>0 )
+            {
+                q.setParameter( "longParam1", longParam1 );
+                q.setParameter( "longParam4", longParam4 );
+                q.setParameter( "userId", userId );                
+            }
+            
+            else if( longParam1 > 0  && userId>0 )
+            {
+                q.setParameter( "longParam1", longParam1 );
+                q.setParameter( "userId", userId );                
+            }
+
+            else if( longParam4 > 0  && userId>0 )
+            {
+                q.setParameter( "longParam4", longParam4 );
+                q.setParameter( "userId", userId );                
+            }
+
+            else if( longParam1 > 0 )
+                q.setParameter( "longParam1", longParam1 );
+
+            else if( longParam4 > 0 )
+                q.setParameter( "longParam4", longParam4 );
+
+            else if( userId > 0 )
+                q.setParameter( "userId", userId );
+
+            return (List<UserAction>) q.getResultList();
+        }
+
+        catch( Exception e )
+        {
+            LogService.logIt(e, "UserFacade.getUserActionEmails() longParam1=" + longParam1 + ", userId=" + userId );
+
+            return new ArrayList<>();
+        }
+
+    }
+    
+    
 
 }

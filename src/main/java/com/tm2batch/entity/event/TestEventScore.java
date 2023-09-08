@@ -2,7 +2,7 @@ package com.tm2batch.entity.event;
 
 import com.tm2batch.account.results.PercentileEntry;
 import com.tm2batch.account.results.ScoreCategoryRange;
-import com.tm2batch.account.results.TestResultUtils;
+import com.tm2batch.account.results.TestReportingUtils;
 import com.tm2batch.event.ScoreCategoryType;
 import com.tm2batch.event.ScoreFormatType;
 import com.tm2batch.event.TestEventResponseRatingType;
@@ -484,7 +484,7 @@ public class TestEventScore implements Serializable, Comparable<TestEventScore>,
 
     public List<TextAndTitle> getTextBasedResponseList( String title, int nonCompetencyItemTypeId, boolean includeFileUploads, boolean fileUploadsOnly, boolean setOrderInInt1, boolean addTestEventResponseRatings)
     {
-        List<TextAndTitle> ttl = TestResultUtils.getTextBasedResponseList(textbasedResponses, title, includeFileUploads, fileUploadsOnly, setOrderInInt1 );
+        List<TextAndTitle> ttl = TestReportingUtils.getTextBasedResponseList(textbasedResponses, title, includeFileUploads, fileUploadsOnly, setOrderInInt1 );
         
         // LogService.logIt( "TestEventScore.getTextBasedResponseList() returned " + ttl.size() + ", title=" + title + ", tbr=" + textbasedResponses );
         if( addTestEventResponseRatings && nonCompetencyItemTypeId>=0 && testEvent!=null )

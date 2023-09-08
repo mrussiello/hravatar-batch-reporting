@@ -15,6 +15,7 @@ import com.tm2batch.entity.event.TestKey;
 import com.tm2batch.entity.event.TestKeyArchive;
 import com.tm2batch.entity.purchase.Product;
 import com.tm2batch.entity.report.Report;
+import com.tm2batch.global.Constants;
 import com.tm2batch.global.STException;
 import com.tm2batch.service.LogService;
 import com.tm2batch.util.StringUtils;
@@ -99,6 +100,46 @@ public class EventFacade
             throw new STException( e );
         }
     }   
+    
+    
+    public List<TestEvent> getTestEventsForTestKey( long testKeyId) throws Exception
+    {
+        try
+        {
+            // if( tm2Factory == null )
+                // tm2Factory = PersistenceManager.getInstance().getEntityManagerFactory();
+
+            // EntityManager em = tm2Factory.createEntityManager();
+
+            Query q = em.createNamedQuery( "TestEventArchive.findByTestKeyId",  TestEventArchive.class );
+
+            q.setParameter( "testKeyId", testKeyId );
+
+            List<TestEvent> tel = new ArrayList<>();
+
+            List<TestEventArchive> tkal = q.getResultList();
+
+            for( TestEventArchive tka : tkal )
+            {
+                tel.add( tka.getTestEvent() );
+            }
+
+            q = em.createNamedQuery( "TestEvent.findByTestKeyId" );
+
+            q.setParameter( "testKeyId", testKeyId );
+
+            tel.addAll( q.getResultList() );
+
+            Collections.sort( tel );
+
+            return tel;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "EventFacade.getTestEventsForTestKey( " + testKeyId + " ) " );
+            throw new STException( e );
+        }
+    }    
     
     public TestEvent getTestEvent( long testEventId ) throws Exception
     {
@@ -312,6 +353,136 @@ public class EventFacade
         }
 
     }
+    
+    public List<TestKey> findTestKeys(  int orgId,
+                                        int suborgId,
+                                        long authUserId,
+                                        int maxTestKeyStatusTypeId,
+                                        String productNameKeyword, // productNameKeyword,
+                                        int productId, // testResultBean.getProductId(),
+                                        int productTypeId, // testResultBean.getProductTypeId(),
+                                        int consumerProductTypeId, // testResultBean.getConsumerProductTypeId(),
+                                        int batteryId, // testResultBean.getBatteryId(),
+                                        Date startDate, // testResultBean.getCompletedAfter(),
+                                        Date endDate, // testResultBean.getCompletedBefore(),
+                                        int sortTypeId, // testResultBean.getTestResultSortTypeId(),
+                                        int maxRows  ) throws Exception
+    {
+        if( maxRows<=0 )
+            maxRows = Constants.DEFAULT_MAX_RESULT_ROWS;
+        
+        String sqlStr = "SELECT t.testkeyid AS 'tkid' FROM testkey AS t ";
+        String sqlStr2 = "SELECT t.testkeyid AS 'tkid' FROM testkeyarchive AS t ";
+
+        String joinStr = (productNameKeyword!=null && !productNameKeyword.isBlank()) || consumerProductTypeId>=0 ? " INNER JOIN product AS p ON p.productid=t.productid " : "";
+                        
+        //String joinStrTk = "";
+        //String joinStrTk2 = "";
+        
+        String whereStr = " WHERE t.orgId=" + orgId + " AND t.statustypeid<=" + maxTestKeyStatusTypeId + " ";
+
+        List<Long> tl = new ArrayList<>();
+
+        if( suborgId > 0 )
+        {
+            whereStr += " AND t.suborgid=" + suborgId + " ";
+        }
+
+        if( authUserId > 0 )
+        {
+            whereStr += " AND t.authorizinguserid=" + authUserId + " ";                
+        }
+
+        if( productNameKeyword != null && !productNameKeyword.isBlank() )
+        {
+            productNameKeyword = StringUtils.sanitizeForSqlQuery( productNameKeyword );
+
+            whereStr += " AND p.name LIKE '%" + productNameKeyword + "%' ";
+        }
+
+        if( productTypeId > 0 )
+        {
+            whereStr += " AND t.producttypeid=" + productTypeId;
+        }
+
+        if( consumerProductTypeId >= 0 )
+        {
+            whereStr += " AND p.consumerproducttypeid=" + consumerProductTypeId;
+        }
+
+        if( batteryId > 0 )
+        {
+            whereStr += " AND t.batteryid=" + batteryId;
+        }
+
+        else if( productId > 0 )
+        {
+            whereStr += " AND t.productid=" + productId;
+        }
+
+
+
+        // java.sql.Date sDate;
+
+        if( startDate != null )
+        {
+            // sDate = new java.sql.Date( completedAfter.getTime() );
+            java.sql.Timestamp ts = new java.sql.Timestamp( startDate.getTime() );
+            whereStr += " AND t.startdate >='" + ts.toString() + "' ";
+        }
+
+        if( endDate != null )
+        {
+            java.sql.Timestamp ts = new java.sql.Timestamp( endDate.getTime() );
+            // sDate = new java.sql.Date( completedBefore.getTime() );
+
+            whereStr += " AND t.startdate<='" + ts.toString() + "' ";
+        }
+
+        String sql = "(" + sqlStr + joinStr + whereStr + ") UNION (" + sqlStr2 + joinStr + whereStr + ") " +
+                " ORDER BY tkid " +
+                " LIMIT " + maxRows;
+                
+        DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2mirror" );
+
+        if( pool == null )
+            throw new Exception( "Can not find Datasource" );
+
+        try( Connection con = pool.getConnection();
+             Statement stmt = con.createStatement() )
+        {
+            con.setTransactionIsolation( Connection.TRANSACTION_READ_UNCOMMITTED );
+
+            ResultSet rs = stmt.executeQuery( sql );
+
+            while( rs.next() )
+            {
+                tl.add( rs.getLong(1) );
+            }
+
+            rs.close();
+
+            LogService.logIt( "EventFacade.findTestKeys() found " + tl.size() + " records. sql=" + sql );
+
+        }
+
+        catch( Exception e )
+        {
+            LogService.logIt( e, "EventFacade.findTestEvents() getting ids. orgId=" + orgId + ", sqlStr=" + sql );
+
+            throw new STException( e );
+        }
+
+        List<TestKey> out = new ArrayList<>();
+        for( Long l : tl )
+        {
+            out.add( getTestKey(l, true) );
+        }
+
+        return out;
+        
+    }
+    
     
     public List<TestEvent> findTestEvents(  int orgId,
                                             int suborgId,

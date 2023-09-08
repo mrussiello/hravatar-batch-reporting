@@ -75,7 +75,7 @@ public class ItemResponseGroup {
         if( cp==null || cp.isEmpty() )
             return textAndTitleList;
         
-        textAndTitleList = TestResultUtils.getTextBasedResponseList( cp );
+        textAndTitleList = TestReportingUtils.getTextBasedResponseList( cp );
         
         String itemRespInfo;
         

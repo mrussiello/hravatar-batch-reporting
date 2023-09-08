@@ -8,6 +8,7 @@ public enum BatchReportContentType
 {
     STD_TEST(0,"Std Test Results","brctn.StdTest", "com.tm2batch.custom.result.StandardResultsReport" ),
     STD_ACTIVITY(1,"Std Activity","brctn.StdActivity", "com.tm2batch.custom.activity.StandardActivityReport" ),
+    STD_UNFINISHED_TK(2,"Std Unfinished TestKey","brctn.StdUnfinishedTestKey", "com.tm2batch.custom.testkey.StandardUnfinishedTestKeyReport" ),
     STD_LIVEVIDEO(10,"Std Live Video","brctn.StdLvi", "com.tm2batch.custom.lvi.StandardLiveVideoReport" ),
     STD_REFCHECK(20,"Std Ref Check","brctn.StdRc", "com.tm2batch.custom.ref.StandardRefCheckReport" ),
     STD_REFCHECK_REFERRALS(30,"Std Ref Check Referrals","brctn.StdRcReferrals", "com.tm2batch.custom.ref.StandardRefCheckReferralReport" );

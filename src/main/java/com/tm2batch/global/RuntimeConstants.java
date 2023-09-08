@@ -48,6 +48,10 @@ public class RuntimeConstants
         
         cache.put( "baseadminuri", "https://www.hravatar.com/ta" );
         
+        cache.put( "testingappprotocol", "https" );
+        cache.put( "testingappbasedomain", "test.hravatar.com" );
+        cache.put( "testingappcontextroot", "tt" );
+        cache.put( "testingapphttpsOK", true);
         
         
         // Note - these are the credentials for S3 Administrator. No other services used by this application.

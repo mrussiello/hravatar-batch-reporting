@@ -31,7 +31,6 @@ public class I18nUtils
         lang.add("fa");
         lang.add("ha");
         lang.add("he");
-        lang.add("iw");
         lang.add("ji");
         lang.add("ps");
         lang.add("ur");

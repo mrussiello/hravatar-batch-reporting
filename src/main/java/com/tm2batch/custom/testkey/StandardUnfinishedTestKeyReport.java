@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tm2batch.custom.result;
+package com.tm2batch.custom.testkey;
 
 import com.tm2batch.account.results.TestReportingUtils;
 import com.tm2batch.autoreport.ExecutableReport;
 import com.tm2batch.custom.BaseExecutableReport;
+import com.tm2batch.entity.event.TestKey;
+import com.tm2batch.event.TestKeyStatusType;
 import com.tm2batch.global.BatchReportException;
 import com.tm2batch.global.Constants;
 import com.tm2batch.service.LogService;
@@ -21,23 +23,23 @@ import java.util.TimeZone;
  *
  * @author miker_000
  */
-public class StandardResultsReport extends BaseExecutableReport implements ExecutableReport {
+public class StandardUnfinishedTestKeyReport extends BaseExecutableReport implements ExecutableReport {
     
     
-    public static String DEFAULT_FILENAME_BASE = "TestResults";
-    public static String DEFAULT_CONTENT_KEY = "g.StdResultReport.content";
-    public static String DEFAULT_CONTENTSUPP_KEY = "g.StdResultReport.contentsupp";
-    public static String DEFAULT_SUBJECT_KEY = "g.StdResultReport.subject";
+    public static String DEFAULT_FILENAME_BASE = "UnfinishedTestKeys";
+    public static String DEFAULT_CONTENT_KEY = "g.StdUnfinishedTestKeyReport.content";
+    public static String DEFAULT_CONTENTSUPP_KEY = "g.StdUnfinishedTestKeyReport.contentsupp";
+    public static String DEFAULT_SUBJECT_KEY = "g.StdUnfinishedTestKeyReport.subject";
     
     byte[] bytes;
     
-    public StandardResultsReport()
+    public StandardUnfinishedTestKeyReport()
     {
     }
 
     @Override
     public String toString() {
-        return "StandardResultsReport{" + '}';
+        return "StandardUnfinishedTestKeyReport{" + '}';
     }
     
     
@@ -47,7 +49,7 @@ public class StandardResultsReport extends BaseExecutableReport implements Execu
         
         TimeZone tz = batchReport.getTimeZone();
         Locale loc = batchReport.getLocaleToUseDefaultUS();
-        LogService.logIt( "StandardResultsReport.init() using locale=" + loc.toString() + " and TimeZone=" + tz.getID());
+        LogService.logIt( "StandardUnfinishedTestKeyReport.init() using locale=" + loc.toString() + " and TimeZone=" + tz.getID());
     }
 
 
@@ -71,7 +73,7 @@ public class StandardResultsReport extends BaseExecutableReport implements Execu
         
         int[] out = new int[4];
         
-        LogService.logIt( "StandardResultsReport.executeReport() START batchReportId=" + this.batchReport.getBatchReportId() );
+        LogService.logIt( "StandardUnfinishedTestKeyReport.executeReport() START batchReportId=" + this.batchReport.getBatchReportId() );
         
         try
         {
@@ -82,31 +84,34 @@ public class StandardResultsReport extends BaseExecutableReport implements Execu
             Date[] dates = batchReport.getDates();
             
             
-            List<TestResult> trl = testReportingUtils.getTestResultList( batchReport, 
+            List<TestKey> trl = testReportingUtils.getTestKeyList( batchReport, 
                                                batchReport.getIntParam1()==1, // boolean thisUserIdOnly, 
+                                               batchReport.getIntParam2()<=0 ? TestKeyStatusType.STARTED.getTestKeyStatusTypeId() : TestKeyStatusType.ACTIVE.getTestKeyStatusTypeId(),
                                                batchReport.getStrParam1(), // String productNameKeyword,
-                                               batchReport.getIntParam2(), // orgAutoTestId
                                                batchReport.getIntParam3(), // int productId, 
                                                batchReport.getIntParam4(), // int productTypeId,
                                                batchReport.getIntParam5(), // int consumerProductTypeId,
                                                batchReport.getIntParam7(), // int batteryId,
-                                               batchReport.getStringArray(2), // String[] customsArray,
-                                               batchReport.getIntParam6(), // int userCompanyStatusTypeId, 
                                                dates[0], // Date startDate, 
                                                dates[1], // Date endDate, 
-                                               batchReport.getIntParam7(), // int testResultSortTypeId,
-                                               Constants.DEFAULT_MAX_RESULT_ROWS, // int maxRows,
-                                               true // boolean includeBatteryTestEvents 
+                                               0, // int testResultSortTypeId,
+                                               Constants.DEFAULT_MAX_RESULT_ROWS // int maxRows,
                                                );
             
-            LogService.logIt( "StandardResultsReport.executeReport() BBB Have " + trl.size() + " Test results. batchReportId=" + this.batchReport.getBatchReportId() );
+            LogService.logIt( "StandardUnfinishedTestKeyReport.executeReport() BBB Have " + trl.size() + " Test results. batchReportId=" + this.batchReport.getBatchReportId() );
             
             if( trl.size()<=0 )
                 return out;
             
-            TestResultExporter tre = new TestResultExporter();
+            for( TestKey tk : trl )
+            {
+                tk.setStartUrl( TestReportingUtils.getTestKeyStartUrl(tk));
+            }
+
             
-            bytes = tre.getTestResultExcelFile(trl, batchReport.getLocaleToUseDefaultUS(), batchReport.getUser().getTimeZone(), batchReport.getUser().getUserReportOptions(), batchReport.getOrg(), dates[0], dates[1] );
+            TestKeyExporter tre = new TestKeyExporter();
+            
+            bytes = tre.getTestKeyExcelFile(trl, batchReport.getLocaleToUseDefaultUS(), batchReport.getUser().getTimeZone(), batchReport.getUser().getUserReportOptions(), batchReport.getOrg(), dates[0], dates[1] );
             
             if( bytes==null )
                 throw new BatchReportException( batchReport.getBatchReportId(), "Bytes is null." );
@@ -114,7 +119,7 @@ public class StandardResultsReport extends BaseExecutableReport implements Execu
             if( bytes.length==0 )
                 throw new BatchReportException( batchReport.getBatchReportId(), "Bytes is empty." );
             
-            LogService.logIt( "StandardResultsReport.executeReport() CCC Have report bytes: length=" + bytes.length + ", batchReportId=" + this.batchReport.getBatchReportId() );
+            LogService.logIt( "StandardUnfinishedTestKeyReport.executeReport() CCC Have report bytes: length=" + bytes.length + ", batchReportId=" + this.batchReport.getBatchReportId() );
             
             String excelFilename = getFilename();
             
@@ -132,7 +137,7 @@ public class StandardResultsReport extends BaseExecutableReport implements Execu
         
         catch( Exception e )
         {
-            LogService.logIt( e, "StandardResultsReport.executeReport() batchReportId=" + batchReport.getBatchReportId() + ", " + batchReport.getTitle() + ", orgId=" + batchReport.getOrgId() );
+            LogService.logIt( e, "StandardUnfinishedTestKeyReport.executeReport() batchReportId=" + batchReport.getBatchReportId() + ", " + batchReport.getTitle() + ", orgId=" + batchReport.getOrgId() );
         }
         
         return out;

@@ -5,7 +5,7 @@ package com.tm2batch.event;
 
 public enum TestKeyStatusType
 {
-    ACTIVE(0,"Active"),
+    ACTIVE(0,"Never Accessed"),
     STARTED(1,"Started"),
     STOPPED_PROCTOR(90,"Stopped By Proctor"),
     COMPLETED(100,"Completed"),

@@ -95,7 +95,7 @@
                                                    
                         <h:panelGroup rendered="#{fn:length(adminAutoReportBean.reportBytes) gt 0}">Download Report:</h:panelGroup>
                         <h:panelGroup rendered="#{fn:length(adminAutoReportBean.reportBytes) gt 0}">
-                            <p:commandLink value="Download File">
+                            <p:commandLink ajax="false" value="Download File">
                                 <p:fileDownload value="#{adminAutoReportBean.excelFileForDownload}" />
                             </p:commandLink>
                         </h:panelGroup>

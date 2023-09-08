@@ -11,6 +11,8 @@ import com.tm2batch.service.EncryptUtils;
 import com.tm2batch.entity.battery.Battery;
 import com.tm2batch.entity.purchase.Product;
 import com.tm2batch.entity.user.OrgAutoTest;
+import com.tm2batch.entity.user.Suborg;
+import com.tm2batch.entity.user.UserAction;
 import com.tm2batch.purchase.ProductType;
 import com.tm2batch.user.ReleaseCodeType;
 import com.tm2batch.util.JsonUtils;
@@ -34,6 +36,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
+import java.util.List;
 
 
 @Cacheable(false)
@@ -278,6 +281,9 @@ public class TestKey implements Serializable, Comparable<TestKey>
     private Org org;
 
     @Transient
+    private Suborg suborg;
+    
+    @Transient
     private OrgAutoTest orgAutoTest;
     
     @Transient
@@ -289,7 +295,14 @@ public class TestKey implements Serializable, Comparable<TestKey>
     @Transient
     private TestKeyArchive testKeyArchive;
     
+    @Transient
+    private List<TestEvent> testEventList;
 
+    @Transient
+    private List<UserAction> userActionList;
+    
+    @Transient
+    private String startUrl;
 
     public boolean getIsArchive()
     {
@@ -493,7 +506,7 @@ public class TestKey implements Serializable, Comparable<TestKey>
         if( pin != null && o.getPin() != null )
             return pin.compareTo( o.getPin() );
 
-        return new Long( testKeyId ).compareTo( new Long( o.getTestKeyId() ) );
+        return Long.valueOf(testKeyId).compareTo(o.getTestKeyId());
     }
 
 
@@ -538,6 +551,21 @@ public class TestKey implements Serializable, Comparable<TestKey>
         return "TestKey{" + "testKeyId=" + testKeyId + ", pin=" + pin + ", productId=" + productId + ", orgId=" + orgId + '}';
     }
 
+    public String getPinToUse()
+    {
+        if( getPin()!=null && !getPin().isBlank() )
+            return getPin();
+        
+        if( pinsave!=null && !pinsave.isBlank() )
+            return pinsave;
+        
+        if( testKeyArchive!=null )
+            return testKeyArchive.getPinsave();
+        
+        return getPin();
+    }
+    
+    
 
 
 
@@ -618,7 +646,7 @@ public class TestKey implements Serializable, Comparable<TestKey>
     public int getTestKeyStatusTypeId() {
         return testKeyStatusTypeId;
     }
-
+    
     public void setTestKeyStatusTypeId(int statusTypeId) {
         this.testKeyStatusTypeId = statusTypeId;
     }
@@ -1173,6 +1201,38 @@ public class TestKey implements Serializable, Comparable<TestKey>
 
     public void setOrgAutoTest(OrgAutoTest orgAutoTest) {
         this.orgAutoTest = orgAutoTest;
+    }
+
+    public Suborg getSuborg() {
+        return suborg;
+    }
+
+    public void setSuborg(Suborg suborg) {
+        this.suborg = suborg;
+    }
+
+    public List<TestEvent> getTestEventList() {
+        return testEventList;
+    }
+
+    public void setTestEventList(List<TestEvent> testEventList) {
+        this.testEventList = testEventList;
+    }
+
+    public String getStartUrl() {
+        return startUrl;
+    }
+
+    public void setStartUrl(String startUrl) {
+        this.startUrl = startUrl;
+    }
+
+    public List<UserAction> getUserActionList() {
+        return userActionList;
+    }
+
+    public void setUserActionList(List<UserAction> userActionList) {
+        this.userActionList = userActionList;
     }
 
 
