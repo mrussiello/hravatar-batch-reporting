@@ -384,6 +384,21 @@ public class RcCheckExporter {
                 cell.setCellStyle(headerCellStyle);
                 cellNum++;
 
+                if( org.getOrgCreditUsageType().getAnyResultCredit() )
+                {
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( "Credit Id" );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(headerCellStyle);
+                    cellNum++;
+
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( "Credit Index" );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(headerCellStyle);
+                    cellNum++;
+                }            
+                
                 for( RcCompetency rcc : competencies )
                 {
                     cell = row.createCell( cellNum);
@@ -637,6 +652,19 @@ public class RcCheckExporter {
                         cell.setCellValue( rc.getRcScript().getRcScriptId());
                         cellNum++;
 
+                        if( org.getOrgCreditUsageType().getAnyResultCredit() )
+                        {
+                            cell = row.createCell( cellNum);
+                            cell.setCellStyle( rowStyle );
+                            cell.setCellValue( rc.getCreditId() );
+                            cellNum++;                        
+
+                            cell = row.createCell( cellNum);
+                            cell.setCellStyle( rowStyle );
+                            cell.setCellValue( rc.getCreditIndex() );
+                            cellNum++;                        
+                        }                    
+                        
                         for( RcCompetency rcc : competencies )
                         {
                             cell = row.createCell( cellNum);

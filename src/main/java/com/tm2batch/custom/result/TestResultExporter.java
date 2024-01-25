@@ -501,11 +501,32 @@ public class TestResultExporter {
 
             if( !forPerfUpload && excelReportBean.isTestCreditsUsed())
             {
+                //cell = row.createCell( cellNum);
+                //cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.CreditsUsed" ) );
+                //colsToAutosize.add( cellNum );
+                //cell.setCellStyle(bold);
+                //cellNum++;
+                
                 cell = row.createCell( cellNum);
-                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.CreditsUsed" ) );
+                if( org.getOrgCreditUsageType().getUsesLegacyCredits() || org.getOrgCreditUsageType().getUnlimited() )
+                    cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.CreditsUsed" ) );
+                else
+                    cell.setCellValue( "Credit Id" );
+                
                 colsToAutosize.add( cellNum );
                 cell.setCellStyle(bold);
                 cellNum++;
+                
+                if( org.getOrgCreditUsageType().getAnyResultCredit() )
+                {
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( "Credit Index" );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(bold);
+                    cellNum++;                    
+                }
+                
+                
             }
 
             if( forPerfUpload || excelReportBean.isTestTakerIdentifier())
@@ -904,10 +925,28 @@ public class TestResultExporter {
 
                 if( !forPerfUpload && excelReportBean.isTestCreditsUsed())
                 {
+                    //cell = row.createCell( cellNum);
+                    //cell.setCellStyle(wrap);
+                    //cell.setCellValue( Integer.toString( tr.getCreditsUsed() ) );
+                    //cellNum++;
+                    
                     cell = row.createCell( cellNum);
                     cell.setCellStyle(wrap);
-                    cell.setCellValue( Integer.toString( tr.getCreditsUsed() ) );
+                    if( org.getOrgCreditUsageType().getUsesLegacyCredits() || org.getOrgCreditUsageType().getUnlimited() )                    
+                        cell.setCellValue( Integer.toString( tr.getCreditsUsed() ) );
+                    else
+                        cell.setCellValue( Long.toString( tr.getTestKey().getCreditId() ) );
                     cellNum++;
+                    
+                    if( org.getOrgCreditUsageType().getAnyResultCredit() )
+                    {
+                        cell = row.createCell( cellNum);
+                        cell.setCellStyle(wrap);
+                        cell.setCellValue( Integer.toString( tr.getTestKey().getCreditIndex() ) );
+                        cellNum++;                        
+                    }
+                    
+                    
                 }
 
                 

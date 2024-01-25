@@ -234,6 +234,21 @@ public class TestKeyExporter {
             cell.setCellStyle(bold);
             cellNum++;
             
+            if( org.getOrgCreditUsageType().getAnyResultCredit() )
+            {
+                cell = row.createCell( cellNum);
+                cell.setCellValue( "Credit Id" );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+                
+                cell = row.createCell( cellNum);
+                cell.setCellValue( "Credit Index" );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+            }
+            
                         
             Date firstEmailOpened;
 
@@ -329,7 +344,18 @@ public class TestKeyExporter {
             
                 cell = row.createCell( cellNum);
                 cell.setCellValue(tk.getStartUrl() );
-                cellNum++;                
+                cellNum++;  
+                
+                if( org.getOrgCreditUsageType().getAnyResultCredit() )
+                {
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue(tk.getCreditId() );
+                    cellNum++;  
+
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue(tk.getCreditIndex() );
+                    cellNum++;  
+                }
             }
             
             for( Integer n : colsToAutosize )
