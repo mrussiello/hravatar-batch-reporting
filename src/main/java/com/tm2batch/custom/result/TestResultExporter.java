@@ -165,9 +165,7 @@ public class TestResultExporter {
             
             if( !forPerfUpload && excelReportBean.isItemResponses() )
                 itemNames = getAllItemNameSet( trl );
-        
-            
-            
+
             UserFacade uf = null;
 
             boolean hasPerfData1 = forPerfUpload ? true : false;
@@ -780,13 +778,20 @@ public class TestResultExporter {
                     tr.setUser( uf.getUser( tr.getUserId() ) );
                 }
                 
+                if( tr.getTestKey()==null )
+                {
+                    if( ef == null )
+                        ef = EventFacade.getInstance();                    
+                    tr.setTestKey( ef.getTestKey( tr.getTestKeyId(), true ) );
+                }
+
                 if( isBattery && ((BatteryScore)tr).getBattery()==null )
                 {
                     if( ef == null )
                         ef = EventFacade.getInstance();                    
                     ((BatteryScore)tr).setBattery( ef.getBattery( ((BatteryScore)tr).getBatteryId() ) );
                 }
-
+                
                 if( !isBattery && tr.getTestKey()!=null && tr.getTestKey().getBatteryId()>0 && te.getBattery()==null )
                 {
                     if( ef == null )
@@ -935,14 +940,14 @@ public class TestResultExporter {
                     if( org.getOrgCreditUsageType().getUsesLegacyCredits() || org.getOrgCreditUsageType().getUnlimited() )                    
                         cell.setCellValue( Integer.toString( tr.getCreditsUsed() ) );
                     else
-                        cell.setCellValue( Long.toString( tr.getTestKey().getCreditId() ) );
+                        cell.setCellValue(  tr.getTestKey()==null ? "" : Long.toString( tr.getTestKey().getCreditId() ) );
                     cellNum++;
                     
                     if( org.getOrgCreditUsageType().getAnyResultCredit() )
                     {
                         cell = row.createCell( cellNum);
                         cell.setCellStyle(wrap);
-                        cell.setCellValue( Integer.toString( tr.getTestKey().getCreditIndex() ) );
+                        cell.setCellValue( tr.getTestKey()==null ? "" : Integer.toString( tr.getTestKey().getCreditIndex() ) );
                         cellNum++;                        
                     }
                     

@@ -43,6 +43,7 @@ public class BaseExecutableReport {
     public UserActionFacade userActionFacade;
     
     public static String EXCEL_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    public static String PDF_MIME_TYPE = "application/pdf";
     
     public String getFilenameDateStr()
     {
@@ -169,7 +170,6 @@ public class BaseExecutableReport {
             subject = MessageFactory.getStringMessage( locale, subjectKey, params );
         
         String contentMime = content.contains("<") && content.contains( ">" ) ? "text/html" : "text/plain";
-
 
         LogService.logIt( "BaseExecutableReport.sendReportEmail() BBB.2 Sending to " + emailsSentTo + " users. Emails=" + sb.toString() );
         

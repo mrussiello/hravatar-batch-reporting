@@ -6,25 +6,28 @@ import java.util.Locale;
 
 public enum BatchReportContentType
 {
-    STD_TEST(0,"Std Test Results","brctn.StdTest", "com.tm2batch.custom.result.StandardResultsReport" ),
-    STD_ACTIVITY(1,"Std Activity","brctn.StdActivity", "com.tm2batch.custom.activity.StandardActivityReport" ),
-    STD_UNFINISHED_TK(2,"Std Unfinished TestKey","brctn.StdUnfinishedTestKey", "com.tm2batch.custom.testkey.StandardUnfinishedTestKeyReport" ),
-    STD_LIVEVIDEO(10,"Std Live Video","brctn.StdLvi", "com.tm2batch.custom.lvi.StandardLiveVideoReport" ),
-    STD_REFCHECK(20,"Std Ref Check","brctn.StdRc", "com.tm2batch.custom.ref.StandardRefCheckReport" ),
-    STD_REFCHECK_REFERRALS(30,"Std Ref Check Referrals","brctn.StdRcReferrals", "com.tm2batch.custom.ref.StandardRefCheckReferralReport" );
+    STD_TEST(0,"Std Test Results","brctn.StdTest", "com.tm2batch.custom.result.StandardResultsReport", true ),
+    STD_ACTIVITY(1,"Std Activity","brctn.StdActivity", "com.tm2batch.custom.activity.StandardActivityReport", true ),
+    STD_UNFINISHED_TK(2,"Std Unfinished TestKey","brctn.StdUnfinishedTestKey", "com.tm2batch.custom.testkey.StandardUnfinishedTestKeyReport", true ),
+    STD_LIVEVIDEO(10,"Std Live Video","brctn.StdLvi", "com.tm2batch.custom.lvi.StandardLiveVideoReport", true ),
+    STD_REFCHECK(20,"Std Ref Check","brctn.StdRc", "com.tm2batch.custom.ref.StandardRefCheckReport", true ),
+    STD_REFCHECK_REFERRALS(30,"Std Ref Check Referrals","brctn.StdRcReferrals", "com.tm2batch.custom.ref.StandardRefCheckReferralReport", true ),
+    CUST_UMINNORGJUSTICE(60,"Uminn Org Justice","brctn.UminnOrgJustice", "com.tm2batch.custom.orgjustice.OrgJusticeReport", false );
 
     private final int batchReportContentTypeId;
 
-    private String name;
-    private String className;
-    private String key;
+    private final boolean standard;
+    private final String name;
+    private final String className;
+    private final String key;
 
-    private BatchReportContentType( int p , String name, String key, String className )
+    private BatchReportContentType( int p , String name, String key, String className, boolean standard )
     {
         this.batchReportContentTypeId = p;
         this.name = name;
         this.key=key;
         this.className=className;
+        this.standard=standard;
     }
 
 

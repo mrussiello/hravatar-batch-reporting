@@ -128,6 +128,8 @@ public class CT3ScoreUtils {
 
             List<TestEventScore> tesl = te.getTestEventScoreList( TestEventScoreType.COMPETENCY );
 
+            te.setItemResponseGroupList(irgl);
+            
             if( !tesl.isEmpty() )
             {
                 String cp;
@@ -152,11 +154,12 @@ public class CT3ScoreUtils {
                 }
             }
             
-            te.setItemResponseGroupList(irgl);
+            // te.setItemResponseGroupList(irgl);
         }
         catch( Exception e )
         {
-            LogService.logIt(e, "CT3ScoreUtils.setItemResponseGroupData() testEventId=" + te.getTestEventId() );
+            LogService.logIt(e, "CT3ScoreUtils.setItemResponseGroupData() NONFATAL RETURNING NULL testEventId=" + te.getTestEventId() );
+            return null;
         }
         
         return irgl;        

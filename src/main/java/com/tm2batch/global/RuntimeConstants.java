@@ -37,6 +37,8 @@ public class RuntimeConstants
         cache.put( "propertiesFile", "/work/tm2batch2/zzapplication.conf" );
         cache.put( "secretsFile", "/work/hraconfig/hraglobals-cfmain.conf" );
 
+        cache.put( "filesroot", "/work/tm2batch2/files" );
+        
         cache.put( "httpsONLY", true );
         
         cache.put( "useAwsMediaServer", true);
@@ -46,12 +48,20 @@ public class RuntimeConstants
         cache.put( "mediaServerWebapp", "web" );
 
         
+        cache.put( "baseurl", "https://sim.hravatar.com/td" );
+        
         cache.put( "baseadminuri", "https://www.hravatar.com/ta" );
         
         cache.put( "testingappprotocol", "https" );
         cache.put( "testingappbasedomain", "test.hravatar.com" );
         cache.put( "testingappcontextroot", "tt" );
         cache.put( "testingapphttpsOK", true);
+
+        
+        cache.put( "tm2batch_rest_api_username", "" );                
+        cache.put( "tm2batch_rest_api_password", "" );     
+        
+        cache.put( "systemerrornotifyemails" , "mike@hravatar.com" );
         
         
         // Note - these are the credentials for S3 Administrator. No other services used by this application.
@@ -130,6 +140,13 @@ public class RuntimeConstants
         cache.put( "twilioDevelopmentNumberFormatted",  "+1 703-635-3077" );        
         
         
+        // ////////////////////////////////////////////////////////////////////////////
+        // Org Justice
+        // ////////////////////////////////////////////////////////////////////////////
+        
+        cache.put( "orgJusticeProductIds",  "6510" );        
+        cache.put( "orgJusticeReportId",  105 );        
+
         
         // ////////////////////////////////////////////////////////////////////////////
 
@@ -293,8 +310,8 @@ public class RuntimeConstants
     {
         LogService.getLogger().fine( message );
     }
-    
-    public static int[] getIntArray( String key, String delimiter )
+
+    public static int[] getIntArrayForString(String s, String delimiter )
     {
         List<Integer> ll = new ArrayList<>();
         
@@ -302,8 +319,6 @@ public class RuntimeConstants
         
         try
         {
-            String s = getStringValue( key );
-
             if( s==null || s.isEmpty() )
                 return new int[0];
 
@@ -324,10 +339,15 @@ public class RuntimeConstants
         }
         catch( NumberFormatException e )
         {
-            LogService.logIt( e, "RuntimeConstants.getIntArray() key=" + key + ", delim=" + delimiter );
+            LogService.logIt( e, "RuntimeConstants.getIntArrayForString() s=" + s + ", delim=" + delimiter );
         }
         
-        return out;
+        return out;        
+    }
+    
+    public static int[] getIntArray( String key, String delimiter )
+    {
+        return getIntArrayForString( getStringValue( key ),  delimiter );
     }
     
     public static List<Integer> getIntList( String key, String delimiter ) throws Exception
@@ -339,6 +359,14 @@ public class RuntimeConstants
         return idl;
     }
 
+    public static List<Integer> getIntListForString( String s, String delimiter ) throws Exception
+    {
+        List<Integer> idl = new ArrayList<>();
+        int[] ial = RuntimeConstants.getIntArrayForString(s, delimiter );
+        for( int i : ial )
+            idl.add( i );
+        return idl;
+    }
     
 
     public static char getPathSeparator()

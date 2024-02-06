@@ -71,6 +71,9 @@ public class Org implements Serializable
     private String performanceNames;    
     
     
+    @Column(name="reportlogourl")
+    private String reportLogoUrl;
+
     
     /*
      0 = none
@@ -472,6 +475,14 @@ public class Org implements Serializable
 
     public void setOrgCreditUsageTypeId(int orgCreditUsageTypeId) {
         this.orgCreditUsageTypeId = orgCreditUsageTypeId;
+    }
+
+    public String getReportLogoUrl() {
+        return reportLogoUrl;
+    }
+
+    public void setReportLogoUrl(String reportLogoUrl) {
+        this.reportLogoUrl = reportLogoUrl;
     }
     
     

@@ -8,6 +8,7 @@ package com.tm2batch.event;
 import com.tm2batch.account.results.TestResultSortType;
 import com.tm2batch.entity.battery.Battery;
 import com.tm2batch.entity.battery.BatteryScore;
+import com.tm2batch.entity.event.ItemResponse;
 import com.tm2batch.entity.event.TestEvent;
 import com.tm2batch.entity.event.TestEventArchive;
 import com.tm2batch.entity.event.TestEventScore;
@@ -317,6 +318,33 @@ public class EventFacade
         }
 
     }
+    
+    public List<ItemResponse> getItemResponsesForTestEvent( long testEventId ) throws Exception
+    {
+        try
+        {
+            if( testEventId<=0 )
+                return new ArrayList<>();
+
+            Query q = em.createNamedQuery( "ItemResponse.findByTestEventId" );
+
+            q.setParameter( "testEventId", testEventId );
+
+            List<ItemResponse> out = (List<ItemResponse>) q.getResultList();
+
+            Collections.sort(out);
+
+            return out;
+        }
+
+        catch( Exception e )
+        {
+            LogService.logIt( e, "EventFacade.getItemResponsesForTestEvent( testEventId=" + testEventId + " ) " );
+
+            throw new STException( e );
+        }
+    }
+    
     
     
     public List<TestEventScore> getTestEventScoresForTestEvent( long testEventId, int testEventScoreTypeId ) throws Exception

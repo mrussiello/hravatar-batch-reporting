@@ -46,6 +46,11 @@ public enum TestEventScoreType
         return equals( COMPETENCY );
     }
 
+    public boolean getIsCompetencyGroup()
+    {
+        return equals( COMPETENCYGROUP );
+    }
+    
     public boolean getIsTask()
     {
         return equals( TASK );

@@ -5,6 +5,7 @@
 package com.tm2batch.entity.report;
 
 
+import com.tm2batch.pdf.ReportTemplateType;
 import com.tm2batch.util.NVPair;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import java.util.Locale;
 
 /**
  *
@@ -62,7 +64,13 @@ public class Report implements Serializable, Comparable<Report>
 
     @Column(name="reportavailabilitytypeid")
     private int reportAvailabilityTypeId;
+    
+    @Column(name="implementationclass")
+    private String implementationClass;
 
+    @Column(name="emailformatterclass")
+    private String emailFormatterClass;
+    
     @Column(name="name")
     private String name;
     
@@ -246,6 +254,9 @@ public class Report implements Serializable, Comparable<Report>
     private Date lastUpdate;
 
 
+    @Transient
+    private Locale localeForReportGen = null;
+
 
     public String getCompetencyColumnName()
     {
@@ -259,7 +270,7 @@ public class Report implements Serializable, Comparable<Report>
         if( b.getName() != null && name != null )
             return name.compareTo( b.getName() );
 
-        return new Long( reportId ).compareTo( new Long( b.getReportId() ) );
+        return Long.valueOf(reportId).compareTo(b.getReportId());
     }
 
     public boolean equals(Object obj) {
@@ -355,6 +366,10 @@ public class Report implements Serializable, Comparable<Report>
     }
 
 
+    public ReportTemplateType getReportTemplateType()
+    {
+        return ReportTemplateType.getValue( reportTemplateTypeId );
+    }
 
 
     @Override
@@ -928,6 +943,30 @@ public class Report implements Serializable, Comparable<Report>
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Locale getLocaleForReportGen() {
+        return localeForReportGen;
+    }
+
+    public void setLocaleForReportGen(Locale localeForReportGen) {
+        this.localeForReportGen = localeForReportGen;
+    }
+
+    public String getImplementationClass() {
+        return implementationClass;
+    }
+
+    public void setImplementationClass(String implementationClass) {
+        this.implementationClass = implementationClass;
+    }
+
+    public String getEmailFormatterClass() {
+        return emailFormatterClass;
+    }
+
+    public void setEmailFormatterClass(String emailFormatterClass) {
+        this.emailFormatterClass = emailFormatterClass;
     }
 
 

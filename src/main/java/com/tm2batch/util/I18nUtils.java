@@ -22,6 +22,7 @@ import java.util.TimeZone;
 public class I18nUtils
 {
     private static final Set<String> RTL;
+    private static final Set<String> NONASCII;
 
 
     static {
@@ -36,6 +37,12 @@ public class I18nUtils
         lang.add("ur");
         lang.add("yi");
         RTL = Collections.unmodifiableSet(lang);
+        
+        lang = new HashSet<>();
+        lang.add("ru");
+        lang.add("zh");
+        NONASCII = Collections.unmodifiableSet(lang);
+        
     }
 
     public static boolean isTextRTL( Locale locale )
@@ -46,6 +53,14 @@ public class I18nUtils
       return RTL.contains(locale.getLanguage());
     }
 
+    public static boolean isTextNonAscii( Locale locale )
+    {
+      if( locale == null )
+          return false;
+
+      return NONASCII.contains(locale.getLanguage());
+    }
+    
 
     /**
      * get a formatted number string with set digits.

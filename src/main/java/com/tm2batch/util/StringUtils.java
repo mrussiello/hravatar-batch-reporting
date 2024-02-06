@@ -1,10 +1,16 @@
 package com.tm2batch.util;
 
+import com.tm2batch.entity.purchase.Product;
+import com.tm2batch.entity.report.Report;
+import com.tm2batch.entity.user.Org;
+import com.tm2batch.entity.user.Suborg;
 import com.tm2batch.global.STException;
 import com.tm2batch.service.LogService;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
@@ -592,6 +598,52 @@ public class StringUtils
         return t.substring( idx + 2 + name.length() , idx2 ).trim();
     }
 
+    public static Map<String,String> getReportFlagMap( Org org, Suborg suborg, Report report, Product product)
+    {
+        Map<String,String> out = new HashMap<>();
+        
+        // Start with Report - lowest level
+        if( report != null )
+            out =  getReportFlagMap(report.getReportFlags());
+
+        // Product is the next level.
+        if( product!=null )
+            out.putAll( getReportFlagMap(product.getStrParam11()) );        
+                
+        // Next level is Org
+        if( org!=null )
+            out.putAll( getReportFlagMap(org.getReportFlags()) );        
+
+        // Highest level is Suborg list
+        if( suborg != null )
+            out.putAll( getReportFlagMap(suborg.getReportFlags()) );        
+        
+        return out;
+    }
+    
+    
+    public static Map<String,String> getReportFlagMap( String inStr )
+    {
+        Map<String,String> out = new HashMap<>();
+        if( inStr==null || inStr.isEmpty() )
+            return out;
+
+        StringTokenizer st = new StringTokenizer( inStr, "|" );
+        String rule;
+        String value;
+
+        while( st.hasMoreTokens() )
+        {
+            rule = st.nextToken();
+            if( !st.hasMoreTokens() )
+                break;
+            value = st.nextToken();
+            if( rule != null && !rule.isEmpty() && value!=null && !value.isEmpty() )
+                out.put( rule,value );
+        }
+        return out;
+    }
+    
     
     
 }

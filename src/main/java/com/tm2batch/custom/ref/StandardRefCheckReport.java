@@ -151,7 +151,7 @@ public class StandardRefCheckReport extends BaseExecutableReport implements Exec
                 throw new BatchReportException( batchReport.getBatchReportId(), "Bytes is null." );
 
             if( bytes.length==0 )
-                throw new BatchReportException( batchReport.getBatchReportId(), "Bytes is empaty." );
+                throw new BatchReportException( batchReport.getBatchReportId(), "Bytes is empty." );
             
             LogService.logIt( "StandardRefCheckReport.executeReport() CCC Have report bytes: length=" + bytes.length + ", batchReportId=" + this.batchReport.getBatchReportId() );
             

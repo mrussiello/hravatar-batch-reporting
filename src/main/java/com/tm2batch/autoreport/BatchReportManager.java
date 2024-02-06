@@ -302,6 +302,7 @@ public class BatchReportManager
             // Check that there is nothing stopping execution.
             er.validateBatchReportForExecution();
             
+            // out[0]==1 for success
             int[] out = er.executeReport();
 
             LogService.logIt("BatchReportManager.executeSingleBatchReport() AAA.1 Completed BatchReport " + br.getTitle() + " (" + br.getBatchReportId() + ") success=" + (out[0]==1) );
