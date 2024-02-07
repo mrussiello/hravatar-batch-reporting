@@ -62,7 +62,11 @@ public class BaseExecutableReport {
         
         if( batchReport.getBatchReportStatusTypeId()!=BatchReportStatusType.ACTIVE.getBatchReportStatusTypeId() )
             throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport.status is inactive" );
-         
+                 
+        if( batchReport.getScheduleDate()!=null && batchReport.getScheduleDate().before( new Date()) )
+            return;
+        
+        // check freq.
         FrequencyType freqType = FrequencyType.getValue( batchReport.getFrequencyTypeId() );
         
         if( freqType.equals( FrequencyType.NEVER) )

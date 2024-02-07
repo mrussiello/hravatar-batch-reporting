@@ -34,7 +34,7 @@ import jakarta.persistence.Transient;
 @NamedQueries({
     
     @NamedQuery ( name="BatchReport.findById", query="SELECT o FROM BatchReport AS o WHERE o.batchReportId = :batchReportId" ),
-    // @NamedQuery ( name="BatchReport.findByStatus", query="SELECT o FROM BatchReport AS o WHERE o.batchReportStatusTypeId=:batchReportStatusTypeId" ),
+    @NamedQuery ( name="BatchReport.findByStatusAndScheduleDate", query="SELECT o FROM BatchReport AS o WHERE o.batchReportStatusTypeId=:batchReportStatusTypeId AND o.scheduleDate IS NOT NULL AND o.scheduleDate<=:maxScheduleDate" ),
     @NamedQuery ( name="BatchReport.findByStatusAndMinFreq", query="SELECT o FROM BatchReport AS o WHERE o.batchReportStatusTypeId=:batchReportStatusTypeId AND o.frequencyTypeId>=:minFrequencyTypeId" )
 })
 public class BatchReport implements Serializable, Comparable<BatchReport>
@@ -275,6 +275,11 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     @Column(name="lastsenddate")
     private Date lastSendDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="scheduledate")
+    private Date scheduleDate;
+    
+    
     @Transient
     private User user;
     
@@ -895,6 +900,14 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public Date getScheduleDate() {
+        return scheduleDate;
+    }
+
+    public void setScheduleDate(Date scheduleDate) {
+        this.scheduleDate = scheduleDate;
     }
 
     

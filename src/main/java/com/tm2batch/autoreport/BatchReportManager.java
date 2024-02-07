@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
@@ -127,7 +128,30 @@ public class BatchReportManager
             
             List<BatchReport> brl = autoReportFacade.getActiveBatchReportList();
             
-            LogService.logIt("BatchReportManager.reportBatch() AAA.1 Found " + brl.size() + " active BatchReports to process." );
+            List<BatchReport> brl2 = autoReportFacade.getOneTimeActiveBatchReportList();
+
+            LogService.logIt("BatchReportManager.reportBatch() AAA.1 Found " + brl.size() + " active BatchReports and " + brl2.size() + " Active One-Time reports to process." );
+            
+            for( BatchReport br : brl2 )
+            {
+                if( br.getScheduleDate()==null )
+                {
+                    LogService.logIt("BatchReportManager.reportBatch() UERR skipping scheduleDate batchReportId=" + br.getBatchReportId() + " because scheduleDate is null. Something WRONG." );
+                    continue;
+                }
+                
+                if( br.getLastSendDate()!=null && br.getLastSendDate().after(br.getScheduleDate()) )
+                {
+                    LogService.logIt("BatchReportManager.reportBatch() removing scheduleDate for batchReportId=" + br.getBatchReportId() + " because lastSendDate (" + br.getLastSendDate().toString() + ") is greater than schedule date (" + br.getScheduleDate().toString() + ")." );
+                    br.setScheduleDate(null);
+                    autoReportFacade.saveBatchReport(br);
+                    continue;
+                }
+                if( brl.contains(br) )
+                    continue;
+                brl.add(br);                
+            }
+            
             out[0] = brl.size();
             
             //ListIterator<BatchReport> iter = brl.listIterator();
@@ -145,6 +169,7 @@ public class BatchReportManager
             // boolean success;             
             for( BatchReport batchReport : brl )
             {
+                
                 // LogService.logIt("BatchReportManager.reportBatch() AAA.3 Starting BatchReport " + batchReport.getTitle() + " (" + batchReport.getBatchReportId() + ")" );
 
                 if( !readyForExecution(batchReport) )
@@ -195,6 +220,10 @@ public class BatchReportManager
             
             br.setUser( userFacade.getUser( br.getUserId() ));
         }
+        
+        // if it has an existing schedule date.
+        if( br.getScheduleDate()!=null && br.getScheduleDate().before( new Date()))
+            return true;
         
         if( !freqType.isTodayOkToSend( br.getTimeZone() ) )
         {
@@ -311,6 +340,13 @@ public class BatchReportManager
             if( out[0]==1 )
             {
                 br.setLastSendDate(new Date());
+                
+                if( br.getScheduleDate()!=null && br.getScheduleDate().before(new Date()))
+                {
+                    LogService.logIt("BatchReportManager.executeSingleBatchReport() removing scheduleDate for batchReportId=" + br.getBatchReportId() + " because this run qualifies as a one-time." );
+                    br.setScheduleDate(null);                   
+                }
+                
                 autoReportFacade.saveBatchReport(br);
                 
                 Tracker.addBatchReportComplete();

@@ -60,7 +60,20 @@ public class AutoReportFacade
         }
     }
     
-        
+    
+    public List<BatchReport> getOneTimeActiveBatchReportList() throws Exception
+    {
+        try
+        {
+            Query q = em.createNamedQuery( "BatchReport.findByStatusAndScheduleDate" ).setParameter( "batchReportStatusTypeId", BatchReportStatusType.ACTIVE.getBatchReportStatusTypeId() ).setParameter( "maxScheduleDate", new Date() ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" );
+            return q.getResultList();
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "AutoReportFacade.getOneTimeActiveBatchReportList() " );
+            throw new STException( e );
+        }        
+    }
     
     public List<BatchReport> getActiveBatchReportList() throws Exception
     {
