@@ -18,8 +18,10 @@ import com.tm2batch.user.UserFacade;
 import com.tm2batch.util.I18nUtils;
 import java.lang.reflect.Constructor;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 /**
@@ -27,6 +29,8 @@ import java.util.TimeZone;
  * @author miker_000
  */
 public class OrgJusticeReport extends BaseExecutableReport implements ExecutableReport {
+    
+    public static Boolean DEV = null;
     
     public static String DEFAULT_FILENAME_BASE = "OrgJusticeFeedbackReport";
     public static String DEFAULT_CONTENT_KEY = "g.OrgJusticeReport.content";
@@ -51,9 +55,12 @@ public class OrgJusticeReport extends BaseExecutableReport implements Executable
     }
     
     
-    private void init()
+    private synchronized void init()
     {
         // testResultUtils = new TestResultUtils();
+        
+        if( DEV==null )
+            DEV = RuntimeConstants.getBooleanValue("Uminn_OrgJustice_Dev" );
         
         TimeZone tz = batchReport.getTimeZone();
         Locale loc = batchReport.getLocaleToUseDefaultUS();
@@ -90,39 +97,10 @@ public class OrgJusticeReport extends BaseExecutableReport implements Executable
             init();
             
             Date[] dates = batchReport.getDates();
-                        
-            if( batchReport.getOrg()==null )
-            {
-                if( userFacade==null )
-                    userFacade=UserFacade.getInstance();
-                batchReport.setOrg( userFacade.getOrg( batchReport.getOrgId() ));
-            }
-                        
-            if( orgJusticeUtils==null )
-                orgJusticeUtils=new OrgJusticeUtils();
             
-            List<Integer> forceProductIds = null;
+            OrgJusticeDataset dataSet = collectDataSet(dates);
             
-            if( batchReport.getStrParam1()!=null && !batchReport.getStrParam1().isBlank() )
-                forceProductIds = RuntimeConstants.getIntListForString( batchReport.getStrParam1(), ",");
-            
-            List<OrgJusticeTestEvent> tel = orgJusticeUtils.findOrgJusticeTestEvents(batchReport.getOrgId(),  dates[0],  dates[1], forceProductIds );
-
-            LogService.logIt( "OrgJusticeReport.executeReport() BBB.1 found " + tel.size() + " testEvents for orgId=" + batchReport.getOrgId() );
-            
-            OrgJusticeDataset dataSet = new OrgJusticeDataset();
-            
-            // calculate means
-            for( OrgJusticeTestEvent ote : tel )
-            {
-                dataSet.addTestEvent(ote);
-            }
-            dataSet.finalizeAverages();
-
             LogService.logIt( "OrgJusticeReport.executeReport() BBB.2 Dataset values: orgId=" + batchReport.getOrgId() + ", " + dataSet.toString() );
-            
-            // to trigger garbage collection. Don't need after we have the dataset. 
-            tel = null;
             
             int reportId = batchReport.getIntParam1();
             if( reportId<=0 )
@@ -202,6 +180,55 @@ public class OrgJusticeReport extends BaseExecutableReport implements Executable
         }
         
         return out;
+    }
+    
+    private OrgJusticeDataset collectDataSet(Date[] dates) throws Exception
+    {
+        if( batchReport.getOrg()==null )
+        {
+            if( userFacade==null )
+                userFacade=UserFacade.getInstance();
+            batchReport.setOrg( userFacade.getOrg( batchReport.getOrgId() ));
+        }
+
+        if( orgJusticeUtils==null )
+            orgJusticeUtils=new OrgJusticeUtils();
+
+        List<Integer> forceProductIds = null;
+
+        if( batchReport.getStrParam1()!=null && !batchReport.getStrParam1().isBlank() )
+            forceProductIds = RuntimeConstants.getIntListForString( batchReport.getStrParam1(), ",");
+
+        List<OrgJusticeTestEvent> tel = orgJusticeUtils.findOrgJusticeTestEvents(batchReport.getOrgId(),  dates[0],  dates[1], forceProductIds );
+
+        LogService.logIt( "OrgJusticeReport.executeReport() BBB.1 found " + tel.size() + " testEvents for orgId=" + batchReport.getOrgId() );
+
+        if( DEV && tel.isEmpty() )
+        {
+            tel.addAll( OrgJusticeUtils.getDummyData() );
+            LogService.logIt( "OrgJusticeReport.executeReport() BBB.2 Added dummy data. tel.size=" + tel.size() );
+        }
+
+        OrgJusticeDataset dataSet = new OrgJusticeDataset();
+        dataSet.setDates(dates);
+        dataSet.setTotalParticipants( tel.size() );
+
+        Set<Long> uids = new HashSet<>();
+        
+        // calculate means        
+        for( OrgJusticeTestEvent ote : tel )
+        {
+            // only use most recent for a user.
+            if( uids.contains(ote.getUserId() ) )
+                continue;
+            
+            dataSet.addTestEvent(ote);
+            uids.add( ote.getUserId() );
+        }
+        dataSet.finalizeAverages();
+        
+        return dataSet;
+        
     }
     
     

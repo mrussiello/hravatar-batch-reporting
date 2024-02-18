@@ -134,6 +134,16 @@ public class TestEventScore implements Serializable, Comparable<TestEventScore>,
     @Column( name = "score6" )
     private float score6;
     
+    @Column( name = "score7" )
+    private float score7;
+
+    @Column( name = "score8" )
+    private float score8;
+
+    @Column( name = "score9" )
+    private float score9;
+    
+    
 
     @Column( name = "percentile" )
     private float percentile;
@@ -1076,6 +1086,30 @@ public class TestEventScore implements Serializable, Comparable<TestEventScore>,
 
     public void setScoreTypeIdUsed(int scoreTypeIdUsed) {
         this.scoreTypeIdUsed = scoreTypeIdUsed;
+    }
+
+    public float getScore7() {
+        return score7;
+    }
+
+    public void setScore7(float score7) {
+        this.score7 = score7;
+    }
+
+    public float getScore8() {
+        return score8;
+    }
+
+    public void setScore8(float score8) {
+        this.score8 = score8;
+    }
+
+    public float getScore9() {
+        return score9;
+    }
+
+    public void setScore9(float score9) {
+        this.score9 = score9;
     }
 
     

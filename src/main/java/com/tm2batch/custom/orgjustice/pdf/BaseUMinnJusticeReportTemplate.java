@@ -11,24 +11,29 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.tm2batch.custom.orgjustice.OrgJusticeDataset;
-import com.tm2batch.entity.purchase.Product;
+import com.tm2batch.custom.orgjustice.OrgJusticeNorms;
+import com.tm2batch.custom.orgjustice.UMinnJusticeDimensionType;
+import com.tm2batch.custom.orgjustice.UMinnJusticeGroupType;
+import com.tm2batch.custom.orgjustice.UMinnJusticeItemType;
 import com.tm2batch.global.STException;
 import com.tm2batch.pdf.ITextUtils;
 import com.tm2batch.pdf.ReportData;
 import com.tm2batch.pdf.ReportTemplate;
 import com.tm2batch.pdf.TableBackground;
 import com.tm2batch.service.LogService;
+import com.tm2batch.util.I18nUtils;
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -83,6 +88,8 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
     OrgJusticeDataset dataSet;
     
     int scoreScheme = 0;
+    
+    UMinnJusticeReportUtils uminnJusticeReportUtils = null;
 
 
     @Override
@@ -451,12 +458,6 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             float y = pageHeight; // = pageHeight - headerLogo.getScaledHeight() - 10;  // ( (pageHeight - t.getTotalHeight() )/2 ) - cfLogo.getHeight() )/2 - cfLogo.getHeight();
             
-            //java.util.List<Chunk> cl = new ArrayList<>();
-
-            //cl.add( new Chunk( lmsg( "g.Univ" ), titleHeaderFont) );
-
-            //cl.add( new Chunk( lmsg( "g.driven" ), titleHeaderFont2 ) );
-           
             float tableWid = pageWidth; // ITextUtils.getMaxChunkWidth( cl ) + 20 + headerLogo.getScaledWidth();
 
             //if( tableWid > pageWidth-120 )
@@ -484,6 +485,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c = new PdfPCell( headerLogo );
             c.setBorder( Rectangle.NO_BORDER );
             c.setPadding( 5 );
+            c.setPaddingTop(10);
             c.setHorizontalAlignment( Element.ALIGN_RIGHT );
             c.setBackgroundColor(uminnMaroon);
             setRunDirection( c );
@@ -536,7 +538,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             DateFormatSymbols dfs = new DateFormatSymbols();
             
-            String monthYearStr = dfs.getMonths()[cal.get(Calendar.MONTH)] + ", "  + cal.get( Calendar.YEAR);
+            String monthYearStr = dfs.getMonths()[cal.get(Calendar.MONTH)] + " " + cal.get(Calendar.DAY_OF_MONTH) + ", "  + cal.get( Calendar.YEAR);
                         
             java.util.List<Chunk> cl  = new ArrayList<>();
 
@@ -544,7 +546,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             cl.add( new Chunk( lmsg( "g.PreparedForC" ), headerFontXLargeMaroon ) );
 
-            cl.add( new Chunk( reportData.getUserName(), headerFontXLargeMaroon ) );
+            cl.add( new Chunk( reportData.getOrgName(), headerFontXLargeMaroon ) );
             
             cl.add( new Chunk( monthYearStr, headerFontXLargeMaroon ) );
            
@@ -577,9 +579,9 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             t.addCell( new Phrase( "\n\n\n\n\n" + lmsg( "g.PreparedForC" ), headerFontXLargeMaroon ) );
             
-            t.addCell( new Phrase( "\n" + reportData.getUserName(), headerFontXLargeMaroon ) );
+            t.addCell( new Phrase( reportData.getOrgName(), headerFontXLargeMaroon ) );
             
-            t.addCell( new Phrase( "\n" + monthYearStr, headerFontXLargeMaroon ) );
+            t.addCell( new Phrase( monthYearStr, headerFontXLargeMaroon ) );
             
             tableH = t.calculateHeights(); //  + 500;
 
@@ -596,21 +598,22 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             // addDirectText( "Assessment", 300, 300, baseFontCalibri, 24, getHraOrangeColor(), false );
 
 
-            t = new PdfPTable( 2 );
+            t = new PdfPTable( 1 );
             
             // t.setWidths( new int[] {50,200} );
             
             cl.clear();
-
             cl.add( new Chunk( lmsg( "url" ), fontXLargeBoldWhite ) );
 
-            cl.add( new Chunk( lmsg( "twitter" ), fontXLargeBoldWhite ) );
+            // cl.add( new Chunk( lmsg( "twitter" ), fontXLargeBoldWhite ) );
            
-            tableWid = ITextUtils.getMaxChunkWidth( cl ) + twitterLogo.getScaledWidth() + 10;            
+            tableWid = ITextUtils.getMaxChunkWidth( cl ) + 10;            
+            // tableWid = ITextUtils.getMaxChunkWidth( cl ) + twitterLogo.getScaledWidth() + 10;            
 
             t.setHorizontalAlignment( Element.ALIGN_CENTER );
             
-            t.setWidths( new float[]{twitterLogo.getScaledWidth(),  ITextUtils.getMaxChunkWidth( cl )+10});
+            // t.setWidths( new float[]{twitterLogo.getScaledWidth(),  ITextUtils.getMaxChunkWidth( cl )+10});
+            t.setWidths( new float[]{ITextUtils.getMaxChunkWidth( cl )+20});
             t.setTotalWidth( tableWid );
             t.setLockedWidth( true );
             setRunDirection(t);
@@ -623,12 +626,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             setRunDirection(c);
                              
-            t.addCell( new Phrase( "", fontXLargeBoldWhite ) );
             t.addCell( new Phrase( lmsg( "url" ), fontXLargeBoldWhite ) );
-
-            
-            t.addCell( twitterLogo );
-            t.addCell( new Phrase( lmsg( "twitter" ), fontXLargeBoldWhite ) );
 
             tableH = t.calculateHeights(); //  + 500;
 
@@ -641,7 +639,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
 
             // Add the maroon below
-            ITextUtils.addDirectColorRect( pdfWriter, getHraBaseReportColor(), 0, 0, pageWidth, tableH + 20, 0, 1, true );
+            ITextUtils.addDirectColorRect( pdfWriter, uminnMaroon, 0, 0, pageWidth, tableH + 20, 0, 1, true );
 
             
         }
@@ -660,42 +658,1897 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
     }
 
     
+    protected void addDimensionScoresDetailTable(int uminnJusticeDimensionTypeId) throws Exception
+    {
+        try
+        {
+            UMinnJusticeDimensionType dimType = UMinnJusticeDimensionType.getValue(uminnJusticeDimensionTypeId );
+            
+            float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
+
+            // First create the table
+            PdfPCell c;
+
+            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+
+            PdfPTable t;
+            float tableH; //  + 500;                      
+            float tableY; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW;
+            float tableX;
+            
+            // First, add a table
+            if( uminnJusticeDimensionTypeId==1 )
+            {
+                t = new PdfPTable( 1 );
+                t.setHorizontalAlignment( Element.ALIGN_CENTER );
+                t.setTotalWidth( outerWid );
+                t.setLockedWidth( true );
+                t.setSplitRows(true);
+                setRunDirection( t );
+
+                c = new PdfPCell( new Paragraph( lmsg("bnch.dimension.title"), this.getFontBold() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(1);
+                c.setPadding( 4 );
+                c.setPaddingTop(15);
+                setRunDirection( c );
+                t.addCell(c);
+                
+                c = new PdfPCell( new Paragraph( lmsg("bnch.dimension.p1"), this.getFont() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(1);
+                c.setPadding( 4 );
+                setRunDirection( c );
+                t.addCell(c);
+                                                    
+                tableH = t.calculateHeights(); //  + 500;                      
+                // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+                tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+                tableW = t.getTotalWidth();
+                tableX = (pageWidth - tableW)/2;
+                t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+                y -= (tableH + 20);
+                currentYLevel = y;
+            }
+                        
+            Font dataFont = getFontXSmall();
+            
+            // 9 columns
+            t = new PdfPTable( new float[]{30,14,14,14,14,14} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            // First ROW
+            c = new PdfPCell( new Paragraph( dimType.getName(), this.getFontBold() ));
+            c.setBorder( Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.All" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Female" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Male" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Urim" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( lmsg( "g.NonUrim" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            
+            // Next ROW - Your Scores
+            c = new PdfPCell( new Paragraph( lmsg("g.YourScore"), dataFont ));
+            c.setBorder( Rectangle.BOX );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAverages()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesFemale()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesMale()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesUrim()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesNonUrim()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+
+            // Next Row - BENCHMARK SCORES
+            c = new PdfPCell( new Paragraph( lmsg("g.Benchmark"), dataFont ));
+            c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAverages[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAveragesFemale[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAveragesMale[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAveragesUrim[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAveragesNonUrim[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+
+            // Next, get Item ids to use
+            // Next Row - Member Items
+            c = new PdfPCell( new Paragraph( lmsg("g.MemberItems"), dataFont ));
+            c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(6);
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            UMinnJusticeItemType itemType;
+            
+            if( uminnJusticeReportUtils==null )
+                uminnJusticeReportUtils=new UMinnJusticeReportUtils();
+            
+            for( int i=0;i<16;i++ )
+            {
+                if( !dimType.includesItemNumber(i+1) )
+                    continue;
+                
+                itemType = UMinnJusticeItemType.getValue(i+1 );
+                
+                c = new PdfPCell( new Paragraph( itemType.getUminnJusticeItemTypeId() + ". " + itemType.getName(uminnJusticeReportUtils), dataFont ));
+                c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAverages()[i], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAveragesFemale()[i], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAveragesMale()[i], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAveragesUrim()[i], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAveragesNonUrim()[i], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);                
+            }
+            
+            
+            tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            y -= (tableH + 20);
+            currentYLevel = y;
+            
+            if( uminnJusticeDimensionTypeId==4 )
+            {
+                t = new PdfPTable( 1 );
+                t.setHorizontalAlignment( Element.ALIGN_CENTER );
+                t.setTotalWidth( outerWid );
+                t.setLockedWidth( true );
+                t.setSplitRows(true);
+                setRunDirection( t );
+
+
+                c = new PdfPCell( new Paragraph( lmsg( "bnch.overall.p2" ), this.getFont() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(1);
+                c.setPadding( 4 );
+                setRunDirection( c );
+                t.addCell(c);
+
+
+                tableH = t.calculateHeights(); //  + 500;                      
+                // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+                tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+                tableW = t.getTotalWidth();
+                tableX = (pageWidth - tableW)/2;
+                t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+                y -= (tableH + 20);            
+                currentYLevel = y;
+            }
+            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addDimensionScoresDetailTable()" );
+            throw new STException( e );
+        }                
+    }
+    
+    protected void addGroupScoresDetailTable( int uminnJusticeGroupTypeId ) throws Exception
+    {
+        try
+        {
+            UMinnJusticeGroupType groupType = UMinnJusticeGroupType.getValue(uminnJusticeGroupTypeId );
+            
+            float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
+
+            // First create the table
+            PdfPCell c;
+
+            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+
+            PdfPTable t;
+            float tableH; //  + 500;                      
+            float tableY; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW;
+            float tableX;
+            
+            // First, add a table
+            if( uminnJusticeGroupTypeId==1 )
+            {
+                t = new PdfPTable( 1 );
+                t.setHorizontalAlignment( Element.ALIGN_CENTER );
+                t.setTotalWidth( outerWid );
+                t.setLockedWidth( true );
+                t.setSplitRows(true);
+                setRunDirection( t );
+
+                c = new PdfPCell( new Paragraph( lmsg("bnch.group.title"), this.getFontBold() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(1);
+                c.setPadding( 4 );
+                c.setPaddingTop(15);
+                setRunDirection( c );
+                t.addCell(c);
+                
+                c = new PdfPCell( new Paragraph( lmsg("bnch.group.p1"), this.getFont() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(1);
+                c.setPadding( 4 );
+                setRunDirection( c );
+                t.addCell(c);
+                                                    
+                tableH = t.calculateHeights(); //  + 500;                      
+                // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+                tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+                tableW = t.getTotalWidth();
+                tableX = (pageWidth - tableW)/2;
+                t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+                y -= (tableH + 20);
+                currentYLevel = y;
+            }
+
+            // First, add a table
+            else if( uminnJusticeGroupTypeId!=5 && uminnJusticeGroupTypeId!=7 )
+            {
+                t = new PdfPTable( 1 );
+                t.setHorizontalAlignment( Element.ALIGN_CENTER );
+                t.setTotalWidth( outerWid );
+                t.setLockedWidth( true );
+                t.setSplitRows(true);
+                setRunDirection( t );
+
+                c = new PdfPCell( new Paragraph( lmsg("bnch.group.title.2"), this.getFontBold() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(1);
+                c.setPadding( 4 );
+                c.setPaddingTop(15);
+                setRunDirection( c );
+                t.addCell(c);
+                                                                    
+                tableH = t.calculateHeights(); //  + 500;                      
+                // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+                tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+                tableW = t.getTotalWidth();
+                tableX = (pageWidth - tableW)/2;
+                t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+                y -= (tableH + 20);
+                currentYLevel = y;
+            }
+            
+            
+            Font dataFont = getFontXSmall();
+            
+            // 9 columns
+            t = new PdfPTable( new float[]{30,14,14,14,14,14} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            // First ROW
+            c = new PdfPCell( new Paragraph( groupType.getName(), this.getFontBold() ) );
+            c.setBorder( Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.All" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Female" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Male" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Urim" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( lmsg( "g.NonUrim" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            
+            // Next ROW - Your Scores
+            c = new PdfPCell( new Paragraph( lmsg("g.YourScore"), dataFont ));
+            c.setBorder( Rectangle.BOX );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAverages()[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesFemale()[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesMale()[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesUrim()[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesNonUrim()[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+
+            // Next Row - BENCHMARK SCORES
+            // Next ROW - Your Scores
+            c = new PdfPCell( new Paragraph( lmsg("g.Benchmark"), dataFont ));
+            c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAverages[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAveragesFemale[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAveragesMale[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAveragesUrim[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAveragesNonUrim[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg("g.GroupItemScores"), dataFont ));
+            c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(6);
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            
+            UMinnJusticeItemType itemType;
+            
+            if( uminnJusticeReportUtils==null )
+                uminnJusticeReportUtils = new UMinnJusticeReportUtils();
+            
+            // Now for each item.
+            for( int ii=0;ii<16;ii++ )
+            {
+                if( !groupType.includeItemForGroup(ii+1))
+                    continue;
+                
+                itemType = UMinnJusticeItemType.getValue(ii+1);
+                
+                c = new PdfPCell( new Paragraph( itemType.getUminnJusticeItemTypeId() + ". " + itemType.getName(uminnJusticeReportUtils), dataFont ));
+                c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAverages()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAveragesFemale()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAveragesMale()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAveragesUrim()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAveragesNonUrim()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);                
+            }
+            
+            
+            tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            y -= (tableH + 20);
+            currentYLevel = y;
+            
+            if( uminnJusticeGroupTypeId!=4 && uminnJusticeGroupTypeId!=6 )
+            {
+                t = new PdfPTable( 1 );
+                t.setHorizontalAlignment( Element.ALIGN_CENTER );
+                t.setTotalWidth( outerWid );
+                t.setLockedWidth( true );
+                t.setSplitRows(true);
+                setRunDirection( t );
+
+
+                c = new PdfPCell( new Paragraph( lmsg( "bnch.overall.p2" ), this.getFont() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(1);
+                c.setPadding( 4 );
+                setRunDirection( c );
+                t.addCell(c);
+
+
+                tableH = t.calculateHeights(); //  + 500;                      
+                // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+                tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+                tableW = t.getTotalWidth();
+                tableX = (pageWidth - tableW)/2;
+                t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+                y -= (tableH + 20);            
+                currentYLevel = y;
+            }
+            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addGroupScoresDetailTable()" );
+            throw new STException( e );
+        }                
+    }
+
+    
+    protected void addOverallScoresDetailTable() throws Exception
+    {
+        try
+        {
+            float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
+
+            // First create the table
+            PdfPCell c;
+
+            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+
+            // First, add a table
+            PdfPTable t = new PdfPTable( 1 );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            c = new PdfPCell( new Paragraph( lmsg( "bnch.overall.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+                        
+            c = new PdfPCell( new Paragraph( lmsg( "bnch.overall.p1" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+                        
+            
+            float tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW = t.getTotalWidth();
+            float tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            y -= (tableH + 20);
+            currentYLevel = y;
+            
+
+            Font dataFont = getFontXSmall();
+            
+            // 9 columns
+            t = new PdfPTable( new float[]{30,14,14,14,14,14} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            // First ROW
+            c = new PdfPCell( new Paragraph( "", this.getFont() ));
+            c.setBorder( Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.All" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Female" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Male" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Urim" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( lmsg( "g.NonUrim" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            
+            // Next ROW - Your Scores
+            c = new PdfPCell( new Paragraph( lmsg("g.YourScore"), dataFont ));
+            c.setBorder( Rectangle.BOX );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvg(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgFemale(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgMale(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgUrim(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgNonUrim(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+
+            // Next Row - BENCHMARK SCORES
+            // Next ROW - Your Scores
+            c = new PdfPCell( new Paragraph( lmsg("g.Benchmark"), dataFont ));
+            c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.overallAvg, 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.overallAvgFemale, 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.overallAvgMale, 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.overallAvgUrim, 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgNonUrim(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            y -= (tableH + 20);
+            currentYLevel = y;
+            
+            t = new PdfPTable( 1 );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+                        
+            c = new PdfPCell( new Paragraph( lmsg( "bnch.overall.p2" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+                        
+            
+            tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            y -= (tableH + 20);            
+            currentYLevel = y;
+            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addOverallScoresDetailTable()" );
+            throw new STException( e );
+        }        
+    }
     
     
+    protected void addOverallScoresPage() throws Exception
+    {
+        try
+        {
+            float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
+
+            // First create the table
+            PdfPCell c;
+
+            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+
+            // First, add a table
+            PdfPTable t = new PdfPTable( 1 );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            c = new PdfPCell( new Paragraph( lmsg( "ovrs.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+                        
+            c = new PdfPCell( new Paragraph( lmsg( "ovrs.p1" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+                        
+            
+            float tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW = t.getTotalWidth();
+            float tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            y -= (tableH + 20);
+            currentYLevel = y;
+
+            Font dataFont = getFontXSmall();
+            
+            // 9 columns
+            t = new PdfPTable( new float[]{15f,10.6f,10.6f,10.6f,10.6f,10.6f,10.6f,10.6f,10.6f} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            // First ROW
+            c = new PdfPCell( new Paragraph( "", this.getFont() ));
+            c.setBorder( Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "g.Group" ), this.getFont() ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setColspan(8);
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            // Next ROW - Group titles
+            c = new PdfPCell( new Paragraph( "", dataFont ));
+            c.setBorder( Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( lmsg( "g.AllGroups" ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setColspan(1);
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            UMinnJusticeGroupType gType;
+            UMinnJusticeDimensionType dType;
+            
+            for( int i=0;i<7;i++ )
+            {
+                gType = UMinnJusticeGroupType.getValue(i+1);
+                c = new PdfPCell( new Paragraph( gType.getName(), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setColspan(1);
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }
+            
+            // Next ROW - All Dims for Group
+            c = new PdfPCell( new Paragraph( lmsg( "g.AllDims" ), dataFont ));
+            c.setBorder( Rectangle.BOX );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setColspan(1);
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            // Overall Average
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvg(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setColspan(1);
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            // Groups scores forall dimensions
+            for( int i=0;i<7;i++ )
+            {
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAverages()[i], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setColspan(1);
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }
+            
+            // NEXT ROW Each Dimension
+            String val;
+            for( int d=0;d<4;d++ )
+            {
+                dType = UMinnJusticeDimensionType.getValue(d+1);
+
+                c = new PdfPCell( new Paragraph( dType.getName(), dataFont ));
+                c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setColspan(1);
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+                
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAverages()[d], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setColspan(1);
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+                                
+                for( int g=0;g<7;g++ )
+                {
+                    // gType = UMinnJusticeGroupType.getValue(g+1);
+                    val = dType.includesGroupType(g+1) ? I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionGroupAverages()[d][g], 1) : "-";
+                    c = new PdfPCell( new Paragraph( val, dataFont ));
+                    c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                    c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                    c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                    c.setColspan(1);
+                    c.setPadding( 3 );
+                    setRunDirection( c );
+                    t.addCell(c);
+                }
+                
+            }
+
+            
+            tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+            y -= (tableH + 20);
+            currentYLevel = y;
+            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addOverallScoresPage()" );
+            throw new STException( e );
+        }        
+        
+    }
+    
+    
+    protected void addOverallSummaryPage() throws Exception
+    {
+        try
+        {
+            float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
+
+            // First create the table
+            PdfPCell c;
+
+            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+
+            // First, add a table
+            PdfPTable t = new PdfPTable( 1 );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            c = new PdfPCell( new Paragraph( lmsg( "sum.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+
+            int participantsTotal = dataSet.getTotalParticipants();
+            int participantsUnique = (int) dataSet.getOverallCount();
+            int um =  (int) dataSet.getOverallCountMale();
+            int uf = (int) dataSet.getOverallCountFemale();
+            int uu = (int) dataSet.getOverallCountUrim();
+            int unu =  (int) dataSet.getOverallCountNonUrim();
+            
+            Date startD = dataSet.getDates()[0];
+            Date endD = dataSet.getDates()[1];
+            
+            String startDate = I18nUtils.getFormattedDate(Locale.US, startD, DateFormat.MEDIUM );
+            String endDate = I18nUtils.getFormattedDate(Locale.US, endD, DateFormat.MEDIUM );
+            
+            String[] params = new String[]{startDate, endDate, Integer.toString(participantsTotal - participantsUnique), Integer.toString(participantsTotal),Integer.toString(participantsUnique)};
+
+            c = new PdfPCell( new Paragraph( lmsg( "sum.p0.dates", params ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            
+            if( participantsTotal>participantsUnique)
+                c = new PdfPCell( new Paragraph( lmsg( "sum.p0.trimmed", params ), this.getFont() ));
+            else
+                c = new PdfPCell( new Paragraph( lmsg( "sum.p0.all", params ), this.getFont() ));                
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            
+            c = new PdfPCell( new Paragraph( lmsg( "sum.p1" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "str.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+            
+            String arg0 = dataSet.getTopDimensionName();
+            String arg1 = dataSet.getTopGroupName();
+            String[] arg2 = dataSet.getTopDimensionGroupNamePair();
+            
+            c = new PdfPCell( new Paragraph( lmsg( "str.p1", new String[]{arg0,arg1,arg2[0],arg2[1]} ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "str.p2" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "opp.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+            
+            arg0 = dataSet.getBottomDimensionName();
+            arg1 = dataSet.getBottomGroupName();
+            arg2 = dataSet.getBottomDimensionGroupNamePair();
+            
+            c = new PdfPCell( new Paragraph( lmsg( "opp.p1", new String[]{arg0,arg1,arg2[0],arg2[1]} ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "opp.p2" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            
+            c = new PdfPCell( new Paragraph( lmsg( "brk.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0"), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            PdfPTable t2 = new PdfPTable( new float[]{50,10});
+            t2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            t2.setTotalWidth( outerWid*0.3f );
+            t2.setLockedWidth( true );
+            setRunDirection( t2 );
+            
+            
+            PdfPCell c2 = new PdfPCell( new Phrase( "   " + lmsg( "brk.p0.total") + ":", this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 2 );
+            c2.setPaddingBottom(8);
+            setRunDirection( c2 );
+            t2.addCell(c2);
+            c2 = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCount() ), this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 2 );
+            c2.setPaddingBottom(8);
+            setRunDirection( c2 );
+            t2.addCell(c2);
+            
+            c2 = new PdfPCell( new Phrase( "   " + lmsg( "brk.p0.female")+ ":", this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 1 );
+            setRunDirection( c2 );
+            t2.addCell(c2);            
+            c2 = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountFemale() ), this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 1 );
+            setRunDirection( c2 );
+            t2.addCell(c2);
+
+            c2 = new PdfPCell( new Phrase( "   " + lmsg( "brk.p0.male")+ ":", this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 1 );
+            c2.setPaddingBottom(8);
+            setRunDirection( c2 );
+            t2.addCell(c2);            
+            c2 = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountMale() ), this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 1 );
+            c2.setPaddingBottom(8);
+            setRunDirection( c2 );
+            t2.addCell(c2);
+            
+            c2 = new PdfPCell( new Phrase( "   " + lmsg( "brk.p0.urim")+ ":", this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 1 );
+            setRunDirection( c2 );
+            t2.addCell(c2);            
+            c2 = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountUrim() ), this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 1 );
+            setRunDirection( c2 );
+            t2.addCell(c2);
+            
+            c2 = new PdfPCell( new Phrase( "   " + lmsg( "brk.p0.nonurim")+ ":", this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 1 );
+            setRunDirection( c2 );
+            t2.addCell(c2);            
+            c2 = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountNonUrim() ), this.getFont() ));
+            c2.setBorder( Rectangle.NO_BORDER );
+            c2.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c2.setPadding( 1 );
+            setRunDirection( c2 );
+            t2.addCell(c2);
+            
+            //StringBuilder ss = new StringBuilder();
+            //ss.append( "   " + lmsg( "brk.p0.total", new String[]{Integer.toString((int)dataSet.getOverallCount())}) + "\n\n" );
+            //ss.append( "   " + lmsg( "brk.p0.female", new String[]{Integer.toString((int)dataSet.getOverallCountFemale())}) + "\n" );
+            //ss.append( "   " + lmsg( "brk.p0.male", new String[]{Integer.toString((int)dataSet.getOverallCountMale())}) + "\n\n" );
+            //ss.append( "   " + lmsg( "brk.p0.urim", new String[]{Integer.toString((int)dataSet.getOverallCountUrim())}) + "\n" );
+            //ss.append( "   " + lmsg( "brk.p0.nonurim", new String[]{Integer.toString((int)dataSet.getOverallCountNonUrim())}) );
+            
+            // c = new PdfPCell( new Paragraph( ss.toString(), this.getFont() ));
+            c = new PdfPCell( t2);
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            
+            arg0 = dataSet.getFemaleBelowMaleDimensionNames();
+            arg1 = dataSet.getFemaleBelowMaleGroupNames();
+            
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p1", new String[]{arg0,arg1} ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            arg0 = dataSet.getUrimBelowNonDimensionNames();
+            arg1 = dataSet.getUrimBelowNonGroupNames();
+                        
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p2", new String[]{arg0,arg1} ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p3" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+
+            
+            
+            float tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW = t.getTotalWidth();
+            float tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addOverallSummaryPage()" );
+            throw new STException( e );
+        }        
+        
+    }
+    
+    
+    protected void addResourcesSection() throws Exception
+    {
+        try
+        {
+            float y = currentYLevel; 
+
+            // First create the table
+            PdfPCell c;
+
+            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+
+            // First, add a table
+            PdfPTable t = new PdfPTable( new float[]{5,5,80} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            c = new PdfPCell( new Paragraph( lmsg( "rsc.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+
+            Paragraph par;
+            Chunk chk;
+            PdfAction pdfa;
+            
+            for( int i=1;i<=7;i++ )
+            {
+                c = new PdfPCell( new Paragraph( lmsg( "rsc." + i + ".t" ), this.getFont() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(3);
+                c.setPadding( 4 );
+                c.setPaddingBottom(1);
+                setRunDirection( c );
+                t.addCell(c);
+
+                par = new Paragraph();
+                chk = new Chunk( lmsg( "rsc." + i + ".u" ),fontSmallBlueItalic );
+                pdfa = PdfAction.gotoRemotePage( lmsg( "rsc." + i + ".u" ) , lmsg("b.Click2Visit"), false, true );                                
+                chk.setAction( pdfa );
+                par.add( chk );                   
+                
+                c = new PdfPCell(par);
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(3);
+                c.setPadding( 4 );
+                c.setPaddingBottom(10);
+                setRunDirection( c );
+                t.addCell(c);
+            }
+            
+            
+            float tableH = t.calculateHeights(); //  + 500;            
+            
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW = t.getTotalWidth();
+            float tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addResourcesSection()" );
+            throw new STException( e );
+        }        
+        
+    }
+    
+    
+    protected void addIntroductionSection() throws Exception
+    {
+        try
+        {
+            float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
+
+            // First create the table
+            PdfPCell c;
+
+            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+
+            // First, add a table
+            PdfPTable t = new PdfPTable( new float[]{5,5,80} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            c = new PdfPCell( new Paragraph( lmsg( "intro.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+
+            for( int i=1;i<=5;i++ )
+            {
+                c = new PdfPCell( new Paragraph( lmsg( "intro.p" + i ), this.getFont() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(3);
+                c.setPadding( 4 );
+                setRunDirection( c );
+                t.addCell(c);
+            }
+            
+            c = new PdfPCell( new Paragraph( lmsg( "ojm.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "ojm.p1"  ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            Phrase phr;
+            
+            for( int i=1;i<=4; i++ )
+            {
+                // blank row
+                c = new PdfPCell( new Phrase( "", font ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+                
+                c = new PdfPCell( new Phrase( BULLET, font ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_RIGHT );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE);
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                phr = new Phrase();
+                phr.add( new Chunk( lmsg("ojm.b" + i + ".b"), fontBold ) );
+                phr.add( new Chunk( " " + lmsg("ojm.b" + i + ".p"), font ) );
+                                
+                c = new PdfPCell( phr );
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE);
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }
+            
+            c = new PdfPCell( new Paragraph( lmsg( "ojm.p2"  ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "ojm.p3"  ), fontBold ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+            
+            // adding image
+            c = new PdfPCell( figure1Image );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment(Element.ALIGN_CENTER );
+            c.setColspan(3);
+            c.setPadding( 0 );
+            c.setPaddingTop( 12 );
+            c.setPaddingBottom( 12 );
+            setRunDirection(c);
+            t.addCell( c );            
+
+            c = new PdfPCell( new Paragraph( lmsg( "ojm.p4"  ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "ojm.p5"  ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            float tableH = t.calculateHeights(); //  + 500;            
+            
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+
+            float tableW = t.getTotalWidth();
+
+            float tableX = (pageWidth - tableW)/2;
+
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+
+            this.addNewPage();
+            y = this.currentYLevel;
+             
+            
+            t = new PdfPTable( new float[]{5,5,80} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            c = new PdfPCell( new Paragraph( lmsg( "ojm.p6"  ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "ovw.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "ovw.p1"  ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+
+            c = new PdfPCell( getThreeSegmentBoldPhrase( lmsg("ovw.p2.a"), lmsg("ovw.p2.b"), lmsg("ovw.p2.c") ) );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            for( int i=1;i<=7;i++ )
+            {
+                // blank row
+                c = new PdfPCell( new Phrase( "", font ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+                
+                c = new PdfPCell( new Phrase( i + ". ", font ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_RIGHT );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE);
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Phrase( lmsg("ovw.b." + i), font ) );
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE);
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);                
+            }
+            
+            c = new PdfPCell( new Paragraph( lmsg( "ovw.p3"  ), fontBold ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+            
+            // adding image
+            c = new PdfPCell( figure2Image );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment(Element.ALIGN_CENTER );
+            c.setColspan(3);
+            c.setPadding( 0 );
+            c.setPaddingTop( 12 );
+            c.setPaddingBottom( 12 );
+            setRunDirection(c);
+            t.addCell( c );            
+            
+            c = new PdfPCell( new Paragraph( lmsg( "fp.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( getThreeSegmentBoldPhrase( lmsg("fp.p1.a"), lmsg("fp.p1.b"), lmsg("fp.p1.c") ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( getThreeSegmentBoldPhrase( lmsg("fp.p2.a"), lmsg("fp.p2.b"), lmsg("fp.p2.c") ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "fp.p3"  ), font ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+                        
+
+            tableH = t.calculateHeights(); //  + 500;            
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+            this.addNewPage();
+            y = this.currentYLevel;
+             
+            t = new PdfPTable( new float[]{5,5,80} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            c = new PdfPCell( new Paragraph( lmsg( "fp.p4"  ), fontBold ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+            
+            // adding image
+            c = new PdfPCell( figure3Image );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment(Element.ALIGN_CENTER );
+            c.setColspan(3);
+            c.setPadding( 0 );
+            c.setPaddingTop( 12 );
+            c.setPaddingBottom( 12 );
+            setRunDirection(c);
+            t.addCell( c );            
+            
+            c = new PdfPCell( new Paragraph( lmsg( "scr.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( getThreeSegmentBoldPhrase( lmsg("scr.p1.a"), lmsg("scr.p1.b"), lmsg("scr.p1.c") ) );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            // adding image
+            c = new PdfPCell( scoreFigureImage );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment(Element.ALIGN_CENTER );
+            c.setColspan(3);
+            c.setPadding( 0 );
+            c.setPaddingTop( 12 );
+            c.setPaddingBottom( 12 );
+            setRunDirection(c);
+            t.addCell( c );            
+
+            c = new PdfPCell( getTwoSegmentBoldPhrase( lmsg("scr.p2.a"), lmsg("scr.p2.b") ) );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( getTwoSegmentBoldPhrase( lmsg("scr.p3.a"), lmsg("scr.p3.b") ) );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( getTwoSegmentBoldPhrase( lmsg("scr.p4.a"), lmsg("scr.p4.b") ) );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            tableH = t.calculateHeights(); //  + 500;            
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addIntroductionSection()" );
+            throw new STException( e );
+        }        
+    }
+    
+    
+    
+    
+    
+    protected Phrase getTwoSegmentBoldPhrase( String a, String b )
+    {
+        Phrase p = new Phrase();
+        p.add( new Chunk(a, fontBold));
+        p.add( new Chunk(" " + b, font));
+        return p;
+    }
+
+    protected Phrase getThreeSegmentBoldPhrase( String a, String b, String c )
+    {
+        Phrase p = new Phrase();
+        p.add( new Chunk(a + " ", font));
+        p.add( new Chunk(b, fontBold));
+        p.add( new Chunk(" " + c, font));
+        return p;
+    }
+
     protected void addPreparationNotesSection() throws Exception
     {
         try
         {
             List<String> prepNotes = new ArrayList<>();
             
-            // LogService.logIt(  "BaseUMinnJusticeReportTemplate.addPreparationNotesSection() START" );
-
-            //if( reportData.getReport().getIncludeNorms()>0 && hasComparisonData() )
-             //    prepNotes.add( 0, lmsg( "g.CT3ComparisonVsOverallNote" ) );
-
-
-
-            //if( !devel )
-            //    prepNotes.add( 0, lmsg( "g.CT3RptCaveat" ) );
-            //else
-            //    prepNotes.add( 0, lmsg( "g.CT3RptCaveatDevel" ) );
-
-            Product p = reportData.p;
-
-            Calendar cal = new GregorianCalendar();            
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm z");            
-            String dtStr = df.format( cal.getTime() );
+            prepNotes.add( lmsg("prepnotes.1") );
+            prepNotes.add( lmsg("prepnotes.2") );
+            
+            prepNotes.add( lmsg("prepnotes.hrause", new String[]{Integer.toString(reportData.o.getOrgId())}));
             
             if( prepNotes.isEmpty() )
                 return;
 
-            if( currentYLevel <= footerHgt + 200 )            
-            {    addNewPage();
-                 previousYLevel =  currentYLevel;                 
-            }
+            //if( currentYLevel <= footerHgt + 200 )            
+            //{    addNewPage();
+            //     previousYLevel =  currentYLevel;                 
+            //}
+            
+            java.util.List<Chunk> cl  = new ArrayList<>();
+            cl.add( new Chunk( lmsg("g.PreparationNotes"), this.fontBold ) );                
 
+            for( String s : prepNotes )
+            {
+                cl.add( new Chunk( s, this.font ) );                
+            }
+           
+            float tableWid = ITextUtils.getMaxChunkWidth( cl ) + 20;
+            if( tableWid > pageWidth-120 )
+                tableWid = pageWidth - 120;
             
-            
+
+                        
             float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
 
             // First create the table
@@ -704,10 +2557,10 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             // First, add a table
             PdfPTable t = new PdfPTable( new float[] { 4,70 } );
 
-            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+            // float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
 
-            // t.setHorizontalAlignment( Element.ALIGN_CENTER );
-            t.setTotalWidth( outerWid );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( tableWid );
             t.setLockedWidth( true );
             setRunDirection( t );
 
@@ -753,7 +2606,9 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             float tableH = t.calculateHeights(); //  + 500;            
             
-            float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            // float tableY = usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableY = usablePageHeight - 50;
 
             float tableW = t.getTotalWidth();
 
@@ -766,6 +2621,108 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
         {
             LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addPreparationNotesSection()" );
 
+            throw new STException( e );
+        }
+    }
+
+
+
+
+
+    
+    protected void addTableOfContentsSection() throws Exception
+    {
+        try
+        {
+            List<String> contentsItems = new ArrayList<>();
+            
+            LogService.logIt(  "BaseUMinnJusticeReportTemplate.addTableOfContentsSection() START" );
+
+            for( int i=1;i<=7;i++ )
+                contentsItems.add( i + ". " + lmsg("contents." + i) );
+            
+            float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
+
+            // First create the table
+            PdfPCell c;
+
+            java.util.List<Chunk> cl  = new ArrayList<>();
+            cl.add( new Chunk( lmsg("contents.title"), this.fontBold ) );                
+
+            for( String s : contentsItems )
+            {
+                cl.add( new Chunk( s, this.font ) );                
+            }
+           
+            float tableWid = ITextUtils.getMaxChunkWidth( cl ) + 50;
+
+            if( tableWid > pageWidth-120 )
+                tableWid = pageWidth - 120;
+            
+            // First create the table
+            // PdfPCell c;
+
+            // First, add a table
+            PdfPTable t = new PdfPTable( 2 );
+
+            t.setTotalWidth( new float[] { tableWid, 50 } );
+            t.setLockedWidth( true );
+            setRunDirection(t);
+
+            c = t.getDefaultCell();
+            c.setPadding( 5 );
+            // c.setPaddingRight( 15 );
+            // c.setPaddingBottom( 25 );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setBorderWidth( 0 );
+            setRunDirection(c);
+
+            c = new PdfPCell( new Phrase( lmsg( "contents.title" ), fontBold ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setColspan(2);
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            for( int i=1;i<=8;i++ )
+            {
+                c = new PdfPCell( new Phrase( i + ". " + lmsg("contents." + i), font ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setColspan(1);
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setPadding( 4 );
+                setRunDirection( c );
+                t.addCell(c);
+
+                c = new PdfPCell( new Phrase( lmsg("contents." + i + ".p"), font ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setColspan(1);
+                c.setHorizontalAlignment( Element.ALIGN_RIGHT );
+                c.setPadding( 4 );
+                setRunDirection( c );
+                t.addCell(c);
+            }
+            
+            float tableH = t.calculateHeights(); //  + 500;
+
+            // float tableY = y; //  + 10 - (y - pageHeight/2 - tableH)/2;
+            // float tableY = usablePageHeight - (usablePageHeight- tableH)/4;
+
+            // float tableY = y; //  + 10 - (y - pageHeight/2 - tableH)/2;
+            float tableY = usablePageHeight - 50;
+                        
+            float tableW = t.getTotalWidth();
+
+            float tableX = (pageWidth - tableW)/2;
+
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );    
+            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addTableOfContentsSection()" );
             throw new STException( e );
         }
     }

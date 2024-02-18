@@ -39,6 +39,39 @@ public enum UMinnJusticeGroupType
         return null;
     }
     
+    public boolean includeItemForGroup( int itemTypeId )
+    {
+        if( itemTypeId==1 || itemTypeId==3 )
+            return true;
+            
+        if( equals(PROGRAM_LEADERS ) )
+            return true;
+
+        if( equals(CLINICAL_SUPERVISORS ) )
+            return itemTypeId!=13 && itemTypeId!=15;
+        
+        if( equals(INTERPROF ) )
+            return itemTypeId<=12 && itemTypeId!=4;
+
+        if( equals(CONSULTANTS ) || equals(COLLEAGUES) )
+            return itemTypeId<=12;
+
+        if( equals(PATIENTS )|| equals(OPERATIONS) )
+            return false;
+        
+        return false;
+    }
+    
+    public static UMinnJusticeGroupType getForItemUniqueId( String uniqueId )
+    {
+        for( UMinnJusticeGroupType t : UMinnJusticeGroupType.values() )
+        {
+            if( uniqueId.startsWith(t.idStub) )
+                return t;
+        }
+        return null;
+    }
+    
     public static UMinnJusticeGroupType getForName( String nm )
     {
         for( UMinnJusticeGroupType t : UMinnJusticeGroupType.values() )

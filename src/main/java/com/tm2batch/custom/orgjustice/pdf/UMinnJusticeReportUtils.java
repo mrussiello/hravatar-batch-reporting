@@ -38,8 +38,7 @@ public class UMinnJusticeReportUtils {
     {
         if( uminnProperties== null )
             loadProperties();
-        
-        
+
         return uminnProperties;
     }
     
@@ -54,7 +53,7 @@ public class UMinnJusticeReportUtils {
             
             uminnProperties = prop;
             
-            // LogService.logIt( "UMinnJusticeReportUtils.loadProperties() Properties files has " + prop.size() + " keys.");
+            LogService.logIt( "UMinnJusticeReportUtils.loadProperties() Properties files has " + prop.size() + " keys.");
         }
         catch( Exception e )
         {

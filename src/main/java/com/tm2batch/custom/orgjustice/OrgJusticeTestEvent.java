@@ -17,6 +17,7 @@ import java.util.List;
 public class OrgJusticeTestEvent {
     
     long testEventId;
+    long userId;
     float overall;
     
     /*
@@ -40,6 +41,15 @@ public class OrgJusticeTestEvent {
     */
     float[] dimensionScores;
     
+    
+    // [dimension][group]
+    float[][] pairScores;
+    
+
+
+    // [group][item index]
+    float[][] groupItemScores; 
+
     
     /*
       Item OJDEM-7-gender
@@ -80,14 +90,24 @@ public class OrgJusticeTestEvent {
       itme CJDS-I-16-LearnerStatus
     */
     int learnerStatus;
+
+    // Used to create dummy data
+    public OrgJusticeTestEvent()
+    {                
+    }
     
     
     public OrgJusticeTestEvent( TestEvent te, List<TestEventScore> tesl, List<ItemResponse> irl )
     {
         this.testEventId=te.getTestEventId();
+        this.userId=te.getUserId();
         
         groupScores = new float[7];
         dimensionScores = new float[4];
+        
+        pairScores = new float[4][7];
+        
+        groupItemScores = new float[7][16];
         
         UMinnJusticeDimensionType dimType;
         UMinnJusticeGroupType groupType;
@@ -109,7 +129,7 @@ public class OrgJusticeTestEvent {
                 groupScores[groupType.getIndex()] = tes.getScore();
             }
 
-            // competencies are the dimension scores.
+            // competencies are the dimension scores. Additionally these have the competency-group scores.
             else if( tes.getTestEventScoreType().getIsCompetencyGroup())
             {
                 dimType = UMinnJusticeDimensionType.getForName( tes.getName() );
@@ -122,18 +142,85 @@ public class OrgJusticeTestEvent {
                 }
                 
                 dimensionScores[dimType.getIndex()] = tes.getScore();
+                
+                if( tes.getScore2()>0 )
+                    pairScores[dimType.getIndex()][0] = tes.getScore2();
+                if( tes.getScore3()>0 )
+                    pairScores[dimType.getIndex()][1] = tes.getScore3();
+                if( tes.getScore4()>0 )
+                    pairScores[dimType.getIndex()][2] = tes.getScore4();
+                if( tes.getScore5()>0 )
+                    pairScores[dimType.getIndex()][3] = tes.getScore5();
+                if( tes.getScore6()>0 )
+                    pairScores[dimType.getIndex()][4] = tes.getScore6();
+                if( tes.getScore7()>0 )
+                    pairScores[dimType.getIndex()][5] = tes.getScore7();
+                if( tes.getScore8()>0 )
+                    pairScores[dimType.getIndex()][6] = tes.getScore8();
             }
         }
         
+        boolean asianPac = false;
+        int points = 0;
+        
+        UMinnJusticeItemType itemType;
+        
+        
         for( ItemResponse ir : irl )
         {
-            if( ir.getIdentifier().equalsIgnoreCase( "OJ-Intro-2-LearnerGroup" ) )
+            groupType = UMinnJusticeGroupType.getForItemUniqueId(ir.getSimletNodeUniqueId());
+            
+            // save group scores.
+            if( groupType!=null )
+            {
+                itemType = UMinnJusticeItemType.getForItemUniqueId( ir.getSimletNodeUniqueId() );
+                
+                if( itemType!=null )
+                {
+                    groupItemScores[groupType.getUminnJusticeGroupTypeId()-1][itemType.getUminnJusticeItemTypeId()-1] = ir.getItemScore();
+                }
+                else
+                    LogService.logIt( "OrgJusticeTestEvent() Cannot identify the itemType for item which has Group Type=" + groupType.getName() + ", itemResponseId=" + ir.getItemResponseId() + ", testEventId=" + ir.getTestEventId() );
+            }
+            
+            
+            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-2-enthnicity" ) )
+            {
+                points = (int) ir.getItemScore();
+                if( points==1 || points==3 || points==5 )
+                    urim=1;
+                else if( points==2 )
+                    asianPac = true;
+            }
+
+            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-3-asian-cat" ) )
+            {
+                points = (int) ir.getItemScore();
+                if( points==1 || points==2 || points==3 || points==5 || points==6 || points==8 || points==11 || points==12 || points==13 || points==15 || points==16 || points==17 || points==18 )
+                    urim=1;
+            }
+            
+            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-11-childhood-income" ) )
+            {
+                points = (int) ir.getItemScore();
+                if( points==5 || points==6 )
+                    urim=1;
+            }
+
+            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-14-firstgen" ) )
+            {
+                points = (int) ir.getItemScore();
+                if( points>=1 )
+                    urim=1;                
+            }
+
+            else if( ir.getIdentifier().equalsIgnoreCase( "OJ-Intro-2-LearnerGroup" ) )
                 learnerGroup = (int) ir.getItemScore();
 
-            if( ir.getIdentifier().equalsIgnoreCase( "CJDS-I-16-LearnerStatus" ) )
+            else if( ir.getIdentifier().equalsIgnoreCase( "CJDS-I-16-LearnerStatus" ) )
                 learnerStatus = (int) ir.getItemScore();
 
-            if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-1-age" ) && ir.getSelectedValue()!=null && !ir.getSelectedValue().isBlank() )
+            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-1-age" ) && ir.getSelectedValue()!=null && !ir.getSelectedValue().isBlank() )
             {
                 try
                 {
@@ -145,10 +232,25 @@ public class OrgJusticeTestEvent {
                 }
             }
 
-            if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-7-gender" ) )
+            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-7-gender" ) )
                 genderTypeId = (int) ir.getItemScore();
             
         }
+    }
+    
+    public boolean isMale()
+    {
+        return this.genderTypeId==4;
+    }
+
+    public boolean isFemale()
+    {
+        return this.genderTypeId==5;
+    }
+    
+    public boolean isUrim()
+    {
+        return this.urim==1;
     }
     
     public boolean hasValidData()
@@ -200,6 +302,31 @@ public class OrgJusticeTestEvent {
         return sb.toString();
     }
 
+    @Override
+    public String toString() {
+        
+        StringBuilder grp = new StringBuilder();
+        for( float s : this.groupScores )
+        {
+            if( grp.length()>0 )
+                grp.append(",");
+            grp.append( Float.toString(s));
+        }
+
+        StringBuilder dim = new StringBuilder();
+        for( float s : this.dimensionScores )
+        {
+            if( dim.length()>0 )
+                dim.append(",");
+            dim.append( Float.toString(s));
+        }
+
+        
+        return "OrgJusticeTestEvent{" + "testEventId=" + testEventId + ", overall=" + overall + ", genderTypeId=" + genderTypeId + ", urim=" + urim + ", age=" + age + ", learnerGroup=" + learnerGroup + ", learnerStatus=" + learnerStatus + " groups: " + grp + ", dimensions=" + dim + '}';
+    }
+
+    
+    
     public long getTestEventId() {
         return testEventId;
     }
@@ -270,6 +397,18 @@ public class OrgJusticeTestEvent {
 
     public void setLearnerStatus(int learnerStatus) {
         this.learnerStatus = learnerStatus;
+    }
+
+    public float[][] getGroupItemScores() {
+        return groupItemScores;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
     
     

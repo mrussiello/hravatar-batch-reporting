@@ -27,22 +27,37 @@ import java.util.Locale;
 public abstract class UMinnJusticeReportSettings extends StandardReportSettings implements ReportSettings {
 
     // Map<String,String> customSettingsMap;
+
+    public String logoUrl = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/uminn-logo.png";    
+    public String headerLogoUrl = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/uminn-logo-m-trans.png";      
+    public String headerLogoWhiteTransUrl = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/uminn-logo-m-trans.png";     
+    public String figure1Url = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/orgjustice-figure-1.png";     
+    public String figure2Url = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/orgjustice-figure-2.png";     
+    public String figure3Url = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/orgjustice-figure-3.png";     
+    public String scoreFigureUrl = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/orgjustice-score-figure.png";     
+        
     
-    public String logoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_8x1481054844094.png";    
-    public String pcmUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_9x1481054844781.png";    
-    public String headerLogoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_12x1481102616782.png";     
-    public String headerLogoWhiteTransUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_12x1481102616782.png";    
-    public String twitterLogoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_13x1481106795247.jpg";
+    // public String pcmUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_9x1481054844781.png";    
+
+    
+    // public String logoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_8x1481054844094.png";    
+    // public String pcmUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_9x1481054844781.png";    
+    // public String headerLogoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_12x1481102616782.png";     
+    // public String headerLogoWhiteTransUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_12x1481102616782.png";    
+    // public String twitterLogoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_13x1481106795247.jpg";
     public String uminnMaroonColStr = "7a0019";        
     public BaseColor uminnMaroon = new BaseColor( 0x7a, 0x00, 0x19 );    
     public BaseColor uminnMaroonLite = new BaseColor( 0xf5, 0xb7, 0xc3 );  // f5b7c3
     
     Image custLogo;
-    Image twitterLogo;    
+    // Image twitterLogo;    
     Image headerLogo;
     
-    static Image pcmImage;
-    static Image headerLogoWhiteTrans;
+    public static Image figure1Image;
+    public static Image figure2Image;
+    public static Image figure3Image;
+    public static Image scoreFigureImage;
+    public static Image headerLogoWhiteTrans;
 
     public BaseFont baseFontBoldArial;
     
@@ -115,8 +130,17 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
             if( logoUrl != null && !logoUrl.isBlank() )
                 custLogo = Image.getInstance( new URL( logoUrl ) );
 
-            if( pcmUrl != null && !pcmUrl.isBlank() )
-                pcmImage = Image.getInstance( new URL( pcmUrl ) );
+            if( figure1Url != null && !figure1Url.isBlank() )
+                figure1Image = Image.getInstance( new URL( figure1Url ) );
+
+            if( figure2Url != null && !figure2Url.isBlank() )
+                figure2Image = Image.getInstance( new URL( figure2Url ) );
+
+            if( figure3Url != null && !figure3Url.isBlank() )
+                figure3Image = Image.getInstance( new URL( figure3Url ) );
+
+            if( scoreFigureUrl != null && !scoreFigureUrl.isBlank() )
+                scoreFigureImage = Image.getInstance( new URL( scoreFigureUrl ) );
 
             if( headerLogoUrl != null && !headerLogoUrl.isBlank() )
                 headerLogo = Image.getInstance( new URL( headerLogoUrl ) );
@@ -124,20 +148,23 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
             if( headerLogoWhiteTransUrl!=null && !headerLogoWhiteTransUrl.isBlank() )
                 headerLogoWhiteTrans = Image.getInstance( new URL( headerLogoWhiteTransUrl ) );
 
-            if( twitterLogo==null )
-                twitterLogo = Image.getInstance( new URL( twitterLogoUrl ) );
+            //if( twitterLogo==null )
+            //    twitterLogo = Image.getInstance( new URL( twitterLogoUrl ) );
 
             // LogService.logIt( "UMinnJusticeReportSettings.initExtra() AAA headerLogoWhiteTrans.scaledHeight " +  headerLogoWhiteTrans.getScaledHeight() );
 
-            twitterLogo.scalePercent(70 );
+            // twitterLogo.scalePercent(70 );
             custLogo.scalePercent( 80);
-            pcmImage.scalePercent( 48 );
+            figure1Image.scalePercent( 66 );
+            figure2Image.scalePercent( 66 );
+            figure3Image.scalePercent( 66 );
+            scoreFigureImage.scalePercent( 66 );
+            
             headerLogo.scalePercent( 46 );
             headerLogoWhiteTrans.scalePercent( 38 );
 
             // LogService.logIt( "UMinnJusticeReportSettings.initExtra() BBB headerLogoWhiteTrans.scaledHeight " +  headerLogoWhiteTrans.getScaledHeight() );                
         }
-
         catch( Exception e )
         {
             LogService.logIt( e, "UMinnJusticeReportSettings.initFonts() getting images. "  );
@@ -180,6 +207,11 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
         return 4;
     }
     
+
+    @Override
+    public BaseColor getHeaderDarkBgColor() {
+        return this.uminnMaroon;
+    }
     
     
     public void initMessages()

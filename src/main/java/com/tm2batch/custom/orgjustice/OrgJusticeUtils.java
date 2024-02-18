@@ -116,4 +116,113 @@ public class OrgJusticeUtils {
         
     }
     
+    public static List<OrgJusticeTestEvent> getDummyData()
+    {
+        List<OrgJusticeTestEvent> out = new ArrayList<>();
+        
+        OrgJusticeTestEvent ojte;
+        
+        for( int i=0; i<20; i++ )
+        {
+            ojte = new OrgJusticeTestEvent();            
+            ojte.testEventId = getRandomInt( 1, 1000 );            
+            ojte.userId = i+293;            
+            ojte.overall = getRandomFloat( 1f, 5f );            
+            ojte.genderTypeId = getRandomBoolean() ? 4 : 5;
+            ojte.urim  = getRandomBoolean() ? 1 : 0;
+            ojte.age = getRandomInt( 18, 28 );
+            ojte.learnerGroup = getRandomInt( 1, 13 );
+            ojte.learnerStatus = getRandomInt( 1, 15 );
+            ojte.dimensionScores = new float[4];
+            for( int j=0;j<4;j++ )
+                ojte.dimensionScores[j] = getRandomFloat( 1f, 5f );             
+            ojte.groupScores = new float[7];
+            for( int j=0;j<7;j++ )
+                ojte.groupScores[j] = getRandomFloat( 1f, 5f ); 
+            ojte.pairScores = new float[4][7];
+            
+            UMinnJusticeDimensionType dimType;
+            for( int d=0;d<4;d++ )
+            {
+                dimType = UMinnJusticeDimensionType.getValue(d+1);
+                for( int g=0;g<7;g++ )
+                {
+                    if( !dimType.includesGroupType(g+1) )
+                        continue;
+                    
+                    ojte.pairScores[d][g] = getRandomFloat( 1f, 5f );  
+                }
+            }
+
+            UMinnJusticeGroupType groupType;
+
+            // UMinnJusticeItemType itemType;
+            
+            ojte.groupItemScores = new float[7][16];
+            
+            for( int g=0;g<7;g++ )
+            {
+                groupType = UMinnJusticeGroupType.getValue(g+1 );
+                
+                for( int ii=0;ii<16;ii++ )
+                {
+                    // itemType = UMinnJusticeItemType.getValue(ii+1);
+                    
+                    if( !groupType.includeItemForGroup( ii+1 ) )
+                        continue;
+                
+                    ojte.groupItemScores[g][ii]=getRandomFloat( 1f, 5f );  
+                }
+            }
+            
+            
+            LogService.logIt( "Added Dummy Data " + ojte.toString());
+            out.add( ojte );
+        }
+        
+        return out;
+    }
+    
+   public static int getItemNumberFromUniqueId( String u )
+   {        
+        if( u==null || u.isBlank() || !u.contains("-") )
+        {
+           LogService.logIt( "OrgJusticeUtils.getItemNumberFromUniqueId() ScorableResponse.intnObj.uniqueId is invalid: u=" + u );
+           return 0;
+        }
+        String ss = u.substring( u.lastIndexOf('-')+1, u.length() ).trim();
+        if( ss.isBlank() )
+        {
+           LogService.logIt( "OrgJusticeUtils.getItemNumberFromUniqueId() uniqueId is invalid: u=" + u + ", ss=" + ss );
+           return 0;
+        }
+        try
+        {
+            return Integer.parseInt(ss);
+        }
+        catch( NumberFormatException e )
+        {
+           LogService.logIt( "OrgJusticeUtils.getItemNumberFromUniqueId() " + e.toString() + ", ScorableResponse.intnObj.uniqueId is invalid: u=" + u + ", ss=" + ss );
+           return 0;
+        }
+   }
+    
+    
+    private static boolean getRandomBoolean()
+    {
+        return Math.random() >= 0.5d;
+    }
+
+    private static float getRandomFloat( float min, float max )
+    {
+        return (float) (Math.random()*(max-min)) + min;
+    }
+
+    private static int getRandomInt( int min, int max )
+    {
+        return (int) (Math.random()*(max-min)) + min;
+    }
+    
+    
+    
 }

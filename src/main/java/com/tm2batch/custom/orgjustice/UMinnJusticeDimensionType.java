@@ -36,6 +36,20 @@ public enum UMinnJusticeDimensionType
         return null;
     }
     
+    public boolean includesGroupType( int uminnJusticeGroupTypeId )
+    {
+        if( uminnJusticeGroupTypeId<=2 )
+            return true;
+        
+        if( equals(DISTRIBUTIVE) )
+            return false;
+        
+        if( equals(PROCEDURAL) || equals(INFORMATIONAL) )
+            return uminnJusticeGroupTypeId!=4 && uminnJusticeGroupTypeId!=7;
+        
+        return true;
+    }
+    
     public boolean includesItemNumber( int itmNumber )
     {
         for( int ii : itemNumbers )

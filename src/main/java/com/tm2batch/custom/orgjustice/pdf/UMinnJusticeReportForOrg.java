@@ -33,7 +33,47 @@ public class UMinnJusticeReportForOrg extends BaseUMinnJusticeReportTemplate imp
 
             addNewPage();
             
-            addPreparationNotesSection();
+            addTableOfContentsSection();
+
+            addNewPage();
+            
+            addIntroductionSection();
+
+            addNewPage();
+            
+            addOverallSummaryPage();
+            
+            addNewPage();
+            
+            addOverallScoresPage();
+                                    
+            addOverallScoresDetailTable();
+                                    
+            addNewPage();
+            
+            for( int i=0;i<4; i++ )
+            {
+                if( i==3 )
+                    addNewPage();
+                
+                addDimensionScoresDetailTable(i+1);                
+            }
+
+            for( int i=0;i<7; i++ )
+            {
+                if( i!=4 && i!=6 )
+                    addNewPage();
+                
+                addGroupScoresDetailTable(i+1);                
+            }
+            
+            addNewPage();
+            
+            addResourcesSection();
+            
+            // addNewPage();
+            
+            // addPreparationNotesSection();
 
             closeDoc();
 

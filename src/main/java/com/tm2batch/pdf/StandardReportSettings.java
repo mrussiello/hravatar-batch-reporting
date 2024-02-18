@@ -48,72 +48,73 @@ public class StandardReportSettings implements ReportSettings
     public BaseFont baseFontBoldItalic;
     public BaseFont headerBaseFont;
 
-    Font fontXXLarge;
-    Font fontXXLargeWhite;
-    Font fontXXLargeLight;
-    Font fontXXLargeBold;
-    Font fontXXLargeItalic;
-    Font fontXXLargeBoldItalic;
+    public Font fontXXLarge;
+    public Font fontXXLargeWhite;
+    public Font fontXXLargeLight;
+    public Font fontXXLargeBold;
+    public Font fontXXLargeItalic;
+    public Font fontXXLargeBoldItalic;
 
-    Font headerFontXXLarge;
-    Font headerFontXXLargeWhite;
+    public Font headerFontXXLarge;
+    public Font headerFontXXLargeWhite;
 
-    Font fontXLarge;
-    Font fontXLargeLight;
-    Font fontXLargeLightBold;
-    Font fontXLargeWhite;
-    Font fontXLargeBold;
-    Font fontXLargeItalic;
-    Font fontXLargeBoldItalic;
+    public Font fontXLarge;
+    public Font fontXLargeLight;
+    public Font fontXLargeLightBold;
+    public Font fontXLargeWhite;
+    public Font fontXLargeBold;
+    public Font fontXLargeItalic;
+    public Font fontXLargeBoldItalic;
     public Font fontXLargeBoldWhite;
 
-    Font headerFontXLarge;
-    Font headerFontXLargeWhite;
+    public Font headerFontXLarge;
+    public Font headerFontXLargeWhite;
 
-    Font fontLarge;
-    Font fontLargeWhite;
-    Font fontLargeLight;
-    Font fontLargeLightBold;
-    Font fontLargeBold;
-    Font fontLargeItalic;
-    Font fontLargeBoldItalic;
+    public Font fontLarge;
+    public Font fontLargeWhite;
+    public Font fontLargeLight;
+    public Font fontLargeLightBold;
+    public Font fontLargeBold;
+    public Font fontLargeItalic;
+    public Font fontLargeBoldItalic;
 
-    Font headerFontLarge;
-    Font headerFontLargeWhite;
+    public Font headerFontLarge;
+    public Font headerFontLargeWhite;
 
-    Font font;
-    Font fontWhite;
-    Font fontLight;
-    Font fontLightBold;
-    Font fontLightItalic;
-    Font fontBold;
-    Font fontItalic;
-    Font fontBoldItalic;
+    public Font font;
+    public Font fontWhite;
+    public Font fontLight;
+    public Font fontLightBold;
+    public Font fontLightItalic;
+    public Font fontBold;
+    public Font fontItalic;
+    public Font fontBoldItalic;
 
-    Font fontSmall;
-    Font fontSmallWhite;
-    Font fontSmallLight;
-    Font fontSmallLightBold;
-    Font fontSmallLightItalic;
-    Font fontSmallBold;
-    Font fontSmallItalic;
-    Font fontSmallBoldItalic;
+    public Font fontSmall;
+    public Font fontSmallWhite;
+    public Font fontSmallLight;
+    public Font fontSmallLightBold;
+    public Font fontSmallLightItalic;
+    public Font fontSmallBold;
+    public Font fontSmallItalic;
+    public Font fontSmallBoldItalic;
+    public Font fontSmallBlueItalic;
 
-    Font fontXSmall;
-    Font fontXSmallWhite;
-    Font fontXSmallLight;
-    Font fontXSmallBold;
-    Font fontXSmallItalic;
-    Font fontXSmallBoldItalic;
+    public Font fontXSmall;
+    public Font fontXSmallWhite;
+    public Font fontXSmallLight;
+    public Font fontXSmallBold;
+    public Font fontXSmallItalic;
+    public Font fontXSmallBoldItalic;
 
-    Font fontXXSmall;
-    Font fontXXSmallWhite;
-    Font fontXXSmallLight;
-    Font fontXXSmallBold;
-    Font fontXXSmallItalic;
-    Font fontXXSmallBoldItalic;
+    public Font fontXXSmall;
+    public Font fontXXSmallWhite;
+    public Font fontXXSmallLight;
+    public Font fontXXSmallBold;
+    public Font fontXXSmallItalic;
+    public Font fontXXSmallBoldItalic;
 
-    Font fontSectionTitle;
+    public Font fontSectionTitle;
 
     BaseColor whiteFontColor;  // #ffffff
     BaseColor darkFontColor;   // #282828
@@ -275,6 +276,7 @@ public class StandardReportSettings implements ReportSettings
             fontSmallLightItalic = new Font( baseFontItalic, XSFONTSZ );
             fontSmallBold = new Font( baseFontBold, SFONTSZ, Font.BOLD );
             fontSmallItalic = new Font( baseFontItalic, SFONTSZ, Font.ITALIC );
+            fontSmallBlueItalic =  new Font( baseFontItalic, SFONTSZ, Font.ITALIC );
             fontSmallBoldItalic = new Font( baseFontBoldItalic, SFONTSZ, Font.BOLDITALIC );
 
             fontXSmall = new Font( baseFont, XSFONTSZ );
@@ -354,6 +356,7 @@ public class StandardReportSettings implements ReportSettings
             fontSmallLightItalic.setColor( lightFontColor  );
             fontSmallBold.setColor( baseFontColor  );
             fontSmallItalic.setColor( baseFontColor  );
+            fontSmallBlueItalic.setColor( BaseColor.BLUE );
             fontSmallBoldItalic.setColor( baseFontColor  );
 
             fontXSmall.setColor( baseFontColor  );

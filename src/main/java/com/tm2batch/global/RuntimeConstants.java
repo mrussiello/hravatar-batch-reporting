@@ -145,7 +145,8 @@ public class RuntimeConstants
         // ////////////////////////////////////////////////////////////////////////////
         
         cache.put( "orgJusticeProductIds",  "6510" );        
-        cache.put( "orgJusticeReportId",  105 );        
+        cache.put( "orgJusticeReportId",  105 );      
+        cache.put( "Uminn_OrgJustice_Dev", false );
 
         
         // ////////////////////////////////////////////////////////////////////////////
