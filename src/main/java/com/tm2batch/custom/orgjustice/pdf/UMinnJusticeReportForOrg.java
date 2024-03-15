@@ -71,6 +71,9 @@ public class UMinnJusticeReportForOrg extends BaseUMinnJusticeReportTemplate imp
             
             addResourcesSection();
             
+            addNewPage();
+            
+            addSupplementaryMaterialsSection();
             // addNewPage();
             
             // addPreparationNotesSection();

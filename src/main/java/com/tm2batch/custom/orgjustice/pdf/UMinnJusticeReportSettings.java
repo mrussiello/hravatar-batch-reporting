@@ -17,6 +17,8 @@ import com.tm2batch.pdf.StandardReportSettings;
 import com.tm2batch.service.LogService;
 import com.tm2batch.util.MessageFactory;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
 
@@ -34,7 +36,9 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
     public String figure1Url = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/orgjustice-figure-1.png";     
     public String figure2Url = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/orgjustice-figure-2.png";     
     public String figure3Url = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/orgjustice-figure-3.png";     
+    public String suppMatsUrl = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/orgjustice-supplementary-materials.png";     
     public String scoreFigureUrl = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/orgjustice-score-figure.png";     
+    public String twitterLogoUrl = RuntimeConstants.getStringValue("baseurl") + "/resources/images/uminn/orgjustice/twitter-logo-maroon.jpg";     
         
     
     // public String pcmUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_9x1481054844781.png";    
@@ -42,20 +46,25 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
     
     // public String logoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_8x1481054844094.png";    
     // public String pcmUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_9x1481054844781.png";    
-    // public String headerLogoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_12x1481102616782.png";     
+    //public String headerLogoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_12x1481102616782.png";     
     // public String headerLogoWhiteTransUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_12x1481102616782.png";    
     // public String twitterLogoUrl = "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/Q8vQJ8K3q0E-/img_13x1481106795247.jpg";
     public String uminnMaroonColStr = "7a0019";        
     public BaseColor uminnMaroon = new BaseColor( 0x7a, 0x00, 0x19 );    
-    public BaseColor uminnMaroonLite = new BaseColor( 0xf5, 0xb7, 0xc3 );  // f5b7c3
+    public BaseColor uminnMaroonLite = new BaseColor( 0x7a, 0x00, 0x19 ); // new BaseColor( 0xf5, 0xb7, 0xc3 );  // f5b7c3
+    
+    public BaseColor tableRow = new BaseColor( 0xe1, 0xe1, 0xe1 );  // f5b7c3
+    public BaseColor tableRowLite = new BaseColor( 0xef, 0xef, 0xef );  // f5b7c3
+    
     
     Image custLogo;
-    // Image twitterLogo;    
+    Image twitterLogo;    
     Image headerLogo;
     
     public static Image figure1Image;
     public static Image figure2Image;
     public static Image figure3Image;
+    public static Image suppMatsImage;
     public static Image scoreFigureImage;
     public static Image headerLogoWhiteTrans;
 
@@ -128,36 +137,40 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
         try
         {
             if( logoUrl != null && !logoUrl.isBlank() )
-                custLogo = Image.getInstance( new URL( logoUrl ) );
+                custLogo = Image.getInstance( new URI( logoUrl ).toURL() );
 
             if( figure1Url != null && !figure1Url.isBlank() )
-                figure1Image = Image.getInstance( new URL( figure1Url ) );
+                figure1Image = Image.getInstance( new URI( figure1Url ).toURL() );
 
             if( figure2Url != null && !figure2Url.isBlank() )
-                figure2Image = Image.getInstance( new URL( figure2Url ) );
+                figure2Image = Image.getInstance( new URI( figure2Url ).toURL() );
 
             if( figure3Url != null && !figure3Url.isBlank() )
-                figure3Image = Image.getInstance( new URL( figure3Url ) );
+                figure3Image = Image.getInstance( new URI( figure3Url ).toURL() );
 
+            if( suppMatsUrl!=null & !suppMatsUrl.isBlank() )
+                suppMatsImage = Image.getInstance( new URI( suppMatsUrl ).toURL() );
+            
             if( scoreFigureUrl != null && !scoreFigureUrl.isBlank() )
-                scoreFigureImage = Image.getInstance( new URL( scoreFigureUrl ) );
+                scoreFigureImage = Image.getInstance( new URI( scoreFigureUrl ).toURL() );
 
             if( headerLogoUrl != null && !headerLogoUrl.isBlank() )
-                headerLogo = Image.getInstance( new URL( headerLogoUrl ) );
+                headerLogo = Image.getInstance( new URI( headerLogoUrl ).toURL() );
 
             if( headerLogoWhiteTransUrl!=null && !headerLogoWhiteTransUrl.isBlank() )
-                headerLogoWhiteTrans = Image.getInstance( new URL( headerLogoWhiteTransUrl ) );
+                headerLogoWhiteTrans = Image.getInstance( new URI( headerLogoWhiteTransUrl ).toURL() );
 
-            //if( twitterLogo==null )
-            //    twitterLogo = Image.getInstance( new URL( twitterLogoUrl ) );
-
+            if( twitterLogo==null )
+                twitterLogo = Image.getInstance( new URI( twitterLogoUrl ).toURL() );
+                
             // LogService.logIt( "UMinnJusticeReportSettings.initExtra() AAA headerLogoWhiteTrans.scaledHeight " +  headerLogoWhiteTrans.getScaledHeight() );
 
-            // twitterLogo.scalePercent(70 );
+            twitterLogo.scalePercent(70 );
             custLogo.scalePercent( 80);
-            figure1Image.scalePercent( 66 );
-            figure2Image.scalePercent( 66 );
-            figure3Image.scalePercent( 66 );
+            figure1Image.scalePercent( 22 );
+            figure2Image.scalePercent( 16 );
+            suppMatsImage.scalePercent( 55 );
+            figure3Image.scalePercent( 24 );
             scoreFigureImage.scalePercent( 66 );
             
             headerLogo.scalePercent( 46 );
@@ -194,8 +207,9 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
     
     public URL getLocalImageUrl(String baseUrl, String fn) {
         try {
-            return new URL(baseUrl + "/" + fn);
-        } catch (MalformedURLException e) {
+            return new URI(baseUrl + "/" + fn).toURL();
+        }         
+        catch (URISyntaxException | MalformedURLException e) {
             LogService.logIt(e, "getLocalImageUrl() ");
             return null;
         }

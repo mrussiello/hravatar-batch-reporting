@@ -248,7 +248,7 @@ public class StandardReportSettings implements ReportSettings
             fontXLargeBold = new Font( baseFontBold, XLFONTSZ, Font.BOLD );
             fontXLargeItalic = new Font( baseFontItalic, XLFONTSZ, Font.ITALIC );
             fontXLargeBoldItalic = new Font( baseFontBoldItalic, XLFONTSZ, Font.BOLDITALIC );
-            fontXLargeBoldWhite = new Font( baseFontBoldItalic, XLFONTSZ, Font.BOLDITALIC );
+            fontXLargeBoldWhite = new Font( baseFontBold, XLFONTSZ, Font.BOLDITALIC );
 
             fontLarge = new Font( baseFont, LFONTSZ );
             fontLargeWhite = new Font( baseFont, LFONTSZ );

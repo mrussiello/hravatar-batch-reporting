@@ -376,6 +376,8 @@ public class UMinnJusticeHeaderFooter extends PdfPageEventHelper
             dc.setHorizontalAlignment( Element.ALIGN_LEFT );
             dc.setBorder( Rectangle.NO_BORDER );
             dc.setPadding( 2 );
+            dc.setPaddingRight(20 );
+            dc.setPaddingLeft(20 );
             dc.setRunDirection( reportData.getTextRunDirection() );
 
             Phrase p = new Phrase( copyright, f );
@@ -383,7 +385,6 @@ public class UMinnJusticeHeaderFooter extends PdfPageEventHelper
 
             dc.setHorizontalAlignment( reportData.getIsLTR() ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT );
             p = new Phrase( MessageFactory.getStringMessage( reportData.getLocale(), "g.PageX", new String[] {Integer.toString(pageNumber-1 )} ), reportSettings.fontSmallLightItalicMaroon );
-            
             t.addCell(p);
 
             /*

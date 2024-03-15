@@ -19,8 +19,10 @@ import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 import com.tm2batch.custom.orgjustice.OrgJusticeDataset;
 import com.tm2batch.custom.orgjustice.OrgJusticeNorms;
+import com.tm2batch.custom.orgjustice.UMinnColorType;
 import com.tm2batch.custom.orgjustice.UMinnJusticeDimensionType;
 import com.tm2batch.custom.orgjustice.UMinnJusticeGroupType;
 import com.tm2batch.custom.orgjustice.UMinnJusticeItemType;
@@ -598,22 +600,22 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             // addDirectText( "Assessment", 300, 300, baseFontCalibri, 24, getHraOrangeColor(), false );
 
 
-            t = new PdfPTable( 1 );
+            t = new PdfPTable( 2 );
             
             // t.setWidths( new int[] {50,200} );
             
             cl.clear();
             cl.add( new Chunk( lmsg( "url" ), fontXLargeBoldWhite ) );
 
-            // cl.add( new Chunk( lmsg( "twitter" ), fontXLargeBoldWhite ) );
+            cl.add( new Chunk( lmsg( "twitter" ), fontXLargeBoldWhite ) );
            
-            tableWid = ITextUtils.getMaxChunkWidth( cl ) + 10;            
-            // tableWid = ITextUtils.getMaxChunkWidth( cl ) + twitterLogo.getScaledWidth() + 10;            
+            // tableWid = ITextUtils.getMaxChunkWidth( cl ) + 10;            
+            tableWid = ITextUtils.getMaxChunkWidth( cl ) + twitterLogo.getScaledWidth() + 10;            
 
             t.setHorizontalAlignment( Element.ALIGN_CENTER );
             
-            // t.setWidths( new float[]{twitterLogo.getScaledWidth(),  ITextUtils.getMaxChunkWidth( cl )+10});
-            t.setWidths( new float[]{ITextUtils.getMaxChunkWidth( cl )+20});
+            t.setWidths( new float[]{twitterLogo.getScaledWidth(),  ITextUtils.getMaxChunkWidth( cl )+10});
+            // t.setWidths( new float[]{ITextUtils.getMaxChunkWidth( cl )+20});
             t.setTotalWidth( tableWid );
             t.setLockedWidth( true );
             setRunDirection(t);
@@ -626,8 +628,12 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             setRunDirection(c);
                              
+            t.addCell( new Phrase( "", fontXLargeBoldWhite ) );
             t.addCell( new Phrase( lmsg( "url" ), fontXLargeBoldWhite ) );
 
+            t.addCell( twitterLogo );
+            t.addCell( new Phrase( lmsg( "twitter" ), fontXLargeBoldWhite ) );
+            
             tableH = t.calculateHeights(); //  + 500;
 
             tableY = tableH + 12; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
@@ -714,8 +720,12 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
                 y -= (tableH + 20);
                 currentYLevel = y;
             }
-                        
+                    
+            BaseColor rowColor = tableRowLite;
             Font dataFont = getFontXSmall();
+            Font dataFontWhite = getFontXSmallWhite();
+            Font titleFont = getFontXSmallWhite();
+
             
             // 9 columns
             t = new PdfPTable( new float[]{30,14,14,14,14,14} );
@@ -733,24 +743,27 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.All" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.All" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroonLite );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Female" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Female" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroonLite );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Male" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Male" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroonLite );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
@@ -758,70 +771,89 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             t.addCell(c);
             
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Urim" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Urim" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroonLite );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( lmsg( "g.NonUrim" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.NonUrim" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroonLite );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
+            rowColor = tableRowLite;
+            UMinnColorType colorType;
             
             // Next ROW - Your Scores
             c = new PdfPCell( new Paragraph( lmsg("g.YourScore"), dataFont ));
+            c.setBackgroundColor( rowColor );
             c.setBorder( Rectangle.BOX );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAverages()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            
+            
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForDimension(uminnJusticeDimensionTypeId, dataSet.getDimensionAverages()[uminnJusticeDimensionTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAverages()[uminnJusticeDimensionTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( colorType.getColor() );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesFemale()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForDimension(uminnJusticeDimensionTypeId, dataSet.getDimensionAveragesFemale()[uminnJusticeDimensionTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesFemale()[uminnJusticeDimensionTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( colorType.getColor() );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesMale()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForDimension(uminnJusticeDimensionTypeId, dataSet.getDimensionAveragesMale()[uminnJusticeDimensionTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesMale()[uminnJusticeDimensionTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( colorType.getColor() );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesUrim()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForDimension(uminnJusticeDimensionTypeId, dataSet.getDimensionAveragesUrim()[uminnJusticeDimensionTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesUrim()[uminnJusticeDimensionTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( colorType.getColor() );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesNonUrim()[uminnJusticeDimensionTypeId-1], 1), dataFont ));
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForDimension(uminnJusticeDimensionTypeId, dataSet.getDimensionAveragesNonUrim()[uminnJusticeDimensionTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesNonUrim()[uminnJusticeDimensionTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( colorType.getColor() );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
+            rowColor = tableRow;
 
             // Next Row - BENCHMARK SCORES
             c = new PdfPCell( new Paragraph( lmsg("g.Benchmark"), dataFont ));
             c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -829,6 +861,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAverages[uminnJusticeDimensionTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -836,6 +869,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAveragesFemale[uminnJusticeDimensionTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -843,6 +877,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAveragesMale[uminnJusticeDimensionTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -850,6 +885,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAveragesUrim[uminnJusticeDimensionTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -857,16 +893,20 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.dimensionAveragesNonUrim[uminnJusticeDimensionTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
 
+            rowColor = tableRowLite;
+            
             // Next, get Item ids to use
             // Next Row - Member Items
             c = new PdfPCell( new Paragraph( lmsg("g.MemberItems"), dataFont ));
             c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setColspan(6);
             c.setPadding( 3 );
@@ -882,11 +922,15 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             {
                 if( !dimType.includesItemNumber(i+1) )
                     continue;
+
+                rowColor = i%2==0 ? tableRowLite : tableRow;
+
                 
                 itemType = UMinnJusticeItemType.getValue(i+1 );
                 
                 c = new PdfPCell( new Paragraph( itemType.getUminnJusticeItemTypeId() + ". " + itemType.getName(uminnJusticeReportUtils), dataFont ));
                 c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_LEFT );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -894,6 +938,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAverages()[i], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -901,6 +946,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAveragesFemale()[i], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -908,6 +954,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAveragesMale()[i], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -915,6 +962,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAveragesUrim()[i], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -922,6 +970,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getItemScoreAveragesNonUrim()[i], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -947,6 +996,14 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
                 t.setLockedWidth( true );
                 t.setSplitRows(true);
                 setRunDirection( t );
+
+                c = new PdfPCell( new Paragraph( lmsg( "sn.scoresnote" ), this.getFont() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(1);
+                c.setPadding( 4 );
+                setRunDirection( c );
+                t.addCell(c);
 
 
                 c = new PdfPCell( new Paragraph( lmsg( "bnch.overall.p2" ), this.getFont() ));
@@ -1064,8 +1121,10 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
                 currentYLevel = y;
             }
             
-            
+            BaseColor rowColor;
             Font dataFont = getFontXSmall();
+            Font dataFontWhite = getFontXSmallWhite();
+            Font titleFont = getFontXSmallWhite();
             
             // 9 columns
             t = new PdfPTable( new float[]{30,14,14,14,14,14} );
@@ -1083,24 +1142,27 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.All" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.All" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroon );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Female" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Female" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroon );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Male" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Male" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroon );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
@@ -1108,71 +1170,88 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             t.addCell(c);
             
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Urim" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Urim" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroon );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( lmsg( "g.NonUrim" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.NonUrim" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroon );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
+            rowColor = tableRowLite;
+            UMinnColorType colorType;
             
             // Next ROW - Your Scores
             c = new PdfPCell( new Paragraph( lmsg("g.YourScore"), dataFont ));
             c.setBorder( Rectangle.BOX );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAverages()[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForGroup(uminnJusticeGroupTypeId, dataSet.getGroupAverages()[uminnJusticeGroupTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAverages()[uminnJusticeGroupTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( colorType.getColor() );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesFemale()[uminnJusticeGroupTypeId-1], 1), dataFont ));
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForGroup(uminnJusticeGroupTypeId, dataSet.getGroupAveragesFemale()[uminnJusticeGroupTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesFemale()[uminnJusticeGroupTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( colorType.getColor() );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForGroup(uminnJusticeGroupTypeId, dataSet.getGroupAveragesMale()[uminnJusticeGroupTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesMale()[uminnJusticeGroupTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( colorType.getColor() );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForGroup(uminnJusticeGroupTypeId, dataSet.getGroupAveragesUrim()[uminnJusticeGroupTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesUrim()[uminnJusticeGroupTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( colorType.getColor() );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForGroup(uminnJusticeGroupTypeId, dataSet.getGroupAveragesNonUrim()[uminnJusticeGroupTypeId-1]);
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesNonUrim()[uminnJusticeGroupTypeId-1], 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
+            c.setBackgroundColor( colorType.getColor() );
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesMale()[uminnJusticeGroupTypeId-1], 1), dataFont ));
-            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
-            c.setHorizontalAlignment( Element.ALIGN_CENTER );
-            c.setPadding( 3 );
-            setRunDirection( c );
-            t.addCell(c);
-
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesUrim()[uminnJusticeGroupTypeId-1], 1), dataFont ));
-            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
-            c.setHorizontalAlignment( Element.ALIGN_CENTER );
-            c.setPadding( 3 );
-            setRunDirection( c );
-            t.addCell(c);
-
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesNonUrim()[uminnJusticeGroupTypeId-1], 1), dataFont ));
-            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
-            c.setHorizontalAlignment( Element.ALIGN_CENTER );
-            c.setPadding( 3 );
-            setRunDirection( c );
-            t.addCell(c);
-
+            rowColor = tableRow;
 
             // Next Row - BENCHMARK SCORES
             // Next ROW - Your Scores
             c = new PdfPCell( new Paragraph( lmsg("g.Benchmark"), dataFont ));
             c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1180,6 +1259,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAverages[uminnJusticeGroupTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1187,6 +1267,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAveragesFemale[uminnJusticeGroupTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1194,6 +1275,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAveragesMale[uminnJusticeGroupTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1201,6 +1283,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAveragesUrim[uminnJusticeGroupTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1208,13 +1291,17 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.groupAveragesNonUrim[uminnJusticeGroupTypeId-1], 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
+            rowColor = tableRowLite;
+                        
             c = new PdfPCell( new Paragraph( lmsg("g.GroupItemScores"), dataFont ));
             c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setColspan(6);
             c.setPadding( 3 );
@@ -1233,10 +1320,13 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
                 if( !groupType.includeItemForGroup(ii+1))
                     continue;
                 
+                rowColor = ii%2==0 ?  tableRowLite : tableRow;
+                           
                 itemType = UMinnJusticeItemType.getValue(ii+1);
                 
                 c = new PdfPCell( new Paragraph( itemType.getUminnJusticeItemTypeId() + ". " + itemType.getName(uminnJusticeReportUtils), dataFont ));
                 c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_LEFT );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -1244,6 +1334,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAverages()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -1251,6 +1342,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAveragesFemale()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -1258,6 +1350,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAveragesMale()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -1265,6 +1358,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAveragesUrim()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -1272,6 +1366,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupItemScoreAveragesNonUrim()[uminnJusticeGroupTypeId-1][ii], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setPadding( 3 );
                 setRunDirection( c );
@@ -1298,7 +1393,15 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
                 t.setSplitRows(true);
                 setRunDirection( t );
 
+                c = new PdfPCell( new Paragraph( lmsg( "sn.scoresnote" ), this.getFont() ));
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setColspan(1);
+                c.setPadding( 4 );
+                setRunDirection( c );
+                t.addCell(c);
 
+               
                 c = new PdfPCell( new Paragraph( lmsg( "bnch.overall.p2" ), this.getFont() ));
                 c.setBorder( Rectangle.NO_BORDER );
                 c.setHorizontalAlignment( Element.ALIGN_LEFT );
@@ -1376,7 +1479,10 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             currentYLevel = y;
             
 
+            BaseColor rowColor;
             Font dataFont = getFontXSmall();
+            Font dataFontWhite = getFontXSmallWhite();
+            Font headerFont = this.getFontXSmallWhite();
             
             // 9 columns
             t = new PdfPTable( new float[]{30,14,14,14,14,14} );
@@ -1394,24 +1500,27 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.All" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.All" ), headerFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor(uminnMaroon);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Female" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Female" ), headerFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor(uminnMaroon);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Male" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Male" ), headerFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor(uminnMaroon);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
@@ -1419,71 +1528,89 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             t.addCell(c);
             
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Urim" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Urim" ), headerFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor(uminnMaroon);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( lmsg( "g.NonUrim" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.NonUrim" ), headerFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor(uminnMaroon);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
+            rowColor = tableRowLite;
+            UMinnColorType colorType;
             
             // Next ROW - Your Scores
             c = new PdfPCell( new Paragraph( lmsg("g.YourScore"), dataFont ));
             c.setBorder( Rectangle.BOX );
+            c.setBackgroundColor(rowColor);
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvg(), 1), dataFont ));
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForOverall(dataSet.getOverallAvg());
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvg(), 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(colorType.getColor());
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgFemale(), 1), dataFont ));
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForOverall(dataSet.getOverallAvgFemale());
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgFemale(), 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(colorType.getColor());
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForOverall(dataSet.getOverallAvgMale());
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgMale(), 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(colorType.getColor());
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForOverall(dataSet.getOverallAvgUrim());
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgUrim(), 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(colorType.getColor());
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            colorType = UMinnJusticeReportUtils.getScoreColorTypeForOverall(dataSet.getOverallAvgNonUrim());
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgNonUrim(), 1), colorType.getDarkFont() ? dataFont : dataFontWhite ));
+            c.setBackgroundColor(colorType.getColor());
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgMale(), 1), dataFont ));
-            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
-            c.setHorizontalAlignment( Element.ALIGN_CENTER );
-            c.setPadding( 3 );
-            setRunDirection( c );
-            t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgUrim(), 1), dataFont ));
-            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
-            c.setHorizontalAlignment( Element.ALIGN_CENTER );
-            c.setPadding( 3 );
-            setRunDirection( c );
-            t.addCell(c);
-
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgNonUrim(), 1), dataFont ));
-            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
-            c.setHorizontalAlignment( Element.ALIGN_CENTER );
-            c.setPadding( 3 );
-            setRunDirection( c );
-            t.addCell(c);
-
-
+            rowColor = tableRow;
+            
             // Next Row - BENCHMARK SCORES
             // Next ROW - Your Scores
             c = new PdfPCell( new Paragraph( lmsg("g.Benchmark"), dataFont ));
             c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1491,6 +1618,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.overallAvg, 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1498,6 +1626,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.overallAvgFemale, 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1505,6 +1634,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.overallAvgMale, 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1512,6 +1642,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.overallAvgUrim, 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1519,6 +1650,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgNonUrim(), 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setPadding( 3 );
             setRunDirection( c );
@@ -1542,6 +1674,14 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( t );
 
                         
+            c = new PdfPCell( new Paragraph( lmsg( "sn.scoresnote" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(1);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+
             c = new PdfPCell( new Paragraph( lmsg( "bnch.overall.p2" ), this.getFont() ));
             c.setBorder( Rectangle.NO_BORDER );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
@@ -1549,7 +1689,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setPadding( 4 );
             setRunDirection( c );
             t.addCell(c);
-                        
+            
             
             tableH = t.calculateHeights(); //  + 500;                      
             // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
@@ -1618,6 +1758,8 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             currentYLevel = y;
 
             Font dataFont = getFontXSmall();
+            Font headerFont = this.getFontXSmallWhite();
+            BaseColor rowColor;
             
             // 9 columns
             t = new PdfPTable( new float[]{15f,10.6f,10.6f,10.6f,10.6f,10.6f,10.6f,10.6f,10.6f} );
@@ -1635,8 +1777,9 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
 
-            c = new PdfPCell( new Paragraph( lmsg( "g.Group" ), this.getFont() ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.Group" ), headerFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( this.uminnMaroon );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setColspan(8);
@@ -1645,14 +1788,15 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             t.addCell(c);
             
             // Next ROW - Group titles
-            c = new PdfPCell( new Paragraph( "", dataFont ));
+            c = new PdfPCell( new Paragraph( "", headerFont ));
             c.setBorder( Rectangle.RIGHT );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( lmsg( "g.AllGroups" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.AllGroups" ), headerFont ));
+            c.setBackgroundColor( this.uminnMaroon );
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setVerticalAlignment( Element.ALIGN_MIDDLE );
@@ -1667,8 +1811,9 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             for( int i=0;i<7;i++ )
             {
                 gType = UMinnJusticeGroupType.getValue(i+1);
-                c = new PdfPCell( new Paragraph( gType.getName(), dataFont ));
+                c = new PdfPCell( new Paragraph( gType.getName(), headerFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( this.uminnMaroon );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setVerticalAlignment( Element.ALIGN_MIDDLE );
                 c.setColspan(1);
@@ -1677,8 +1822,11 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
                 t.addCell(c);
             }
             
+            rowColor = tableRowLite;
+            
             // Next ROW - All Dims for Group
-            c = new PdfPCell( new Paragraph( lmsg( "g.AllDims" ), dataFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.OverallJusticeScore" ), dataFont ));
+            c.setBackgroundColor( rowColor );
             c.setBorder( Rectangle.BOX );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setColspan(1);
@@ -1689,6 +1837,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             // Overall Average
             c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvg(), 1), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setColspan(1);
             c.setPadding( 3 );
@@ -1700,6 +1849,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             {
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAverages()[i], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setVerticalAlignment( Element.ALIGN_MIDDLE );
                 c.setColspan(1);
@@ -1707,15 +1857,18 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
                 setRunDirection( c );
                 t.addCell(c);
             }
-            
+    
             // NEXT ROW Each Dimension
             String val;
             for( int d=0;d<4;d++ )
             {
                 dType = UMinnJusticeDimensionType.getValue(d+1);
 
+                rowColor = d%2==0 ? tableRow : tableRowLite;
+                            
                 c = new PdfPCell( new Paragraph( dType.getName(), dataFont ));
                 c.setBorder( Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setColspan(1);
                 c.setPadding( 3 );
@@ -1724,6 +1877,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
                 
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAverages()[d], 1), dataFont ));
                 c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
                 c.setHorizontalAlignment( Element.ALIGN_CENTER );
                 c.setVerticalAlignment( Element.ALIGN_MIDDLE );
                 c.setColspan(1);
@@ -1737,6 +1891,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
                     val = dType.includesGroupType(g+1) ? I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionGroupAverages()[d][g], 1) : "-";
                     c = new PdfPCell( new Paragraph( val, dataFont ));
                     c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+                    c.setBackgroundColor( rowColor );
                     c.setHorizontalAlignment( Element.ALIGN_CENTER );
                     c.setVerticalAlignment( Element.ALIGN_MIDDLE );
                     c.setColspan(1);
@@ -1811,7 +1966,12 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             String[] params = new String[]{startDate, endDate, Integer.toString(participantsTotal - participantsUnique), Integer.toString(participantsTotal),Integer.toString(participantsUnique)};
 
-            c = new PdfPCell( new Paragraph( lmsg( "sum.p0.dates", params ), this.getFont() ));
+            Phrase p = new Phrase();
+            p.add( new Chunk(lmsg( "sum.p0.dates.p1", params ) + " " , getFont() ) );
+            p.add( new Chunk(lmsg( "sum.p0.dates.p2", params ) + " " , getFontBold() ) );
+            p.add( new Chunk("." + " " , getFont() ) );
+            
+            c = new PdfPCell( p );
             c.setBorder( Rectangle.NO_BORDER );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setPadding( 4 );
@@ -1901,13 +2061,36 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
             
+            
+            
             c = new PdfPCell( new Paragraph( lmsg( "brk.p0"), this.getFont() ));
             c.setBorder( Rectangle.NO_BORDER );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
             c.setPadding( 4 );
             setRunDirection( c );
             t.addCell(c);
+
+            float tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW = t.getTotalWidth();
+            float tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+
+            // First, add a table
+            t = new PdfPTable( 1 );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            y -= (tableH + 20);
+            currentYLevel = y;
             
+            
+            /*
             PdfPTable t2 = new PdfPTable( new float[]{50,10});
             t2.setHorizontalAlignment( Element.ALIGN_LEFT );
             t2.setTotalWidth( outerWid*0.3f );
@@ -1998,7 +2181,11 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setPadding( 4 );
             setRunDirection( c );
             t.addCell(c);
+            */
             
+            addGenderUrimTables();
+            
+            y = currentYLevel;
             
             arg0 = dataSet.getFemaleBelowMaleDimensionNames();
             arg1 = dataSet.getFemaleBelowMaleGroupNames();
@@ -2026,20 +2213,588 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setPadding( 4 );
             setRunDirection( c );
             t.addCell(c);
-
-
             
             
-            float tableH = t.calculateHeights(); //  + 500;                      
+            tableH = t.calculateHeights(); //  + 500;      
+            
+            if( y - tableH < 50 )
+            {
+                this.addNewPage();
+                y = currentYLevel;
+            }
             // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
-            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
-            float tableW = t.getTotalWidth();
-            float tableX = (pageWidth - tableW)/2;
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
             t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
         }
         catch( Exception e )
         {
             LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addOverallSummaryPage()" );
+            throw new STException( e );
+        }        
+        
+    }
+    
+    protected void addGenderUrimTables() throws Exception
+    {
+        try
+        {
+            float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
+
+            // First create the table
+            PdfPCell c;
+
+            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+
+                        
+
+            Font headerFont = getFontXSmallWhite();
+            Font dataFont = getFontXSmall();
+            
+            // FIRST - DIMENSIONS SCALES
+            PdfPTable t = new PdfPTable( new float[]{30,14,14,14,14,14,14} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            // First ROW
+            c = new PdfPCell( new Paragraph( "", headerFont ));
+            c.setBorder( Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.count" ), headerFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroonLite );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.overall" ), headerFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroonLite );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            for( UMinnJusticeDimensionType dimType : UMinnJusticeDimensionType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( dimType.getName(), headerFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor( uminnMaroonLite );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }            
+
+            
+            BaseColor rowColor = tableRowLite;
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.female" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setBackgroundColor(rowColor);
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountFemale() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgFemale(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            for( UMinnJusticeDimensionType dimType : UMinnJusticeDimensionType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesFemale()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor(rowColor);
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+            
+            rowColor = tableRow;
+
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.male" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountMale() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgMale(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            for( UMinnJusticeDimensionType dimType : UMinnJusticeDimensionType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesMale()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor(rowColor);
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+
+            rowColor = tableRowLite;
+            
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.urim" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountUrim() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgUrim(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            for( UMinnJusticeDimensionType dimType : UMinnJusticeDimensionType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesUrim()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor(rowColor);
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+            
+            rowColor = tableRow;
+            
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.nonurim" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountNonUrim() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgNonUrim(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            for( UMinnJusticeDimensionType dimType : UMinnJusticeDimensionType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAveragesNonUrim()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor(rowColor);
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+
+            rowColor = tableRowLite;
+
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.total" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCount() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvg(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor(rowColor);
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            for( UMinnJusticeDimensionType dimType : UMinnJusticeDimensionType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getDimensionAverages()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor(rowColor);
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+            
+            
+            float tableH = t.calculateHeights(); //  + 500;                      
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            
+            if( y - tableH  < 50 )
+            {
+                this.addNewPage();
+                y = currentYLevel;
+            }
+            
+            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW = t.getTotalWidth();
+            float tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            y -= (tableH + 20);
+            currentYLevel = y;
+            
+
+            // SECOND - GROUP SCALES
+            t = new PdfPTable( new float[]{15,11,11,11,11,11,11,11,11} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            // First ROW
+            c = new PdfPCell( new Paragraph( "", headerFont ));
+            c.setBorder( Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.count" ), headerFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroonLite );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            /*
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.overall" ), headerFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+            c.setBackgroundColor( uminnMaroonLite );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            */
+            
+            for( UMinnJusticeGroupType dimType : UMinnJusticeGroupType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( dimType.getName(), headerFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor( uminnMaroonLite );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }            
+
+            rowColor = tableRowLite;
+            
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.female" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountFemale() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            /*
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgFemale(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            */
+            
+            for( UMinnJusticeGroupType dimType : UMinnJusticeGroupType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesFemale()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+
+            rowColor = tableRow;
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.male" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountMale() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            /*
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgMale(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            */
+            
+            for( UMinnJusticeGroupType dimType : UMinnJusticeGroupType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesMale()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+
+            rowColor = tableRowLite;
+            
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.urim" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountUrim() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            /*
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgUrim(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            */
+            
+            for( UMinnJusticeGroupType dimType : UMinnJusticeGroupType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesUrim()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+            
+            rowColor = tableRow;
+            
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.nonurim" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCountNonUrim() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            /*
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgNonUrim(), 1), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            */
+            
+            for( UMinnJusticeGroupType dimType : UMinnJusticeGroupType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAveragesNonUrim()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+            
+            rowColor = tableRowLite;
+            
+
+            // Next Row 
+            c = new PdfPCell( new Paragraph( lmsg( "brk.p0.total" ), dataFont ));
+            c.setBorder( Rectangle.BOX  );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+
+            c = new PdfPCell( new Phrase( Integer.toString( (int)dataSet.getOverallCount() ), dataFont ));
+            c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
+            c.setBackgroundColor( rowColor );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setPadding( 3 );
+            setRunDirection( c );
+            t.addCell(c);
+            
+            for( UMinnJusticeGroupType dimType : UMinnJusticeGroupType.values() )
+            {
+
+                c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAverages()[dimType.getIndex()], 1), dataFont ));
+                c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
+                c.setBackgroundColor( rowColor );
+                c.setHorizontalAlignment( Element.ALIGN_CENTER );
+                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
+                c.setPadding( 3 );
+                setRunDirection( c );
+                t.addCell(c);
+            }          
+
+            
+            tableH = t.calculateHeights(); //  + 500;                      
+
+            if( y - tableH  < 50 )
+            {
+                this.addNewPage();
+                y = currentYLevel;
+            }
+
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            y -= (tableH + 20);
+            currentYLevel = y;
+            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addGenderUrimTables()" );
             throw new STException( e );
         }        
         
@@ -2124,6 +2879,85 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
         
     }
     
+    protected void addSupplementaryMaterialsSection() throws Exception
+    {
+        try
+        {
+            float y = currentYLevel; 
+
+            // First create the table
+            PdfPCell c;
+
+            float outerWid = pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN;
+
+            // First, add a table
+            PdfPTable t = new PdfPTable( new float[]{5,5,80} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+
+            c = new PdfPCell( new Paragraph( lmsg( "smats.title" ), this.getFontBold() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            c.setPaddingTop(15);
+            setRunDirection( c );
+            t.addCell(c);
+
+
+            c = new PdfPCell( new Paragraph( lmsg( "smats.p1" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 2 );
+            c.setPaddingBottom(1);
+            setRunDirection( c );
+            t.addCell(c);
+            
+            c = new PdfPCell( suppMatsImage );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 2 );
+            c.setPaddingBottom(1);
+            setRunDirection( c );
+            t.addCell(c);
+            
+            
+            c = new PdfPCell( new Paragraph( lmsg( "smats.p2" ), this.getFont() ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 2 );
+            c.setPaddingBottom(1);
+            setRunDirection( c );
+            t.addCell(c);
+            
+            
+            
+            float tableH = t.calculateHeights(); //  + 500;            
+            
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW = t.getTotalWidth();
+            float tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseUMinnJusticeReportTemplate.addSupplementaryMaterialsSection()" );
+            throw new STException( e );
+        }        
+        
+    }
+    
+
+
     
     protected void addIntroductionSection() throws Exception
     {
@@ -2226,7 +3060,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
             c.setColspan(3);
             c.setPadding( 4 );
-            c.setPaddingTop(15);
+            c.setPaddingTop(10);
             setRunDirection( c );
             t.addCell(c);
             
@@ -2236,11 +3070,28 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setHorizontalAlignment(Element.ALIGN_CENTER );
             c.setColspan(3);
             c.setPadding( 0 );
-            c.setPaddingTop( 12 );
+            c.setPaddingTop( 0 );
             c.setPaddingBottom( 12 );
             setRunDirection(c);
             t.addCell( c );            
 
+            float tableH = t.calculateHeights(); //  + 500;            
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            float tableW = t.getTotalWidth();
+            float tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            this.addNewPage();
+            y = this.currentYLevel;
+            
+            t = new PdfPTable( new float[]{5,5,80} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );            
+            
             c = new PdfPCell( new Paragraph( lmsg( "ojm.p4"  ), this.getFont() ));
             c.setBorder( Rectangle.NO_BORDER );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
@@ -2257,29 +3108,6 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
             
-            float tableH = t.calculateHeights(); //  + 500;            
-            
-            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
-            float tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
-
-            float tableW = t.getTotalWidth();
-
-            float tableX = (pageWidth - tableW)/2;
-
-            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
-
-
-            this.addNewPage();
-            y = this.currentYLevel;
-             
-            
-            t = new PdfPTable( new float[]{5,5,80} );
-            t.setHorizontalAlignment( Element.ALIGN_CENTER );
-            t.setTotalWidth( outerWid );
-            t.setLockedWidth( true );
-            t.setSplitRows(true);
-            setRunDirection( t );
-
             c = new PdfPCell( new Paragraph( lmsg( "ojm.p6"  ), this.getFont() ));
             c.setBorder( Rectangle.NO_BORDER );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
@@ -2359,7 +3187,24 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setPaddingBottom( 12 );
             setRunDirection(c);
             t.addCell( c );            
+                        
+            tableH = t.calculateHeights(); //  + 500;       
+            // float tableY = y - tableH; //   pageHeight/2 - (pageHeight/2 - tableH)/2;
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
             
+            addNewPage();            
+            y = this.currentYLevel - 20;
+            
+            t = new PdfPTable( new float[]{5,5,80} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+                        
             c = new PdfPCell( new Paragraph( lmsg( "fp.title" ), this.getFontBold() ));
             c.setBorder( Rectangle.NO_BORDER );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
@@ -2385,6 +3230,14 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
 
+            c = new PdfPCell( new Phrase( lmsg( "fp.p2.p2" ), font ));
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setColspan(3);
+            c.setPadding( 4 );
+            setRunDirection( c );
+            t.addCell(c);
+            
             c = new PdfPCell( new Paragraph( lmsg( "fp.p3"  ), font ));
             c.setBorder( Rectangle.NO_BORDER );
             c.setHorizontalAlignment( Element.ALIGN_LEFT );
@@ -2393,22 +3246,6 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
                         
-
-            tableH = t.calculateHeights(); //  + 500;            
-            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
-            tableW = t.getTotalWidth();
-            tableX = (pageWidth - tableW)/2;
-            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
-
-            this.addNewPage();
-            y = this.currentYLevel;
-             
-            t = new PdfPTable( new float[]{5,5,80} );
-            t.setHorizontalAlignment( Element.ALIGN_CENTER );
-            t.setTotalWidth( outerWid );
-            t.setLockedWidth( true );
-            t.setSplitRows(true);
-            setRunDirection( t );
 
             c = new PdfPCell( new Paragraph( lmsg( "fp.p4"  ), fontBold ));
             c.setBorder( Rectangle.NO_BORDER );
@@ -2429,6 +3266,24 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setPaddingBottom( 12 );
             setRunDirection(c);
             t.addCell( c );            
+            
+
+            tableH = t.calculateHeights(); //  + 500;            
+            tableY = y; //  usablePageHeight - (usablePageHeight- tableH)/4;
+            tableW = t.getTotalWidth();
+            tableX = (pageWidth - tableW)/2;
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+
+            this.addNewPage();
+            y = this.currentYLevel;
+             
+            t = new PdfPTable( new float[]{5,5,80} );
+            t.setHorizontalAlignment( Element.ALIGN_CENTER );
+            t.setTotalWidth( outerWid );
+            t.setLockedWidth( true );
+            t.setSplitRows(true);
+            setRunDirection( t );
+            
             
             c = new PdfPCell( new Paragraph( lmsg( "scr.title" ), this.getFontBold() ));
             c.setBorder( Rectangle.NO_BORDER );
@@ -2641,6 +3496,55 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             for( int i=1;i<=7;i++ )
                 contentsItems.add( i + ". " + lmsg("contents." + i) );
             
+            float y = addTitle( pageHeight - headerHgt - 60 , lmsg("contents.title"), null );  
+            
+            y -= TPAD;
+            
+                        // First, add a table
+            PdfPTable t = new PdfPTable( 1 );
+
+            t.setTotalWidth( pageWidth - 2*(CT2_MARGIN + CT2_TEXT_EXTRAMARGIN - 2 ) );
+            
+            t.setLockedWidth( true );
+            setRunDirection(t);
+
+            PdfPCell c = t.getDefaultCell();
+            c.setPadding( 5 );
+            // c.setPaddingRight( 15 );
+            // c.setPaddingBottom( 25 );
+            c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setBorderWidth( 0 );
+            setRunDirection(c);
+            
+            Font tcFont = this.getFontLarge();
+            
+            Paragraph p;
+
+            String spacer = "   ";
+            
+            
+            for( String s : contentsItems )
+            {
+
+                p = new Paragraph( s, tcFont );            
+                DottedLineSeparator dls = new DottedLineSeparator();            
+                p.add( new Chunk( dls ) );            
+                p.add( "3" );
+                t.addCell( p );
+            }
+            
+            float tableH = t.calculateHeights(); //  + 500;
+
+            float tableY = y; //  + 10 - (y - pageHeight/2 - tableH)/2;
+
+            float tableW = t.getTotalWidth();
+
+            float tableX = (pageWidth - tableW)/2;
+
+            t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );
+            
+            /*
             float y = currentYLevel; // addTitle( currentYLevel, lmsg( "g.PreparationNotes" ), null );
 
             // First create the table
@@ -2651,7 +3555,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             for( String s : contentsItems )
             {
-                cl.add( new Chunk( s, this.font ) );                
+                cl.add( new Chunk( s, this.fontLarge ) );                
             }
            
             float tableWid = ITextUtils.getMaxChunkWidth( cl ) + 50;
@@ -2718,7 +3622,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             float tableX = (pageWidth - tableW)/2;
 
             t.writeSelectedRows(0, -1,tableX, tableY, pdfWriter.getDirectContent() );    
-            
+            */
         }
         catch( Exception e )
         {
