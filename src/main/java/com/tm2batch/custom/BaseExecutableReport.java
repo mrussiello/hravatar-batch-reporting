@@ -69,7 +69,7 @@ public class BaseExecutableReport {
         // check freq.
         FrequencyType freqType = FrequencyType.getValue( batchReport.getFrequencyTypeId() );
         
-        if( freqType.equals( FrequencyType.NEVER) )
+        if( !overrideSendFreq && freqType.equals( FrequencyType.NEVER) )
             throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport.Frequency is NEVER" );
         
         if( !overrideSendFreq && batchReport.getLastSendDate()!=null && batchReport.getLastSendDate().after( freqType.getCutoffDate() ))
