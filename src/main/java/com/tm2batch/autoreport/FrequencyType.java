@@ -23,8 +23,7 @@ public enum FrequencyType
     WEEKLY_F(24,"Weekly-Fridays",0,0,1,0),
     DAILY(25,"Daily",0,0,0,1),
     DAILY_MWF(26,"Daily-MonWedFri",0,0,0,2),
-    DAILY_TTH(27,"Daily-TueThurs",0,0,0,2),
-    ;
+    DAILY_TTH(27,"Daily-TueThurs",0,0,0,2);
 
     private final int frequencyTypeId;
 

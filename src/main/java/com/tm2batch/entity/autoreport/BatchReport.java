@@ -75,6 +75,9 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     @Column(name="wholetimeunitsonly")
     private int wholeTimeUnitsOnly;    
 
+    @Column(name="weeksback")
+    private int weeksBack;
+
     @Column(name="monthsback")
     private int monthsBack;
 
@@ -399,6 +402,17 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
             if( this.wholeTimeUnitsOnly==1 )
             {
                 cal.set( Calendar.DAY_OF_MONTH, 1);
+                cal.set( Calendar.HOUR_OF_DAY, 0);
+                cal.set( Calendar.MINUTE, 0);
+                cal.set( Calendar.SECOND, 0);
+            }
+        }
+
+        if( weeksBack!=0 )
+        {
+            cal.add( Calendar.WEEK_OF_YEAR, -1*weeksBack );
+            if( this.wholeTimeUnitsOnly==1 )
+            {
                 cal.set( Calendar.HOUR_OF_DAY, 0);
                 cal.set( Calendar.MINUTE, 0);
                 cal.set( Calendar.SECOND, 0);
@@ -908,6 +922,14 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
 
     public void setScheduleDate(Date scheduleDate) {
         this.scheduleDate = scheduleDate;
+    }
+
+    public int getWeeksBack() {
+        return weeksBack;
+    }
+
+    public void setWeeksBack(int weeksBack) {
+        this.weeksBack = weeksBack;
     }
 
     

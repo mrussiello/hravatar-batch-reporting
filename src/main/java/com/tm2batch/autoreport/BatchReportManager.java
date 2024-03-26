@@ -126,20 +126,25 @@ public class BatchReportManager
             if( autoReportFacade==null )
                 autoReportFacade = AutoReportFacade.getInstance();
             
+            // all Batch Reports that have a defined freq
             List<BatchReport> brl = autoReportFacade.getActiveBatchReportList();
             
+            // all active batch reports that have a valid send date (before now).
             List<BatchReport> brl2 = autoReportFacade.getOneTimeActiveBatchReportList();
 
             LogService.logIt("BatchReportManager.reportBatch() AAA.1 Found " + brl.size() + " active BatchReports and " + brl2.size() + " Active One-Time reports to process." );
             
+            // get the one times and review them for need to execute.
             for( BatchReport br : brl2 )
             {
+                // no schedule date. Should not happen for this group of Batch Reports
                 if( br.getScheduleDate()==null )
                 {
                     LogService.logIt("BatchReportManager.reportBatch() UERR skipping scheduleDate batchReportId=" + br.getBatchReportId() + " because scheduleDate is null. Something WRONG." );
                     continue;
                 }
                 
+                // send after schedule date. 
                 if( br.getLastSendDate()!=null && br.getLastSendDate().after(br.getScheduleDate()) )
                 {
                     LogService.logIt("BatchReportManager.reportBatch() removing scheduleDate for batchReportId=" + br.getBatchReportId() + " because lastSendDate (" + br.getLastSendDate().toString() + ") is greater than schedule date (" + br.getScheduleDate().toString() + ")." );
@@ -147,8 +152,11 @@ public class BatchReportManager
                     autoReportFacade.saveBatchReport(br);
                     continue;
                 }
+                
+                // already in list as a n active.
                 if( brl.contains(br) )
                     continue;
+                
                 brl.add(br);                
             }
             
@@ -172,6 +180,7 @@ public class BatchReportManager
                 
                 // LogService.logIt("BatchReportManager.reportBatch() AAA.3 Starting BatchReport " + batchReport.getTitle() + " (" + batchReport.getBatchReportId() + ")" );
 
+                
                 if( !readyForExecution(batchReport) )
                     continue;
                 
@@ -221,10 +230,13 @@ public class BatchReportManager
             br.setUser( userFacade.getUser( br.getUserId() ));
         }
         
-        // if it has an existing schedule date.
+        // if it has an existing schedule date prior to now.
         if( br.getScheduleDate()!=null && br.getScheduleDate().before( new Date()))
             return true;
         
+        // only freq based sends here. br.scheduleDate=null
+        
+        // Not ok to send today based on freq
         if( !freqType.isTodayOkToSend( br.getTimeZone() ) )
         {
             // LogService.logIt( "BatchReportManager.readyForExecution() Not Ready because freq type returned NOT OK to send. TimeZone=" + br.getTimeZoneId() +", batchReportId=" + br.getBatchReportId() + ", " + br.getTitle() );

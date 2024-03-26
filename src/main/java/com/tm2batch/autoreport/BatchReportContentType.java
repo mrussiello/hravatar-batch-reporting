@@ -29,8 +29,7 @@ public enum BatchReportContentType
         this.className=className;
         this.standard=standard;
     }
-
-
+    
     public boolean getIsTest()
     {
         return equals(STD_TEST );
