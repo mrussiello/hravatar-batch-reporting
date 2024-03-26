@@ -90,7 +90,11 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
     
     protected ReportUtils reportUtils;
     
-     
+    public int overallScorePrecisionDigits = 2;
+
+    public int competencyScorePrecisionDigits = 2;
+
+    
     public abstract void initForSource();
     
 
@@ -134,6 +138,8 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
         reportColors.barGraphCoreShade1 = new BaseColor( 0x91, 0x21, 0x38 ); // f68d2f // new BaseColor( 0xf6, 0x8d, 0x2f ); // f68d2f
         reportColors.barGraphCoreShade2 = new BaseColor( 0xff, 0x3b, 0x62 );      // ff3b62               
 
+        
+        
         try
         {
             if( logoUrl != null && !logoUrl.isBlank() )
@@ -176,6 +182,12 @@ public abstract class UMinnJusticeReportSettings extends StandardReportSettings 
             headerLogo.scalePercent( 46 );
             headerLogoWhiteTrans.scalePercent( 38 );
 
+            if( reportData.getReport()!=null && reportData.getReport().getIntParam2()>0 )
+                overallScorePrecisionDigits = reportData.getReport().getIntParam2();
+
+            if( reportData.getReport()!=null && reportData.getReport().getIntParam3()>0 )
+                competencyScorePrecisionDigits = reportData.getReport().getIntParam3();
+            
             // LogService.logIt( "UMinnJusticeReportSettings.initExtra() BBB headerLogoWhiteTrans.scaledHeight " +  headerLogoWhiteTrans.getScaledHeight() );                
         }
         catch( Exception e )

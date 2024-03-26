@@ -160,7 +160,7 @@ public class OrgJusticeTestEvent {
             }
         }
         
-        boolean asianPac = false;
+        //boolean asianPac = false;
         int points = 0;
         
         UMinnJusticeItemType itemType;
@@ -184,43 +184,43 @@ public class OrgJusticeTestEvent {
             }
             
             
-            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-2-enthnicity" ) )
+            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-2-enthnicity" ) )
             {
                 points = (int) ir.getItemScore();
                 if( points==1 || points==3 || points==5 )
                     urim=1;
-                else if( points==2 )
-                    asianPac = true;
+                //else if( points==2 )
+                //    asianPac = true;
             }
 
-            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-3-asian-cat" ) )
+            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-3-asian-cat" ) )
             {
                 points = (int) ir.getItemScore();
                 if( points==1 || points==2 || points==3 || points==5 || points==6 || points==8 || points==11 || points==12 || points==13 || points==15 || points==16 || points==17 || points==18 )
                     urim=1;
             }
             
-            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-11-childhood-income" ) )
+            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-11-childhood-income" ) )
             {
                 points = (int) ir.getItemScore();
                 if( points==5 || points==6 )
                     urim=1;
             }
 
-            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-14-firstgen" ) )
+            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-14-firstgen" ) )
             {
                 points = (int) ir.getItemScore();
                 if( points>=1 )
                     urim=1;                
             }
 
-            else if( ir.getIdentifier().equalsIgnoreCase( "OJ-Intro-2-LearnerGroup" ) )
+            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJ-Intro-2-LearnerGroup" ) )
                 learnerGroup = (int) ir.getItemScore();
 
-            else if( ir.getIdentifier().equalsIgnoreCase( "CJDS-I-16-LearnerStatus" ) )
+            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "CJDS-I-16-LearnerStatus" ) )
                 learnerStatus = (int) ir.getItemScore();
 
-            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-1-age" ) && ir.getSelectedValue()!=null && !ir.getSelectedValue().isBlank() )
+            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-1-age" ) && ir.getSelectedValue()!=null && !ir.getSelectedValue().isBlank() )
             {
                 try
                 {
@@ -232,7 +232,7 @@ public class OrgJusticeTestEvent {
                 }
             }
 
-            else if( ir.getIdentifier().equalsIgnoreCase( "OJDEM-7-gender" ) )
+            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-7-gender" ) )
                 genderTypeId = (int) ir.getItemScore();
             
         }
@@ -256,10 +256,13 @@ public class OrgJusticeTestEvent {
     public boolean hasValidData()
     {        
         if( groupScores==null || groupScores.length<7 )
+        {
+            return false;
+        }
+        
+        if( dimensionScores==null || dimensionScores.length<4 )
             return false;
         
-        if( dimensionScores==null || dimensionScores.length<7 )
-            return false;
         for( float i : groupScores )
         {
             if( i<=0 )
@@ -277,25 +280,25 @@ public class OrgJusticeTestEvent {
     {
         StringBuilder sb = new StringBuilder();
         if( groupScores==null || groupScores.length<7 )
-            sb.append( "GroupScores array invalid: " + (groupScores==null ? "null" : "length=" + groupScores.length ) );
+            sb.append( "GroupScores array invalid: " + (groupScores==null ? "null" : "length=" + groupScores.length ) + "\n" );
 
         else
         {
             for( int i=0;i<groupScores.length;i++ )
             {
                 if( groupScores[i]<=0 )
-                    sb.append( "Score for group index " + i  + " (" + UMinnJusticeGroupType.getValue( i+1 ).getName() + ") is invalid: " + groupScores[i] );
+                    sb.append( "Score for group index " + i  + " (" + UMinnJusticeGroupType.getValue( i+1 ).getName() + ") is invalid: " + groupScores[i] + "\n" );
             }            
         }
         
-        if( dimensionScores==null || dimensionScores.length<7 )
-            sb.append( "DimensionScores array invalid: " + (dimensionScores==null ? "null" : "length=" + dimensionScores.length ) );
+        if( dimensionScores==null || dimensionScores.length<4 )
+            sb.append( "DimensionScores array invalid: " + (dimensionScores==null ? "null" : "length=" + dimensionScores.length ) + "\n" );
         else
         {
             for( int i=0;i<dimensionScores.length;i++ )
             {
                 if( dimensionScores[i]<=0 )
-                    sb.append( "Score for dimension index " + i  + " (" + UMinnJusticeDimensionType.getValue( i+1 ).getName() + ") is invalid: " + dimensionScores[i] );
+                    sb.append( "Score for dimension index " + i  + " (" + UMinnJusticeDimensionType.getValue( i+1 ).getName() + ") is invalid: " + dimensionScores[i] + "\n" );
             }            
         }
         

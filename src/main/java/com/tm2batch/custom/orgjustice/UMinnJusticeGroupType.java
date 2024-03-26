@@ -7,7 +7,7 @@ public enum UMinnJusticeGroupType
     CLINICAL_SUPERVISORS(1,"Clinical Supervisors", "OJCS", new int[]{1,2,3,4}),
     PROGRAM_LEADERS(2,"Program Leaders", "OJPL", new int[]{1,2,3,4}),
     INTERPROF(3,"Interprofessional Team Members", "OJIPTM", new int[]{1,2,3}),
-    OPERATIONS(4,"Operations", "OJOS", new int[]{1}),
+    OPERATIONS(4,"Operations Staff", "OJOS", new int[]{1}),
     CONSULTANTS(5,"Consultants", "OJCON", new int[]{1,2,3}),
     COLLEAGUES(6,"Colleagues", "OJCOL", new int[]{1,2,3,4}),
     PATIENTS(7,"Patients and Families", "OJPAT", new int[]{1});

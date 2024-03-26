@@ -39,7 +39,7 @@ public class OrgJusticeReport extends BaseExecutableReport implements Executable
     
     byte[] bytes;
     
-    OrgJusticeFacade orgJusticeFacade;
+    // OrgJusticeFacade orgJusticeFacade;
     EventFacade eventFacade;
     
     OrgJusticeUtils orgJusticeUtils;
@@ -51,7 +51,7 @@ public class OrgJusticeReport extends BaseExecutableReport implements Executable
 
     @Override
     public String toString() {
-        return "StandardRefCheckReport{" + '}';
+        return "OrgJusticeReport{" + '}';
     }
     
     
