@@ -4,8 +4,10 @@
  */
 package com.tm2batch.service;
 
+import com.tm2batch.global.RuntimeConstants;
 import com.tm2batch.util.Base64Encoder;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
@@ -21,7 +23,6 @@ import javax.crypto.spec.DESedeKeySpec;
 
 public class StringEncrypter
 {
-
     public static final String  DESEDE_ENCRYPTION_SCHEME = "DESede";
 
     public static final String  DES_ENCRYPTION_SCHEME    = "DES";
@@ -36,7 +37,7 @@ public class StringEncrypter
 
     public StringEncrypter(String encryptionScheme) throws EncryptionException
     {
-        this(encryptionScheme, EncryptUtils.DEFAULT_ENCRYPTION_KEY);
+        this(encryptionScheme, RuntimeConstants.getStringValue("stringEncryptorKey"));
     }
 
     public StringEncrypter(String encryptionScheme, String encryptionKey)
@@ -97,7 +98,9 @@ public class StringEncrypter
         }
     }
 
-    public String decrypt(String encryptedString) throws EncryptionException
+
+    /*
+    public String decrypt_OLD(String encryptedString) throws EncryptionException
     {
         if (encryptedString == null || encryptedString.trim().length() <= 0)
             throw new IllegalArgumentException(
@@ -114,10 +117,112 @@ public class StringEncrypter
             throw new EncryptionException(e);
         }
     }
+    */
+
+
+
+    public String decrypt(String encryptedString) throws EncryptionException
+    {
+        if( encryptedString==null || encryptedString.isEmpty() )
+            return null;
+
+        String es = encryptedString;
+
+        try
+        {
+
+            String out = decryptNoError( es );
+
+            if( out!=null && !out.isEmpty() )
+                return out;
+
+            es = URLDecoder.decode(es,"UTF8" );
+
+            es = es.replace('_', '+');
+
+            es = es.replace('-', '/');
+
+            es = es.replace('*', '=');
+
+            out = decryptNoError( es );
+
+            if( out!=null && !out.isEmpty() )
+                return out;
+
+            es = encryptedString + "*";
+
+            out = decryptNoError( es );
+
+            if( out!=null && !out.isEmpty() )
+                return out;
+
+
+            es = encryptedString + "=";
+
+            out = decryptNoError( es );
+
+            if( out!=null && !out.isEmpty() )
+                return out;
+
+            return null;
+
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "StringEncryptor.decrypt() encryptedString=" + encryptedString + ", es=" + es );
+
+            return null;
+        }
+
+    }
+
+
+    public String decryptNoError(String encryptedString) throws EncryptionException
+    {
+        if (encryptedString == null || encryptedString.trim().length() <= 0)
+            return null;
+         //   throw new IllegalArgumentException(
+         //           "encrypted string was null or empty");
+        try
+        {
+            SecretKey key = keyFactory.generateSecret(keySpec);
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] cleartext = Base64Encoder.decode( encryptedString );
+            byte[] ciphertext = cipher.doFinal(cleartext);
+            return bytes2String(ciphertext);
+        } catch (Exception e)
+        {
+            LogService.logIt( "StringEncryptor.decryptNoError() NONFATAL ERROR " + encryptedString + ", " + e.toString() );
+            return null;
+            // throw new EncryptionException(e);
+        }
+    }
+
+    /*
+    public String decrypt(String encryptedString) throws EncryptionException
+    {
+        if (encryptedString == null || encryptedString.trim().length() <= 0)
+            throw new IllegalArgumentException(
+                    "encrypted string was null or empty");
+        try
+        {
+            SecretKey key = keyFactory.generateSecret(keySpec);
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] cleartext = Base64Encoder.decode( encryptedString );
+            byte[] ciphertext = cipher.doFinal(cleartext);
+            return bytes2String(ciphertext);
+        }
+
+        catch (Exception e)
+        {
+                throw new EncryptionException(e);
+        }
+    }
+    */
 
     private static String bytes2String(byte[] bytes)
     {
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         for (int i = 0; i < bytes.length; i++)
         {
             stringBuffer.append((char) bytes[i]);

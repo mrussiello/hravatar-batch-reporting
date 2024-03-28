@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SealedObject;
+import javax.crypto.SecretKey;
 
 
 public class RuntimeConstants
@@ -21,6 +25,8 @@ public class RuntimeConstants
     private static Map<String, Object> cache = null;
 
     public static boolean DEBUG = false;
+
+    public static SecretKey sealedObjectSecretKey = null;
 
     /**
      * Init
@@ -62,11 +68,6 @@ public class RuntimeConstants
         cache.put( "tm2batch_rest_api_password", "" );     
         
         cache.put( "systemerrornotifyemails" , "mike@hravatar.com" );
-        
-        
-        // Note - these are the credentials for S3 Administrator. No other services used by this application.
-        //cache.put( "awsAccessKey", "" );
-        //cache.put( "awsSecretKey", "" );
 
         cache.put( "awsBucket", "cfmedia-hravatar-com" );
         cache.put( "awsBucketLvRecording", "lv-hravatar-com" );
@@ -92,15 +93,9 @@ public class RuntimeConstants
 
         
         cache.put( "applicationSystemId", (int)( 1405 ) );
-        
-        // ////////////////////////////////////////////////////////////////////////////
-        // AWS Creds
-        // ////////////////////////////////////////////////////////////////////////////
-        
-        
-        //cache.put( "awsAccessKey", "" );
-        //cache.put( "awsSecretKey", "" );
-        
+
+        cache.put( "stringEncryptorKey",  "" );
+        cache.put( "stringEncryptorKeyFileSafe",  "" );
         
         
         // ////////////////////////////////////////////////////////////////////////////
@@ -159,7 +154,86 @@ public class RuntimeConstants
         propertiesFile = (String) cache.get( "secretsFile" );
         if( propertiesFile != null && !propertiesFile.isBlank() )
             loadProperties( propertiesFile );
+        convertSecretsToSealedObjects();                
+    }
+    
+    private static synchronized void convertSecretsToSealedObjects()
+    {
+        if( sealedObjectSecretKey!=null )
+            return;
+        
+        try
+        {
+            sealedObjectSecretKey = KeyGenerator.getInstance("DES").generateKey();
+            Cipher ecipher = Cipher.getInstance("DES");
+            ecipher.init(Cipher.ENCRYPT_MODE, sealedObjectSecretKey );
 
+            substituteStringWithSealedObject( "secretsFile", ecipher );
+            substituteStringWithSealedObject( "stringEncryptorKey", ecipher );
+            substituteStringWithSealedObject( "stringEncryptorKeyFileSafe", ecipher );
+            substituteStringWithSealedObject( "twilio.auhtoken", ecipher );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "RuntimeConstants.convertSecretsToSealedObjects()" );
+        }
+    }
+    
+    private static String getStringValueFromSealedObject( String cacheKey, SealedObject so )
+    {
+        if( cacheKey==null || cacheKey.isBlank() )
+            return null;
+        
+        try
+        {
+            if( so==null )
+            {
+                Object o = cache.get(cacheKey);
+                if( o ==null )
+                    return null;
+                else if( o instanceof String )
+                    return (String)o;
+                else if( o instanceof SealedObject )
+                    so = (SealedObject)o;
+                else
+                    throw new Exception( "Cache value for key=" + cacheKey + " is not a String or SealedObject: " + o.getClass().getName() );                
+            }
+            Cipher dcipher = Cipher.getInstance("DES");
+            dcipher.init(Cipher.DECRYPT_MODE, sealedObjectSecretKey);
+            return (String) so.getObject(dcipher);
+        }
+        catch( Exception e )
+        {
+            LogService.logIt("RuntimeConstants.getStringValueFromSealedObject() NONFATAL " + e.toString() + ", cacheKey=" + cacheKey ); 
+        }
+        return null;
+    }
+    
+    private static void substituteStringWithSealedObject( String cacheKey, Cipher cipher )
+    {
+        try
+        {
+            if( cacheKey==null || cacheKey.isBlank() )
+            {
+                LogService.logIt( "RuntimeConstants.substituteStringWithSealedObject() cacheKey is invalid (null or empty). Skipping." );
+                return;
+            }
+            
+            Object o = cache.get(cacheKey );
+            if( o==null )
+                throw new Exception( "no entry found for CacheKey " + cacheKey );
+            
+            if( !(o instanceof String) )
+                throw new Exception( "Value for CacheKey " + cacheKey + " is not a String. Class="  + (o.getClass().getName()) );
+            
+            SealedObject so = new SealedObject((String)o, cipher);
+            cache.put( cacheKey, so );
+            
+        }
+        catch( Exception e )
+        {
+            LogService.logIt("RuntimeConstants.substituteStringWithSealedObject() NONFATAL " + e.toString() + ", cacheKey=" + cacheKey );
+        }
     }
     
     private static void loadProperties( String propertiesFile )
@@ -282,7 +356,14 @@ public class RuntimeConstants
      */
     public static String getStringValue( String theKey )
     {
-        return (String) cache.get( theKey );
+        Object o = cache.get( theKey );
+        
+        if( o==null )
+            return null;
+        if( o instanceof SealedObject )
+            return RuntimeConstants.getStringValueFromSealedObject(theKey, (SealedObject)o);
+        
+        return (String)o;
     }
 
 

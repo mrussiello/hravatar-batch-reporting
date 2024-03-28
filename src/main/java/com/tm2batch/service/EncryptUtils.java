@@ -4,6 +4,7 @@
  */
 package com.tm2batch.service;
 
+import com.tm2batch.global.RuntimeConstants;
 import com.tm2batch.global.STException;
 
 
@@ -12,46 +13,39 @@ import com.tm2batch.global.STException;
 
 public class EncryptUtils
 {
+    public static StringEncrypter ENCRYPTER;
+    public static StringEncrypter FILE_ENCRYPTER;
 
-    public static final String  DEFAULT_ENCRYPTION_KEY   = "MIFavor1teSp0rt1s10nnisOooutsydeInTheSun";
-
-
-    public static final String  DEFAULT_FILE_ENCRYPTION_KEY   = "JustALittle5923FuN098sWSDFGWETheSDFsddQ";
-
-
-
-    public static String urlSafeEncrypt( long i , String key ) throws Exception
+    public static synchronized void init()
     {
+        if( ENCRYPTER!=null )
+            return;
+        
         try
         {
-            return urlSafeEncrypt( Long.toString( i ) , key );
+            ENCRYPTER = new StringEncrypter( StringEncrypter.DES_ENCRYPTION_SCHEME , RuntimeConstants.getStringValue("stringEncryptorKey") );
+            FILE_ENCRYPTER = new StringEncrypter( StringEncrypter.DES_ENCRYPTION_SCHEME , RuntimeConstants.getStringValue("stringEncryptorKeyFileSafe") );            
         }
-
         catch( Exception e )
         {
-            LogService.logIt( e ,  "urlSafeEncrypt( value=" + i + ", key=" + key + " ) "  );
-
-            throw new STException( e );
+            LogService.logIt(e, "EncryptUtils.init()" );
         }
-
     }
-
-
 
     public static String urlSafeEncrypt( long i ) throws Exception
     {
+       if( EncryptUtils.ENCRYPTER==null )
+           init();
+       
         try
         {
-            return urlSafeEncrypt( Long.toString( i ) );
+            return urlSafeEncrypt( Long.toString( i ), EncryptUtils.ENCRYPTER );
         }
-
         catch( Exception e )
         {
-            LogService.logIt( e ,  "urlSafeEncrypt( value=" + i + " ) "  );
-
+            LogService.logIt( e ,  "EncryptUtils.urlSafeEncrypt( value=" + i + " ) "  );
             throw new STException( e );
         }
-
     }
 
 
@@ -59,29 +53,46 @@ public class EncryptUtils
 
    public static String urlSafeEncrypt( String s ) throws Exception
    {
+       if( EncryptUtils.ENCRYPTER==null )
+           init();
+       
        try
        {
-           return urlSafeEncrypt( s , null );
+           return urlSafeEncrypt( s , EncryptUtils.ENCRYPTER );
        }
-
        catch( Exception e )
        {
-           LogService.logIt( e ,  "urlSafeEncrypt( " + s + " ) "  );
-
+           LogService.logIt( e ,  "EncryptUtils.urlSafeEncrypt( " + s + " ) "  );
            throw new STException( e );
        }
-
    }
 
+    public static String urlSafeEncrypt( long i , StringEncrypter encrypter ) throws Exception
+    {
+        try
+        {
+            return urlSafeEncrypt( Long.toString( i ) , encrypter );
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e ,  "EncryptUtils.urlSafeEncrypt( value=" + i + " ) "  );
+            throw new STException( e );
+        }
+    }
 
     /**
 
      * Encodes a string into a url-friendly base64 encoded string
 
      */
-    public static String urlSafeEncrypt( String s ,
-                                         String key ) throws Exception
+    public static String urlSafeEncrypt( String s , StringEncrypter encrypter ) throws Exception
     {
+       if( EncryptUtils.ENCRYPTER==null )
+           init();
+       
+        if( encrypter==null )
+            encrypter = EncryptUtils.ENCRYPTER;
+       
         try
         {
             String newStr = null;
@@ -91,35 +102,27 @@ public class EncryptUtils
 
             if (s != null) {
 
-                newStr = encryptString(s , key );
+                newStr = encryptString(s , encrypter );
 
                 newStr = newStr.replace( '+', '_');
-
                 newStr = newStr.replace( '/', '-');
-
                 newStr = newStr.replace( '=', '*');
-
                 newStr = newStr.replaceAll( ">", "");
-
                 newStr = newStr.replaceAll( "<", "");
-
                 newStr = newStr.replaceAll( "\n", "");
-
                 newStr = newStr.replaceAll( "\r", "");
-
             }
 
             return newStr;
         }
-
         catch( Exception e )
         {
-            LogService.logIt( e ,  "urlSafeEncrypt( value=" + s + ", key=" + key + " ) "  );
-
+            LogService.logIt( e ,  "EncryptUtils.urlSafeEncrypt( value=" + s + " ) "  );
             throw new STException( e );
         }
-
     }
+
+
 
 
     /**
@@ -133,13 +136,14 @@ public class EncryptUtils
     {
         try
         {
+            if( EncryptUtils.ENCRYPTER==null )
+                init();
+            
             if( s != null )
                 s = s.trim();
 
-            String newStr = urlSafeEncrypt( s , DEFAULT_FILE_ENCRYPTION_KEY );
-
+            String newStr = urlSafeEncrypt( s , EncryptUtils.FILE_ENCRYPTER );
             newStr = newStr.replace( '*', '-');
-
             return newStr;
         }
 
@@ -147,15 +151,43 @@ public class EncryptUtils
         {
             throw e;
         }
-
         catch( Exception e )
         {
-            LogService.logIt( e ,  "fileSafeEncrypt( value=" + s + " ) "  );
-
+            LogService.logIt( e ,  "EncryptUtils.fileSafeEncrypt( value=" + s + " ) "  );
             throw new STException( e );
         }
-
     }
+
+    public static String fileSafeDecrypt( String s ) throws Exception
+    {
+        if( EncryptUtils.ENCRYPTER==null )
+            init();
+            
+        try
+        {
+            if( s != null )
+                s = s.trim();
+
+            if( s != null )
+            {
+                s = s.replace( '-', '=');
+                s = s.replace('_', '+');
+                s = decryptString(s , EncryptUtils.FILE_ENCRYPTER );
+            }
+
+            return s;
+        }
+        catch( STException e )
+        {
+            throw e;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e ,  "EncryptUtils.fileSafeDecrypt( value=" + s + " ) "  );
+            throw new STException( e );
+        }
+    }
+
 
 
     /**
@@ -168,12 +200,15 @@ public class EncryptUtils
      */
     public static String javascriptSafeEncrypt( String s ) throws Exception
     {
+        if( EncryptUtils.ENCRYPTER==null )
+            init();
+        
         try
         {
             if( s != null )
                 s = s.trim();
 
-            String newStr = urlSafeEncrypt( s , DEFAULT_FILE_ENCRYPTION_KEY );
+            String newStr = urlSafeEncrypt( s , EncryptUtils.FILE_ENCRYPTER );
 
             newStr = newStr.replace( '*', '_');
 
@@ -181,19 +216,15 @@ public class EncryptUtils
 
             return newStr;
         }
-
         catch( STException e )
         {
             throw e;
         }
-
         catch( Exception e )
         {
             LogService.logIt( e ,  "fileSafeEncrypt( value=" + s + " ) "  );
-
             throw new STException( e );
         }
-
     }
 
 
@@ -201,20 +232,23 @@ public class EncryptUtils
     public static String urlSafeDecrypt( String s ) throws Exception
     {
 
-        try
-        {
+        if( EncryptUtils.ENCRYPTER==null )
+            init();
+        
+        //try
+        //{
             if( s == null || s.length() == 0 )
                 return s;
 
-            return urlSafeDecrypt( s , null );
-        }
+            return urlSafeDecrypt( s , EncryptUtils.ENCRYPTER );
+        //}
 
-        catch( Exception e )
-        {
-            LogService.logIt( e ,  "urlSafeDecrypt( " + s + " ) " + e.toString()  );
+        //catch( Exception e )
+        //{
+        //    LogService.logIt( e ,  "urlSafeDecrypt( " + s + " ) " + e.toString()  );
 
-            throw new STException( e );
-        }
+       //     throw new STException( e );
+        //}
     }
 
 
@@ -225,41 +259,32 @@ public class EncryptUtils
 
      */
 
-    public static String urlSafeDecrypt(String s , String key ) throws Exception
+    public static String urlSafeDecrypt(String s , StringEncrypter encrypter ) throws Exception
     {
+       if( EncryptUtils.ENCRYPTER==null )
+           init();
+       
+        if( encrypter==null )
+            encrypter = EncryptUtils.ENCRYPTER;
+        
+        String newStr = s;
 
-        try
+        if (newStr != null)
         {
-            String newStr = s;
+            newStr = newStr.trim();
 
-            if (newStr != null)
-            {
-                newStr = newStr.trim();
+            if( newStr.length() > 0 && newStr.length() % 4 == 3 )
+                newStr += "*";
 
-                if( newStr.length() > 0 &&
-                        newStr.length() % 4 == 3 )
-                    newStr += "*";
-
-                newStr = newStr.replaceAll( "%2A", "*" );
-
-                newStr = newStr.replace('_', '+');
-
-                newStr = newStr.replace('-', '/');
-
-                newStr = newStr.replace('*', '=');
-
-                newStr = decryptString(newStr , key );
-            }
-
-            return newStr;
+            newStr = newStr.replaceAll( "%2a", "*" );
+            newStr = newStr.replaceAll( "%2A", "*" );
+            newStr = newStr.replace('_', '+');
+            newStr = newStr.replace('-', '/');
+            newStr = newStr.replace('*', '=');
+            newStr = decryptString(newStr , encrypter );
         }
 
-        catch( Exception e )
-        {
-            LogService.logIt( e ,  "urlSafeDecrypt( value=" + s + ", key=" + key + " ) " + e.toString()  );
-
-            throw new STException( e );
-        }
+        return newStr;
     }
 
 
@@ -268,37 +293,20 @@ public class EncryptUtils
 
 
 
-    protected static String decryptString( String inStr , String key ) throws Exception
+    protected static String decryptString( String inStr , StringEncrypter encrypter ) throws Exception
     {
-        try
-        {
-            if( inStr == null )
-                return null;
+        if( inStr == null )
+            return null;
 
-            if( inStr.length() == 0 )
-                return inStr;
+        if( inStr.length() == 0 )
+            return inStr;
 
-            //
-            // if( encrypter == null )
-            //     initEncrypter();
-
-            StringEncrypter encrypter = new StringEncrypter( StringEncrypter.DES_ENCRYPTION_SCHEME , key == null ? DEFAULT_ENCRYPTION_KEY : key );
-
-            return encrypter.decrypt( inStr );
-        }
-
-        catch( Exception e )
-        {
-            LogService.logIt( e ,  "decryptString( " + inStr + " ) " + e.toString()  );
-
-            throw new STException( e );
-        }
-
+        return encrypter.decrypt( inStr );
     }
 
 
 
-    protected static String encryptString( String inStr , String key ) throws Exception
+    protected static String encryptString( String inStr , StringEncrypter encrypter ) throws Exception
     {
         try
         {
@@ -307,17 +315,12 @@ public class EncryptUtils
 
             if( inStr.length() == 0 )
                 return inStr;
-
-            StringEncrypter encrypter = new StringEncrypter( StringEncrypter.DES_ENCRYPTION_SCHEME , key == null ? DEFAULT_ENCRYPTION_KEY : key  );
-
-
+            
             return encrypter.encrypt( inStr );
         }
-
         catch( Exception e )
         {
             LogService.logIt( e ,  "encryptString( " + inStr + " ) " + e.toString()  );
-
             throw new STException( e );
         }
 
@@ -328,5 +331,4 @@ public class EncryptUtils
     {
         LogService.logIt( message );
     }
-
 }
