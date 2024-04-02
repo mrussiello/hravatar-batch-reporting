@@ -183,44 +183,96 @@ public class OrgJusticeTestEvent {
                     LogService.logIt( "OrgJusticeTestEvent() Cannot identify the itemType for item which has Group Type=" + groupType.getName() + ", itemResponseId=" + ir.getItemResponseId() + ", testEventId=" + ir.getTestEventId() );
             }
             
-            
-            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-2-enthnicity" ) )
-            {
-                points = (int) ir.getItemScore();
-                if( points==1 || points==3 || points==5 )
-                    urim=1;
-                //else if( points==2 )
-                //    asianPac = true;
-            }
 
-            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-3-asian-cat" ) )
-            {
-                points = (int) ir.getItemScore();
-                if( points==1 || points==2 || points==3 || points==5 || points==6 || points==8 || points==11 || points==12 || points==13 || points==15 || points==16 || points==17 || points==18 )
-                    urim=1;
-            }
-            
-            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-11-childhood-income" ) )
+            // URIM poor
+            if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-11-childhood-income" ) )
             {
                 points = (int) ir.getItemScore();
                 if( points==5 || points==6 )
                     urim=1;
             }
 
-            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-14-firstgen" ) )
+            // URIM Immigrant
+            if( urim==0 &&  ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-14-firstgen" ) )
             {
                 points = (int) ir.getItemScore();
                 if( points>=1 )
                     urim=1;                
             }
+            
+            // URIM Ethnicity
+            if( urim==0 && ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-2-enthnicity" ) )
+            {
+                points = (int) ir.getItemScore();
+                if( points==1 || points==3 || points==5 )
+                {
+                    urim=1;
+                }
+                
+                else
+                {
+                    String sel = ir.getSelectedValue();
+                    sel = sel==null ? "" : sel;
+                    if( sel.contains( "Black or African American") || 
+                        sel.contains( "American Indian or Alaska Native")  )
+                        urim=1;
+                }
+            }
 
-            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJ-Intro-2-LearnerGroup" ) )
+            // URIM Hispanic Category
+            if( urim==0 && ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-5-hispanic-category" ) )
+            {
+                points = (int) ir.getItemScore();
+                if( points==8 )
+                {
+                    urim=1;
+                }
+                
+                else
+                {
+                    String sel = ir.getSelectedValue();
+                    sel = sel==null ? "" : sel;
+                    if( sel.contains( "Puerto Rican")  )
+                        urim=1;
+                }
+            }
+            
+            // URIM Asian Category
+            if(  urim==0 && ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-3-asian-cat" ) )
+            {
+                points = (int) ir.getItemScore();
+                if( points==1 || points==2 || points==3 || points==5 || points==6 || points==8 || points==11 || points==12 || points==13 || points==15 || points==16 || points==17 || points==18 )
+                    urim=1;
+                else
+                {
+                    String sel = ir.getSelectedValue();
+                    sel = sel==null ? "" : sel;
+                    if( sel.contains( "Brunese" ) ||
+                        sel.contains( "Burmese" ) ||
+                        sel.contains( "Cambodian" ) ||
+                        sel.contains( "Timor-Leste" ) ||
+                        sel.contains( "Hmong" ) ||
+                        sel.contains( "Indonesian" ) ||
+                        sel.contains( "Laotian" ) ||
+                        sel.contains( "Malaysian" ) ||
+                        sel.contains( "Filipino" ) ||
+                        sel.contains( "Singaporean" ) ||
+                        sel.contains( "Thai" ) ||
+                        sel.contains( "Vietnamese" ) )
+                        urim=1;
+                }
+            }
+            
+
+            // learner group
+            if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJ-Intro-2-LearnerGroup" ) )
                 learnerGroup = (int) ir.getItemScore();
 
             else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "CJDS-I-16-LearnerStatus" ) )
                 learnerStatus = (int) ir.getItemScore();
 
-            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-1-age" ) && ir.getSelectedValue()!=null && !ir.getSelectedValue().isBlank() )
+            // Age
+            if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-1-age" ) && ir.getSelectedValue()!=null && !ir.getSelectedValue().isBlank() )
             {
                 try
                 {
@@ -232,8 +284,19 @@ public class OrgJusticeTestEvent {
                 }
             }
 
-            else if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-7-gender" ) )
+            // gender
+            if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-7-gender" ) )
+            {                
                 genderTypeId = (int) ir.getItemScore();
+                if( genderTypeId!=4 && genderTypeId!=5 )
+                {
+                    String selValue = ir.getSelectedValue();
+                    selValue = selValue==null ? "" : selValue.toLowerCase();
+                    if( selValue.contains("woman"))
+                        genderTypeId = 5;
+                    else if( selValue.contains("man"))
+                        genderTypeId = 4;                }
+            }
             
         }
     }
