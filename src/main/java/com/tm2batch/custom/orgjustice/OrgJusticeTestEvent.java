@@ -214,12 +214,14 @@ public class OrgJusticeTestEvent {
                     String sel = ir.getSelectedValue();
                     sel = sel==null ? "" : sel;
                     if( sel.contains( "Black or African American") || 
+                        sel.contains( "Hispanic or Latino/a")  ||
                         sel.contains( "American Indian or Alaska Native")  )
                         urim=1;
                 }
             }
 
             // URIM Hispanic Category
+            /*
             if( urim==0 && ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-5-hispanic-category" ) )
             {
                 points = (int) ir.getItemScore();
@@ -236,6 +238,7 @@ public class OrgJusticeTestEvent {
                         urim=1;
                 }
             }
+            */
             
             // URIM Asian Category
             if(  urim==0 && ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-3-asian-cat" ) )
