@@ -4,6 +4,7 @@
  */
 package com.tm2batch.custom.orgjustice;
 
+import com.tm2batch.service.LogService;
 import java.util.Date;
 
 /**
@@ -12,6 +13,8 @@ import java.util.Date;
  */
 public class OrgJusticeDataset 
 {
+    static boolean DEBUG = true;
+    
     int totalParticipants;
     
     Date[] dates;
@@ -25,6 +28,11 @@ public class OrgJusticeDataset
     float overallAvgFemale;
     float overallCountFemale;
 
+    float overallAvgOther;
+    float overallCountOther;
+
+    
+    
     float overallAvgUrim;
     float overallCountUrim;
 
@@ -57,6 +65,10 @@ public class OrgJusticeDataset
     
     float[] itemScoreAveragesFemale;
     float[] itemScoreCountsFemale;
+
+    float[] itemScoreAveragesOther;
+    float[] itemScoreCountsOther;
+    
     
     float[] itemScoreAveragesUrim;
     float[] itemScoreCountsUrim;
@@ -76,6 +88,9 @@ public class OrgJusticeDataset
     float[][] groupItemScoreAveragesFemale;
     float[][] groupItemScoreCountsFemale;
 
+    float[][] groupItemScoreAveragesOther;
+    float[][] groupItemScoreCountsOther;
+    
     // group id (0-70, item id (1-16)
     float[][] groupItemScoreAveragesUrim;
     float[][] groupItemScoreCountsUrim;
@@ -90,6 +105,9 @@ public class OrgJusticeDataset
 
     float[] groupAveragesFemale;
     float[] groupAveragesFemaleCounts;
+
+    float[] groupAveragesOther;
+    float[] groupAveragesOtherCounts;
 
     float[] groupAveragesUrim;
     float[] groupAveragesUrimCounts;
@@ -113,6 +131,9 @@ public class OrgJusticeDataset
     float[] dimensionAveragesFemale;
     float[] dimensionAveragesFemaleCounts;
 
+    float[] dimensionAveragesOther;
+    float[] dimensionAveragesOtherCounts;
+
     float[] dimensionAveragesUrim;
     float[] dimensionAveragesUrimCounts;
 
@@ -133,6 +154,9 @@ public class OrgJusticeDataset
         overallAvgFemale=0;
         overallCountFemale=0;
 
+        overallAvgOther=0;
+        overallCountOther=0;
+        
         overallAvgUrim=0;
         overallCountUrim=0;
 
@@ -148,6 +172,9 @@ public class OrgJusticeDataset
         groupAveragesFemale = new float[7];
         groupAveragesFemaleCounts = new float[7];
 
+        groupAveragesOther = new float[7];
+        groupAveragesOtherCounts = new float[7];
+        
         groupAveragesUrim = new float[7];
         groupAveragesUrimCounts = new float[7];
 
@@ -162,6 +189,9 @@ public class OrgJusticeDataset
 
         dimensionAveragesFemale = new float[4];
         dimensionAveragesFemaleCounts = new float[4];
+
+        dimensionAveragesOther = new float[4];
+        dimensionAveragesOtherCounts = new float[4];
 
         dimensionAveragesUrim = new float[4];
         dimensionAveragesUrimCounts = new float[4];
@@ -181,6 +211,9 @@ public class OrgJusticeDataset
          groupItemScoreAveragesFemale = new float[7][16];
          groupItemScoreCountsFemale = new float[7][16];
 
+         groupItemScoreAveragesOther = new float[7][16];
+         groupItemScoreCountsOther = new float[7][16];
+         
          groupItemScoreAveragesUrim = new float[7][16];
          groupItemScoreCountsUrim = new float[7][16];
 
@@ -195,6 +228,9 @@ public class OrgJusticeDataset
 
         itemScoreAveragesFemale = new float[16];
         itemScoreCountsFemale = new float[16];
+
+        itemScoreAveragesOther = new float[16];
+        itemScoreCountsOther = new float[16];
 
         itemScoreAveragesUrim = new float[16];
         itemScoreCountsUrim = new float[16];
@@ -458,6 +494,9 @@ public class OrgJusticeDataset
     {
         init();
         
+        if( DEBUG )
+            LogService.logIt( "OrgJusticeDataset.addTestEvent() adding " + ote.toString() );
+        
         if( ote.getOverall()>0 )
         {
             this.overallAvg+=ote.getOverall();
@@ -468,13 +507,17 @@ public class OrgJusticeDataset
                 overallAvgMale += ote.getOverall();
                 overallCountMale++;
             }
-
-            if( ote.getGenderTypeId()==5 )
+            else if( ote.getGenderTypeId()==5 )
             {
                 overallAvgFemale += ote.getOverall();
                 overallCountFemale++;
             }
-
+            else
+            {
+                overallAvgOther += ote.getOverall();
+                overallCountOther++;
+            }
+            
             if( ote.getUrim()==1 )
             {
                 overallAvgUrim += ote.getOverall();
@@ -505,6 +548,12 @@ public class OrgJusticeDataset
                 {
                     groupAveragesFemale[i] += ote.getGroupScores()[i];
                     groupAveragesFemaleCounts[i]++;
+                    
+                }                    
+                else
+                {
+                    groupAveragesOther[i] += ote.getGroupScores()[i];
+                    groupAveragesOtherCounts[i]++;
                     
                 }                    
                 if( ote.getUrim()==1 )
@@ -546,6 +595,15 @@ public class OrgJusticeDataset
                             itemScoreCountsFemale[ii]++;
                             
                         }                    
+                        else
+                        {
+                            groupItemScoreAveragesOther[i][ii] += ote.getGroupItemScores()[i][ii];
+                            groupItemScoreCountsOther[i][ii]++;         
+                            
+                            itemScoreAveragesOther[ii] += ote.getGroupItemScores()[i][ii];
+                            itemScoreCountsOther[ii]++;                           
+                        }                    
+
                         if( ote.getUrim()==1 )
                         {
                             groupItemScoreAveragesUrim[i][ii] += ote.getGroupItemScores()[i][ii];
@@ -582,8 +640,12 @@ public class OrgJusticeDataset
                 else if( ote.getGenderTypeId()==5 )
                 {
                     dimensionAveragesFemale[i] += ote.getDimensionScores()[i];
-                    dimensionAveragesFemaleCounts[i]++;
-                    
+                    dimensionAveragesFemaleCounts[i]++;                    
+                }                    
+                else
+                {
+                    dimensionAveragesOther[i] += ote.getDimensionScores()[i];
+                    dimensionAveragesOtherCounts[i]++;                    
                 }                    
                 if( ote.getUrim()==1 )
                 {
@@ -617,6 +679,7 @@ public class OrgJusticeDataset
         overallAvg = overallCount>0 ? overallAvg/overallCount : 0;
         overallAvgMale = overallCountMale>0 ? overallAvgMale/overallCountMale : 0;
         overallAvgFemale = overallCountFemale>0 ? overallAvgFemale/overallCountFemale : 0;
+        overallAvgOther = overallCountOther>0 ? overallAvgOther/overallCountOther : 0;
         overallAvgUrim = overallCountUrim>0 ? overallAvgUrim/overallCountUrim : 0;
         overallAvgNonUrim = overallCountNonUrim>0 ? overallAvgNonUrim/overallCountNonUrim : 0;
         
@@ -626,6 +689,7 @@ public class OrgJusticeDataset
             groupAverages[i] = groupAveragesCounts[i]>0 ? groupAverages[i]/groupAveragesCounts[i] : 0;
             groupAveragesMale[i] = groupAveragesMaleCounts[i]>0 ? groupAveragesMale[i]/groupAveragesMaleCounts[i] : 0;
             groupAveragesFemale[i] = groupAveragesFemaleCounts[i]>0 ? groupAveragesFemale[i]/groupAveragesFemaleCounts[i] : 0;
+            groupAveragesOther[i] = groupAveragesOtherCounts[i]>0 ? groupAveragesOther[i]/groupAveragesOtherCounts[i] : 0;
             groupAveragesUrim[i] = groupAveragesUrimCounts[i]>0 ? groupAveragesUrim[i]/groupAveragesUrimCounts[i] : 0;
             groupAveragesNonUrim[i] = groupAveragesNonUrimCounts[i]>0 ? groupAveragesNonUrim[i]/groupAveragesNonUrimCounts[i] : 0;
             
@@ -635,6 +699,7 @@ public class OrgJusticeDataset
                 groupItemScoreAverages[i][ii] = groupItemScoreCounts[i][ii]>0 ? groupItemScoreAverages[i][ii]/groupItemScoreCounts[i][ii] : 0;
                 groupItemScoreAveragesMale[i][ii] = groupItemScoreCountsMale[i][ii]>0 ? groupItemScoreAveragesMale[i][ii]/groupItemScoreCountsMale[i][ii] : 0;
                 groupItemScoreAveragesFemale[i][ii] = groupItemScoreCountsFemale[i][ii]>0 ? groupItemScoreAveragesFemale[i][ii]/groupItemScoreCountsFemale[i][ii] : 0;
+                groupItemScoreAveragesOther[i][ii] = groupItemScoreCountsOther[i][ii]>0 ? groupItemScoreAveragesOther[i][ii]/groupItemScoreCountsOther[i][ii] : 0;
                 groupItemScoreAveragesUrim[i][ii] = groupItemScoreCountsUrim[i][ii]>0 ? groupItemScoreAveragesUrim[i][ii]/groupItemScoreCountsUrim[i][ii] : 0;
                 groupItemScoreAveragesNonUrim[i][ii] = groupItemScoreCountsNonUrim[i][ii]>0 ? groupItemScoreAveragesNonUrim[i][ii]/groupItemScoreCountsNonUrim[i][ii] : 0;
             }            
@@ -645,6 +710,7 @@ public class OrgJusticeDataset
             dimensionAverages[i] = dimensionAveragesCounts[i]>0 ? dimensionAverages[i]/dimensionAveragesCounts[i] : 0;
             dimensionAveragesMale[i] = dimensionAveragesMaleCounts[i]>0 ? dimensionAveragesMale[i]/dimensionAveragesMaleCounts[i] : 0;
             dimensionAveragesFemale[i] = dimensionAveragesFemaleCounts[i]>0 ? dimensionAveragesFemale[i]/dimensionAveragesFemaleCounts[i] : 0;
+            dimensionAveragesOther[i] = dimensionAveragesOtherCounts[i]>0 ? dimensionAveragesOther[i]/dimensionAveragesOtherCounts[i] : 0;
             dimensionAveragesUrim[i] = dimensionAveragesUrimCounts[i]>0 ? dimensionAveragesUrim[i]/dimensionAveragesUrimCounts[i] : 0;
             dimensionAveragesNonUrim[i] = dimensionAveragesNonUrimCounts[i]>0 ? dimensionAveragesNonUrim[i]/dimensionAveragesNonUrimCounts[i] : 0;
             
@@ -661,6 +727,7 @@ public class OrgJusticeDataset
             itemScoreAverages[i] = itemScoreCounts[i]>0 ? itemScoreAverages[i]/itemScoreCounts[i] : 0;
             itemScoreAveragesMale[i] = itemScoreCountsMale[i]>0 ? itemScoreAveragesMale[i]/itemScoreCountsMale[i] : 0;
             itemScoreAveragesFemale[i] = itemScoreCountsFemale[i]>0 ? itemScoreAveragesFemale[i]/itemScoreCountsFemale[i] : 0;
+            itemScoreAveragesOther[i] = itemScoreCountsOther[i]>0 ? itemScoreAveragesOther[i]/itemScoreCountsOther[i] : 0;
             itemScoreAveragesUrim[i] = itemScoreCountsUrim[i]>0 ? itemScoreAveragesUrim[i]/itemScoreCountsUrim[i] : 0;
             itemScoreAveragesNonUrim[i] = itemScoreCountsNonUrim[i]>0 ? itemScoreAveragesNonUrim[i]/itemScoreCountsNonUrim[i] : 0;
             
@@ -810,6 +877,10 @@ public class OrgJusticeDataset
         return overallAvgFemale;
     }
 
+    public float getOverallAvgOther() {
+        return overallAvgOther;
+    }
+
     public void setOverallAvgFemale(float overallAvgFemale) {
         this.overallAvgFemale = overallAvgFemale;
     }
@@ -838,6 +909,10 @@ public class OrgJusticeDataset
         return groupAveragesFemale;
     }
 
+    public float[] getGroupAveragesOther() {
+        return groupAveragesOther;
+    }
+
     public float[] getGroupAveragesUrim() {
         return groupAveragesUrim;
     }
@@ -854,6 +929,10 @@ public class OrgJusticeDataset
         return dimensionAveragesFemale;
     }
 
+    public float[] getDimensionAveragesOther() {
+        return dimensionAveragesOther;
+    }
+
     public float[] getDimensionAveragesUrim() {
         return dimensionAveragesUrim;
     }
@@ -868,6 +947,10 @@ public class OrgJusticeDataset
 
     public float[][] getGroupItemScoreAveragesMale() {
         return groupItemScoreAveragesMale;
+    }
+
+    public float[][] getGroupItemScoreAveragesOther() {
+        return groupItemScoreAveragesOther;
     }
 
     public float[][] getGroupItemScoreAveragesFemale() {
@@ -892,6 +975,10 @@ public class OrgJusticeDataset
 
     public float[] getItemScoreAveragesFemale() {
         return itemScoreAveragesFemale;
+    }
+
+    public float[] getItemScoreAveragesOther() {
+        return itemScoreAveragesOther;
     }
 
     public float[] getItemScoreAveragesUrim() {
@@ -929,6 +1016,10 @@ public class OrgJusticeDataset
     public float getOverallCountFemale() {
         return overallCountFemale;
     }
+    public float getOverallCountOther() {
+        return overallCountOther;
+    }
+
 
     public float getOverallCountUrim() {
         return overallCountUrim;

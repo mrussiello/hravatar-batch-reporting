@@ -5,6 +5,7 @@
  */
 package com.tm2batch.custom.orgjustice;
 
+import com.tm2batch.autoreport.AutoReportFacade;
 import com.tm2batch.autoreport.ExecutableReport;
 import com.tm2batch.custom.BaseExecutableReport;
 import com.tm2batch.entity.report.Report;
@@ -240,7 +241,13 @@ public class OrgJusticeReport extends BaseExecutableReport implements Executable
         
         // specific checks
         if( batchReport.getYearsBack()<=0 && batchReport.getMonthsBack()<=0 && batchReport.getDaysBack()<=0 && batchReport.getHoursBack()<=0 )
-            throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport does not look back at least one day or one hour. daysBack=" + batchReport.getDaysBack() + ", hoursBack=" + batchReport.getHoursBack() );        
+        {
+            LogService.logIt( "OrgJusticeReport.validateBatchReportForExecution() BatchReport id=" + batchReport.getBatchReportId() + " does not look back at least one day or one hour or month or year. daysBack=" + batchReport.getDaysBack() + ", hoursBack=" + batchReport.getHoursBack() + ", setting to 1 month back." );
+            batchReport.setMonthsBack(1);
+            if( autoReportFacade==null )
+                autoReportFacade=AutoReportFacade.getInstance();
+            autoReportFacade.saveBatchReport(batchReport);
+        }        
         
         if( batchReport.getUser().getUserReportOptions()==null )
             throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport User (userId=" + batchReport.getUser().getUserId() + ", orgId=" + batchReport.getOrgId() + ") does not have any UserReportOptions. Please create a UserReportOptions object for this User." );

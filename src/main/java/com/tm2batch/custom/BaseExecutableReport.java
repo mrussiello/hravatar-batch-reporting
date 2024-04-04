@@ -38,6 +38,7 @@ public class BaseExecutableReport {
     
     public TestReportingUtils testReportingUtils;
     
+    public AutoReportFacade autoReportFacade;
     public UserFacade userFacade;
     public EmailBlockFacade emailBlockFacade;
     public UserActionFacade userActionFacade;

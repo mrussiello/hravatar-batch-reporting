@@ -54,6 +54,7 @@ public class OrgJusticeTestEvent {
     /*
       Item OJDEM-7-gender
     
+    ITEM:
      0 unknown
      Agrender 1
      non-binay 2
@@ -62,13 +63,18 @@ public class OrgJusticeTestEvent {
      Female 5
      Prefer not answer 998
      Other 999
+    
+    // However, we are only using
+      Male 4
+      Female 5
+      Other  999
+      All OrgJusticeTestEvent records should be set there.
     */
     int genderTypeId;
     
     
     /*
       Item 
-     
      0 no
      1 yes
     */
@@ -190,14 +196,31 @@ public class OrgJusticeTestEvent {
                 points = (int) ir.getItemScore();
                 if( points==5 || points==6 )
                     urim=1;
+                if( urim==0 )
+                {
+                    String sel = ir.getSelectedValue();
+                    sel = sel==null ? "" : sel;
+                    if( sel.contains( "$30,000 to $49,999") || 
+                        sel.contains( "$29,999 or less") )
+                        urim=1;                    
+                }
             }
 
             // URIM Immigrant
             if( urim==0 &&  ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-14-firstgen" ) )
             {
+                // 1=yes 0=no
                 points = (int) ir.getItemScore();
                 if( points>=1 )
                     urim=1;                
+                else
+                {
+                    String sel = ir.getSelectedValue();
+                    sel = sel==null ? "" : sel;
+                    if( sel.contains( "Yes") )
+                        urim=1;                    
+                }
+
             }
             
             // URIM Ethnicity
@@ -290,15 +313,26 @@ public class OrgJusticeTestEvent {
             // gender
             if( ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-7-gender" ) )
             {                
-                genderTypeId = (int) ir.getItemScore();
-                if( genderTypeId!=4 && genderTypeId!=5 )
-                {
+                //genderTypeId = (int) ir.getItemScore();
+                //if( genderTypeId!=4 && genderTypeId!=5 )
+                //{
                     String selValue = ir.getSelectedValue();
-                    selValue = selValue==null ? "" : selValue.toLowerCase();
-                    if( selValue.contains("woman"))
-                        genderTypeId = 5;
-                    else if( selValue.contains("man"))
-                        genderTypeId = 4;                }
+                    selValue = selValue==null ? "" : selValue;
+                    
+                    if( selValue.contains("Woman"))
+                    {
+                        if( selValue.contains("Man"))
+                            genderTypeId=999;
+                        else
+                            genderTypeId = 5;
+                    }
+                    
+                    else if( selValue.contains("Man"))
+                        genderTypeId = 4;  
+                    
+                    else
+                        genderTypeId=999;
+                  //}
             }
             
         }

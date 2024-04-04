@@ -13,6 +13,7 @@ public class OrgJusticeNorms {
     public static final float overallAvg = 4.30f;
     public static final float overallAvgMale = 4.46f;
     public static final float overallAvgFemale = 4.24f;
+    public static final float overallAvgOther = 9.99f;
     public static final float overallAvgUrim = 4.03f;
     public static final float overallAvgNonUrim = 4.40f;
     
@@ -31,6 +32,8 @@ public class OrgJusticeNorms {
 
     public static final float[] groupAveragesFemale = new float[]{4.22f,4.35f,3.98f,4.78f,4.17f,4.47f,4.07f};
 
+    public static final float[] groupAveragesOther = new float[]{9.99f,9.99f,9.99f,9.99f,9.99f,9.99f,9.99f};
+
     public static final float[] groupAveragesUrim = new float[]{3.82f,4.15f,3.78f,4.75f,4.03f,4.27f,3.85f};
 
     public static final float[] groupAveragesNonUrim = new float[]{4.43f,4.51f,4.21f,4.82f,4.33f,4.54f,4.10f};
@@ -46,6 +49,8 @@ public class OrgJusticeNorms {
     public static final float[] dimensionAveragesMale = new float[]{4.47f,4.41f,4.55f,4.42f};
     
     public static final float[] dimensionAveragesFemale = new float[]{4.43f,4.19f,4.34f,4.13f};
+
+    public static final float[] dimensionAveragesOther = new float[]{9.99f,9.99f,9.99f,9.99f};
 
     public static final float[] dimensionAveragesUrim = new float[]{4.13f,3.96f,4.01f,4.02f};
 
