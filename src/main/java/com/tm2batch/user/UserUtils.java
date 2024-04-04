@@ -245,13 +245,7 @@ public class UserUtils
             if( userBean.getUserLoggedOnAsAdmin()&& userBean.getLogonHistoryId() > 0 )
                userFacade.addUserLogout( userBean.getLogonHistoryId(), LogoffType.USER.getLogoffTypeId() );
 
-            userBean.setLogonHistoryId( 0 );
-
-            Tracker.addLogout();
-
-            userBean.setUser(null);
-
-            userBean.clear();
+            processLogout( LogoffType.USER.getLogoffTypeId() );
             
             FacesContext fc = FacesContext.getCurrentInstance();
             
@@ -277,6 +271,38 @@ public class UserUtils
     }
 
 
+    public void processLogout( int logoffTypeId ) throws Exception
+    {
+        try
+        {
+            getUserBean();
+
+            if( userBean.getUserLoggedOnAsAdmin()&& userBean.getLogonHistoryId() > 0 )
+               userFacade.addUserLogout( userBean.getLogonHistoryId(), logoffTypeId );
+
+            userBean.setLogonHistoryId( 0 );
+
+            Tracker.addLogout();
+
+            userBean.setUser(null);
+
+            userBean.clear();
+
+            FacesContext fc = FacesContext.getCurrentInstance();
+
+            if( fc==null )
+                throw new Exception( "FacesContext is null." );
+
+            fc.getExternalContext().invalidateSession();
+        }
+        catch( Exception e )
+        {
+            LogService.logIt(e, "UserUtils.processLogout() " );
+            throw e;
+        }
+    }
+    
+    
 
 
     public void setStringErrorMessage( String message )

@@ -2,11 +2,8 @@ package com.tm2batch.faces;
 
 
 import com.tm2batch.global.Constants;
-import com.tm2batch.service.LogService;
 import com.tm2batch.user.UserBean;
-import com.tm2batch.user.UserUtils;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
@@ -24,7 +21,7 @@ public class IdleMonitorUtils
         return Constants.IDLE_SESSION_TIMEOUT_MINS*60*1000;
     }
     
-    
+        /*
     public void onIdle() 
     {
         try
@@ -46,6 +43,7 @@ public class IdleMonitorUtils
             LogService.logIt( "IdleMonitorUtils.onIdle() " + userBean.getUserLoggedOnAsAdmin() );
         }
     }
+    */
  
     
 
