@@ -224,23 +224,23 @@ public class OrgJusticeTestEvent {
             }
             
             // URIM Ethnicity
-            if( urim==0 && ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-2-enthnicity" ) )
+            if( urim==0 && ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-2-ethnicity" ) )
             {
-                points = (int) ir.getItemScore();
-                if( points==1 || points==3 || points==5 )
-                {
-                    urim=1;
-                }
+                //points = (int) ir.getItemScore();
+                //if( points==1 || points==3 || points==5 )
+                //{
+                //    urim=1;
+                //}
                 
-                else
-                {
+                //else
+                //{
                     String sel = ir.getSelectedValue();
                     sel = sel==null ? "" : sel;
                     if( sel.contains( "Black or African American") || 
                         sel.contains( "Hispanic or Latino/a")  ||
                         sel.contains( "American Indian or Alaska Native")  )
                         urim=1;
-                }
+                //}
             }
 
             // URIM Hispanic Category
@@ -266,11 +266,11 @@ public class OrgJusticeTestEvent {
             // URIM Asian Category
             if(  urim==0 && ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-3-asian-cat" ) )
             {
-                points = (int) ir.getItemScore();
-                if( points==1 || points==2 || points==3 || points==5 || points==6 || points==8 || points==11 || points==12 || points==13 || points==15 || points==16 || points==17 || points==18 )
-                    urim=1;
-                else
-                {
+                //points = (int) ir.getItemScore();
+                //if( points==1 || points==2 || points==3 || points==5 || points==6 || points==8 || points==11 || points==12 || points==13 || points==15 || points==16 || points==17 || points==18 )
+                //    urim=1;
+                //else
+                //{
                     String sel = ir.getSelectedValue();
                     sel = sel==null ? "" : sel;
                     if( sel.contains( "Brunese" ) ||
@@ -286,7 +286,7 @@ public class OrgJusticeTestEvent {
                         sel.contains( "Thai" ) ||
                         sel.contains( "Vietnamese" ) )
                         urim=1;
-                }
+                //}
             }
             
 
@@ -319,15 +319,16 @@ public class OrgJusticeTestEvent {
                     String selValue = ir.getSelectedValue();
                     selValue = selValue==null ? "" : selValue;
                     
-                    if( selValue.contains("Woman"))
+                    selValue=selValue.trim();
+                    if( selValue.equalsIgnoreCase("Woman"))
                     {
-                        if( selValue.contains("Man"))
-                            genderTypeId=999;
-                        else
-                            genderTypeId = 5;
+                        //if( selValue.contains("Man"))
+                        //    genderTypeId=999;
+                        //else
+                        genderTypeId = 5;
                     }
                     
-                    else if( selValue.contains("Man"))
+                    else if( selValue.equalsIgnoreCase("Man"))
                         genderTypeId = 4;  
                     
                     else
