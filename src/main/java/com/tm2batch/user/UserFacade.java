@@ -365,7 +365,7 @@ public class UserFacade
 
             password = StringUtils.sanitizeForSqlQuery( password );
 
-            PreparedStatement ps = con.prepareStatement( "SELECT username FROM xuser WHERE xpass=MD5( ? ) AND userid=?" );
+            PreparedStatement ps = con.prepareStatement( "SELECT username FROM xuser WHERE zpass IS NOT NULL AND zpass=SHA2( ?, 224 ) AND userid=?" );
 
             ps.setString( 1, password );
 
@@ -381,6 +381,29 @@ public class UserFacade
             rs.close();
 
             ps.close();
+            
+            if( !recordFound )
+            {
+                ps = con.prepareStatement( "SELECT username FROM xuser WHERE xpass IS NOT NULL AND xpass=MD5( ? ) AND userid=?" );
+                ps.setString( 1, password );
+                ps.setLong( 2, userId );            
+                rs = ps.executeQuery();
+                if( rs.next() )
+                    recordFound = true;
+                rs.close();
+                ps.close();   
+
+                // if it matched on old password storage, change to new password storage.
+                if( recordFound )
+                {
+                    LogService.logIt( "UserFacade.checkPassword() Converting User to new password storage. userId=" + userId );
+                    ps = con.prepareStatement( "UPDATE xuser SET xpass3=null,xpass2=null,xpass1=null,xpass=null,zpass=SHA2( ?, 224 ) WHERE userid=?" );
+                    ps.setString( 1, password );
+                    ps.setLong( 2, userId );
+                    ps.executeUpdate();                    
+                }
+            }
+            
 
             return recordFound;
         }
