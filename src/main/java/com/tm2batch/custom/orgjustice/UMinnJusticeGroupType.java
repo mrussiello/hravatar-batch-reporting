@@ -53,10 +53,16 @@ public enum UMinnJusticeGroupType
         if( equals(INTERPROF ) )
             return itemTypeId<=12 && itemTypeId!=4;
 
-        if( equals(CONSULTANTS ) || equals(COLLEAGUES) )
+        if( equals(CONSULTANTS ) )
             return itemTypeId<=12;
+        
+        if( equals(COLLEAGUES) )
+            return itemTypeId<=12 || itemTypeId==16;
 
-        if( equals(PATIENTS )|| equals(OPERATIONS) )
+        if( equals(PATIENTS ) )
+            return false;
+        
+        if( equals(OPERATIONS) )
             return false;
         
         return false;

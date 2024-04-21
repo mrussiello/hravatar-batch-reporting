@@ -79,7 +79,7 @@ public class I18nUtils
 
         NumberFormat numberFormatter = NumberFormat.getNumberInstance(  _locale  );
 
-        numberFormatter.setRoundingMode( _fixedFractionDigits>0 ? RoundingMode.HALF_UP : RoundingMode.FLOOR );
+        numberFormatter.setRoundingMode( _fixedFractionDigits>0 ? RoundingMode.HALF_UP : RoundingMode.FLOOR ); 
         
         numberFormatter.setMaximumFractionDigits(_fixedFractionDigits );
         

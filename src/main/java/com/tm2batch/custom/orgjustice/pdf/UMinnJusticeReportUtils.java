@@ -90,9 +90,14 @@ public class UMinnJusticeReportUtils {
     
     public static UMinnColorType getScoreColorTypeArray( float norm, float score )
     {
-        if( score<0.35f*norm )
+        
+        //if( score<0.35f*norm )
+        //    return UMinnColorType.RED;
+        //if( score<0.7f*norm )
+        //    return UMinnColorType.YELLOW;
+        if( score<3.0f )
             return UMinnColorType.RED;
-        if( score<0.7f*norm )
+        if( score<4.0f )
             return UMinnColorType.YELLOW;
         return UMinnColorType.GREEN;
     }

@@ -1754,7 +1754,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getOverallAvgNonUrim(), overallScorePrecisionDigits), dataFont ));
+            c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, OrgJusticeNorms.overallAvgNonUrim, overallScorePrecisionDigits), dataFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
             c.setBackgroundColor(rowColor);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
@@ -1945,12 +1945,13 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             c.setBorder( Rectangle.BOTTOM | Rectangle.RIGHT );
             c.setBackgroundColor( rowColor );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
+            c.setVerticalAlignment( Element.ALIGN_MIDDLE );
             c.setColspan(1);
             c.setPadding( 3 );
             setRunDirection( c );
             t.addCell(c);
             
-            // Groups scores forall dimensions
+            // Groups scores for all dimensions
             for( int i=0;i<7;i++ )
             {
                 c = new PdfPCell( new Paragraph( I18nUtils.getFormattedNumber(Locale.US, dataSet.getGroupAverages()[i], overallScorePrecisionDigits), dataFont ));
@@ -3686,6 +3687,8 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             
             LogService.logIt(  "BaseUMinnJusticeReportTemplate.addTableOfContentsSection() START" );
 
+            int[] contentsPageNums = new int[]{2,2,3,4,6,8,9};
+            
             for( int i=1;i<=7;i++ )
                 contentsItems.add( i + ". " + lmsg("contents." + i) );
             
@@ -3716,14 +3719,17 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
 
             String spacer = "   ";
             
-            
-            for( String s : contentsItems )
+            String s;
+            int pageNum;
+            for( int i=0;i<7;i++ )
+            //for( String s : contentsItems )
             {
-
+                s = contentsItems.get(i);
+                pageNum = contentsPageNums[i];
                 p = new Paragraph( s, tcFont );            
                 DottedLineSeparator dls = new DottedLineSeparator();            
                 p.add( new Chunk( dls ) );            
-                p.add( "3" );
+                p.add( Integer.toString(pageNum) );
                 t.addCell( p );
             }
             

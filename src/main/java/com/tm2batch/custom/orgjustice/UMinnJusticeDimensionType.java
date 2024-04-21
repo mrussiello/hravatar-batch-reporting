@@ -42,7 +42,7 @@ public enum UMinnJusticeDimensionType
             return true;
         
         if( equals(DISTRIBUTIVE) )
-            return false;
+            return uminnJusticeGroupTypeId==6;
         
         if( equals(PROCEDURAL) || equals(INFORMATIONAL) )
             return uminnJusticeGroupTypeId!=4 && uminnJusticeGroupTypeId!=7;
