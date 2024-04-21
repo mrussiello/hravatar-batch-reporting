@@ -55,10 +55,5 @@ public class OrgJusticeNorms {
     public static final float[] dimensionAveragesUrim = new float[]{4.13f,3.96f,4.01f,4.02f};
 
     public static final float[] dimensionAveragesNonUrim = new float[]{4.43f,4.36f,4.50f,4.32f};
-    
-    
-    
-    
-    
-    
+
 }
