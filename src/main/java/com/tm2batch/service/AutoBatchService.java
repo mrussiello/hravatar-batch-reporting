@@ -13,6 +13,8 @@ import jakarta.servlet.annotation.WebListener;
 @WebListener
 public class AutoBatchService implements ServletContextListener {
         
+    public static boolean STARTED = false;
+    
     @Override
     public void contextInitialized(ServletContextEvent evt) 
     {  
@@ -20,11 +22,14 @@ public class AutoBatchService implements ServletContextListener {
         {            
             LogService.logIt( "TM2Batch - AutoBatchService.contextInitialized() STARTING SETUP  AAAA ");
 
-            if( RuntimeConstants.getBooleanValue( "autoReportBatchesOk" ) )
-                (new Thread(new AutoBatchStarter())).start();                      
+            if( !STARTED && RuntimeConstants.getBooleanValue( "autoReportBatchesOk" ) )
+            {
+                (new Thread(new AutoBatchStarter())).start();
+                STARTED = true;
+            }                      
 
 
-            LogService.logIt( "TM2Batch - AutoBatchService.contextInitialized() COMPLETED SETUP  BBBB ");
+            LogService.logIt( "TM2Batch - AutoBatchService.contextInitialized() COMPLETED SETUP  BBBB STARTED=" + STARTED );
         }
 
         catch( Exception e )
@@ -40,6 +45,8 @@ public class AutoBatchService implements ServletContextListener {
     {
         try
         {
+          STARTED = false;
+          
           LogService.logIt( "TM2Batch - AutoBatchService.contextDestroyed() Stopping AutoBatchStarter." );
 
           if( AutoBatchStarter.sched != null )
@@ -47,10 +54,13 @@ public class AutoBatchService implements ServletContextListener {
 
           if( AutoBatchStarter.scheduler != null )
               AutoBatchStarter.scheduler.shutdownNow();
+          
         }      
         catch( Exception e )
         {
             LogService.logIt(e, "TM2Batch - AutoBatchService.contextDestroyed() Stopping AutoBatchStarter." );
         }
-    }  
+    } 
+    
+    
 }

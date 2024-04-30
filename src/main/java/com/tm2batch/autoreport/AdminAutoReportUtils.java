@@ -9,6 +9,9 @@ import com.tm2batch.entity.autoreport.BatchReport;
 import com.tm2batch.faces.FacesUtils;
 import com.tm2batch.global.RuntimeConstants;
 import com.tm2batch.global.STException;
+import com.tm2batch.service.AutoBatchService;
+import static com.tm2batch.service.AutoBatchService.STARTED;
+import com.tm2batch.service.AutoBatchStarter;
 import com.tm2batch.service.LogService;
 import com.tm2batch.service.Tracker;
 import com.tm2batch.user.UserBean;
@@ -88,7 +91,20 @@ public class AdminAutoReportUtils extends FacesUtils implements Serializable {
                     
             RuntimeConstants.setValue( "autoReportBatchesOk", false );
             
-            setStringInfoMessage( "Automatic Report Batches are OFF" );            
+            setStringInfoMessage( "Automatic Report Batches are OFF" );     
+            
+            if( AutoBatchService.STARTED )
+            {
+                if( AutoBatchStarter.sched != null )
+                    AutoBatchStarter.sched.cancel(false);
+
+                if( AutoBatchStarter.scheduler != null )
+                    AutoBatchStarter.scheduler.shutdownNow();
+          
+                AutoBatchService.STARTED = false;                
+                setStringInfoMessage( "AutoBatchStarter Stopped" );            
+            }
+            
             return "StayInSamePlace";            
         }
         catch( STException e )
@@ -114,6 +130,13 @@ public class AdminAutoReportUtils extends FacesUtils implements Serializable {
             RuntimeConstants.setValue( "autoReportBatchesOk", true );
             
             setStringInfoMessage( "Automatic Report Batches are ON" );            
+            
+            if( !AutoBatchService.STARTED )
+            {
+                (new Thread(new AutoBatchStarter())).start();
+                AutoBatchService.STARTED = true;                
+                setStringInfoMessage( "AutoBatchStarter Started" );            
+            }
             return "StayInSamePlace";            
         }
         catch( STException e )

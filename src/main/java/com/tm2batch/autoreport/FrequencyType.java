@@ -1,5 +1,7 @@
 package com.tm2batch.autoreport;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -44,6 +46,15 @@ public enum FrequencyType
         this.days=d;
     }
 
+    
+    public boolean isThisHourOkToSend( int hourToSendGmt )
+    {
+        if( hourToSendGmt<0 )
+            hourToSendGmt=10;
+        
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Etc/GMT"));            
+        return now.getHour()==hourToSendGmt;
+    }
     
     public boolean isTodayOkToSend( TimeZone tz)
     {

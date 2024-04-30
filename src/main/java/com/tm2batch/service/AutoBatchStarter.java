@@ -36,6 +36,7 @@ public class AutoBatchStarter implements Runnable {
         {
             LogService.logIt( "TM2Batch - AutoBatchStarter.run() START AutoBatches On=" + RuntimeConstants.getBooleanValue( "autoReportBatchesOk" ) );
             
+            /*
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/New_York"));
             ZonedDateTime nextRun = now.withHour(6).withMinute(0).withSecond(0);
             
@@ -53,9 +54,29 @@ public class AutoBatchStarter implements Runnable {
             // LogService.logIt( "TM2Convert - AutoBatchStarter.run() STARTING SETUP  BBBB ");
             final Runnable autoBatchThread = new AutoBatchThread();
     
-            // final ScheduledFuture<?> sched = scheduler.scheduleAtFixedRate(autoScoreThread, 30, 180, SECONDS);
-            // waits 30 seconds, then runs every 5 minutes.
             sched = scheduler.scheduleAtFixedRate(autoBatchThread, initalDelay, TimeUnit.HOURS.toSeconds(12), SECONDS );
+            */
+            // wait a few seconds to start this.
+            Thread.sleep( 30000 );
+                        
+            ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Etc/GMT"));            
+            ZonedDateTime nextRun = now.plusHours(1).withMinute(0).withSecond(0);
+                
+            // if we are already after this time. 
+            //if(now.compareTo(nextRun) > 0)
+            //    nextRun = nextRun.plusDays(1);
+
+            // Set the delay
+            Duration duration = Duration.between(now, nextRun);
+            long initalDelay = duration.getSeconds();            
+            
+            // LogService.logIt( "TM2Convert - AutoBatchStarter.run() STARTING SETUP  BBBB ");
+            final Runnable autoBatchThread = new AutoBatchThread();
+            
+            // Runs every hour.
+            sched = scheduler.scheduleAtFixedRate(autoBatchThread, initalDelay, TimeUnit.HOURS.toSeconds(1), SECONDS );
+            
+            
             
             LogService.logIt( "TM2Batch - AutoBatchStarter.run() COMPLETED SETUP CCCC Initial Delay=" + initalDelay + " seconds.");
         }

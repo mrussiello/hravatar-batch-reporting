@@ -17,7 +17,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  *
@@ -126,7 +125,7 @@ public class BatchReportManager
             if( autoReportFacade==null )
                 autoReportFacade = AutoReportFacade.getInstance();
             
-            // all Batch Reports that have a defined freq
+            // get all Batch Reports that have a defined freq and are in active status.
             List<BatchReport> brl = autoReportFacade.getActiveBatchReportList();
             
             // all active batch reports that have a valid send date (before now).
@@ -242,6 +241,14 @@ public class BatchReportManager
             // LogService.logIt( "BatchReportManager.readyForExecution() Not Ready because freq type returned NOT OK to send. TimeZone=" + br.getTimeZoneId() +", batchReportId=" + br.getBatchReportId() + ", " + br.getTitle() );
             return false;
         }
+
+        // Not ok to send today based on freq
+        if( !freqType.isThisHourOkToSend( br.getHourToSend() ) )
+        {
+            // LogService.logIt( "BatchReportManager.readyForExecution() Not Ready because freq type returned NOT OK to send based on set hour to send=" + br.getHourToSend() + ", current date/time=" + (new Date()).toString() + ", batchReportId=" + br.getBatchReportId() + ", " + br.getTitle() );
+            return false;
+        }
+
         
         if( freqType.equals( FrequencyType.NEVER) )
         {

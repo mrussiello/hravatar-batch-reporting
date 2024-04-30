@@ -87,6 +87,12 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     @Column(name="hoursback")
     private int hoursBack;
     
+    /**
+     * 0 - 23 - this is in GMT - will run every hour. Default is 6 am EST
+     */
+    @Column(name="hourtosend")
+    private int hourToSend=10;
+    
     
     
     
@@ -930,6 +936,14 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
 
     public void setWeeksBack(int weeksBack) {
         this.weeksBack = weeksBack;
+    }
+
+    public int getHourToSend() {
+        return hourToSend;
+    }
+
+    public void setHourToSend(int hourToSend) {
+        this.hourToSend = hourToSend;
     }
 
     
