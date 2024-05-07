@@ -770,7 +770,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( lmsg( "g.Other" ), titleFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.OtherGender" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
             c.setBackgroundColor( uminnMaroonLite );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
@@ -1204,7 +1204,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( lmsg( "g.Other" ), titleFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.OtherGender" ), titleFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
             c.setBackgroundColor( uminnMaroon );
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
@@ -1608,7 +1608,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             setRunDirection( c );
             t.addCell(c);
             
-            c = new PdfPCell( new Paragraph( lmsg( "g.Other" ), headerFont ));
+            c = new PdfPCell( new Paragraph( lmsg( "g.OtherGender" ), headerFont ));
             c.setBorder( Rectangle.BOTTOM | Rectangle.TOP | Rectangle.RIGHT );
             c.setBackgroundColor(uminnMaroon);
             c.setHorizontalAlignment( Element.ALIGN_CENTER );
@@ -3027,7 +3027,7 @@ public abstract class BaseUMinnJusticeReportTemplate extends UMinnJusticeReportS
             Chunk chk;
             PdfAction pdfa;
             
-            for( int i=1;i<=7;i++ )
+            for( int i=1;i<=9;i++ )
             {
                 c = new PdfPCell( new Paragraph( lmsg( "rsc." + i + ".t" ), this.getFont() ));
                 c.setBorder( Rectangle.NO_BORDER );
