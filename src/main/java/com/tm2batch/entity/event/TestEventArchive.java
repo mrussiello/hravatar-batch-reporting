@@ -93,6 +93,10 @@ public class TestEventArchive implements Serializable
     @Column( name = "langreport" )
     private String localeStrReport;
 
+    @Column( name = "scorecolorschemetypeid" )
+    private int scoreColorSchemeTypeId;
+
+    
     @Column( name = "overallscore" )
     private float overallScore;
 
@@ -218,6 +222,7 @@ public class TestEventArchive implements Serializable
         te.setPercentileCountry(percentileCountry);
         te.setExcludeFmNorms(excludeFmNorms);
         te.setScoreFormatTypeId(scoreFormatTypeId);
+        te.setScoreColorSchemeTypeId( scoreColorSchemeTypeId );
         te.setPercentComplete(percentComplete);
         te.setBatteryId(batteryId);
         te.setProductId(productId);
@@ -704,6 +709,14 @@ public class TestEventArchive implements Serializable
 
     public void setLastAccessDate(Date lastAccessDate) {
         this.lastAccessDate = lastAccessDate;
+    }
+
+    public int getScoreColorSchemeTypeId() {
+        return scoreColorSchemeTypeId;
+    }
+
+    public void setScoreColorSchemeTypeId(int scoreColorSchemeTypeId) {
+        this.scoreColorSchemeTypeId = scoreColorSchemeTypeId;
     }
 
 

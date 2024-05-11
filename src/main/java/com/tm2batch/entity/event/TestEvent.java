@@ -125,6 +125,10 @@ public class TestEvent implements Serializable, Comparable<TestEvent>, TestResul
     @Column( name = "langreport" )
     private String localeStrReport;
 
+    @Column( name = "scorecolorschemetypeid" )
+    private int scoreColorSchemeTypeId;
+
+    
     @Column( name = "overallscore" )
     private float overallScore;
 
@@ -791,6 +795,7 @@ public class TestEvent implements Serializable, Comparable<TestEvent>, TestResul
         tea.setSkinId(skinId);
         tea.setOrgId(orgId);
         tea.setSuborgId(suborgId);
+        tea.setScoreColorSchemeTypeId( scoreColorSchemeTypeId );
         tea.setOverallRating(overallRating);
         tea.setOverallScore(overallScore);
         tea.setOverallPercentile(overallPercentile);
@@ -1687,6 +1692,14 @@ public class TestEvent implements Serializable, Comparable<TestEvent>, TestResul
 
     public void setOrgAutoTest(OrgAutoTest orgAutoTest) {
         this.orgAutoTest = orgAutoTest;
+    }
+
+    public int getScoreColorSchemeTypeId() {
+        return scoreColorSchemeTypeId;
+    }
+
+    public void setScoreColorSchemeTypeId(int scoreColorSchemeTypeId) {
+        this.scoreColorSchemeTypeId = scoreColorSchemeTypeId;
     }
 
  
