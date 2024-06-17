@@ -2,15 +2,15 @@ package com.tm2batch.global;
 
 public class Constants
 {
-    public final static int ON = 1;
+    // public final static int ON = 1;
 
     public final static int YES = 1;
 
-    public final static int OFF = 0;
+    // public final static int OFF = 0;
 
-    public final static int NO = 0;
+    // public final static int NO = 0;
 
-    public final static int MAX_ROWS = 1000;
+    // public final static int MAX_ROWS = 1000;
     
     public final static String DEFAULT_RESOURCE_BUNDLE = "com.tm2batch.resources.TM2Messages";
    
@@ -109,11 +109,11 @@ public class Constants
     
     public static final String SERVER_START_LOG_MARKER = "*************************************** TM2Batch SERVER START ******************************************";
 
-    public static String SUPPORT_EMAIL = "support@hravatar.com";
+    // public static String SUPPORT_EMAIL = "support@hravatar.com";
 
-    public static String SYSTEM_ADMIN_EMAIL = "mike@hravatar.com";
+    // public static String SYSTEM_ADMIN_EMAIL = "mike@hravatar.com";
 
-    public static String SUPPORT_EMAIL_NOREPLY = "no-reply@hravatar.com";
+    // public static String SUPPORT_EMAIL_NOREPLY = "no-reply@hravatar.com";
 
     public static int MAX_FAILED_LOGON_ATTEMPTS  = 5;
     

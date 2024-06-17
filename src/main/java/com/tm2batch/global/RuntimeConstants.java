@@ -53,9 +53,12 @@ public class RuntimeConstants
         cache.put( "mediaServerDomain", "cdn.hravatar.com" );
         cache.put( "mediaServerWebapp", "web" );
 
+        cache.put( "no-reply-email", "no-reply@hravatar.com" );        
+        cache.put( "support-email", "support@hravatar.com" );        
+        cache.put( "system-admin-email", "mike@hravatar.com" );        
         
-        cache.put( "baseurl", "https://sim.hravatar.com/td" );
         
+        cache.put( "baseurl", "https://sim.hravatar.com/td" );        
         cache.put( "baseadminuri", "https://www.hravatar.com/ta" );
         
         cache.put( "testingappprotocol", "https" );

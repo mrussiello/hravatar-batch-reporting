@@ -101,7 +101,7 @@ public class BaseBatchRestResource {
 
             sb = new StringBuilder();
 
-            sb.append( Constants.SUPPORT_EMAIL );
+            sb.append( RuntimeConstants.getStringValue("support-email") );
 
             emailMap.put( EmailUtils.FROM, sb.toString() );
 

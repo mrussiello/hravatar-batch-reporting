@@ -1,6 +1,7 @@
 package com.tm2batch.service;
 
 import com.tm2batch.global.Constants;
+import com.tm2batch.global.RuntimeConstants;
 import com.tm2batch.global.STException;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class EmailUtils
             emailMap.put( TO, toEmailsCommaDelim  );
 
             sb = new StringBuilder();
-            sb.append( Constants.SUPPORT_EMAIL_NOREPLY );
+            sb.append( RuntimeConstants.getStringValue("no-reply-email") );
             emailMap.put( FROM, sb.toString() );
             emailMap.put( OVERRIDE_BLOCK, "true" );
 
@@ -109,10 +110,10 @@ public class EmailUtils
                 emailMap.put( EmailUtils.MIME_TYPE , "text/plain" );
                 emailMap.put( EmailUtils.SUBJECT, subj );
                 emailMap.put( EmailUtils.CONTENT, msg );
-                emailMap.put( EmailUtils.TO, emailAddr==null || emailAddr.isEmpty() ? Constants.SYSTEM_ADMIN_EMAIL  : emailAddr );
+                emailMap.put( EmailUtils.TO, emailAddr==null || emailAddr.isEmpty() ? RuntimeConstants.getStringValue("system-admin-email")  : emailAddr );
 
                 // emailMap.put( EmailUtils.FROM, Constants.SUPPORT_EMAIL + "|" + MessageFactory.getStringMessage( locale , "g.SupportEmailKey", null ) );
-                emailMap.put( EmailUtils.FROM, Constants.SUPPORT_EMAIL_NOREPLY );
+                emailMap.put( EmailUtils.FROM, RuntimeConstants.getStringValue("no-reply-email") );
 
                 sendEmail( emailMap );
         }
