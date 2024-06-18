@@ -49,6 +49,9 @@ public class RuntimeConstants
         
         cache.put( "useAwsMediaServer", true);
         
+        cache.put( "baselogourl", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_8x1715795136855.png" );
+        cache.put( "baseiconurl", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_21x1717875839610.png" );
+        
         cache.put( "mediaServerProtocol", "https" );
         cache.put( "mediaServerDomain", "cdn.hravatar.com" );
         cache.put( "mediaServerWebapp", "web" );

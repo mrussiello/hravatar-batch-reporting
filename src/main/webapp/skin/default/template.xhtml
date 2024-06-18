@@ -21,7 +21,7 @@
         <h:outputStylesheet library="css" name="default.css"/>
 
         <ui:debug />
-	<link rel="shortcut icon" href="/td/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="#{userBean.baseIconUrl}" type="image/x-icon" />
 
 
 	<ui:insert name="headspec">
@@ -74,7 +74,7 @@
             <h:panelGrid columns="3" cellpadding="3" columnClasses="hdrleft,hdrmid,hdrright" style="width:700px;margin-left: auto;margin-right: auto; border-bottom: 1px solid #c0c0c0">
 
                 <h:outputLink value="/td/index.xhtml">
-                <h:graphicImage library="images" name="hra-two-color-tagline-logo-trans-166.png"/>
+                <h:graphicImage value="#{userBean.baseLogoUrl}" alt=""/>
                 </h:outputLink>
 
                 <h:panelGroup></h:panelGroup>

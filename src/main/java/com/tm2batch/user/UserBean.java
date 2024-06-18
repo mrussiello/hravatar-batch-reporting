@@ -5,6 +5,7 @@
 package com.tm2batch.user;
 
 import com.tm2batch.entity.user.User;
+import com.tm2batch.global.RuntimeConstants;
 import java.io.Serializable;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
@@ -49,7 +50,17 @@ public class UserBean implements Serializable
         this.user = user;
     }
 
+    public String getBaseLogoUrl()
+    {
+        return RuntimeConstants.getStringValue("baselogourl");
+    }
 
+    public String getBaseIconUrl()
+    {
+        return RuntimeConstants.getStringValue("baseiconurl");
+    }
+    
+    
     public boolean getUserLoggedOnAsAdmin()
     {
         return user != null && user.getUserId()>0 && ( user.getRoleId() >= RoleType.ADMIN.getRoleTypeId() );
