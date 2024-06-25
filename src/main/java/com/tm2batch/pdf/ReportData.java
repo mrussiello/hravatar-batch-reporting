@@ -15,6 +15,8 @@ import com.tm2batch.service.LogService;
 import com.tm2batch.util.I18nUtils;
 import java.awt.ComponentOrientation;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -30,6 +32,7 @@ public class ReportData
     public static String logoWhiteTextFilename = "hralogowhitetext-blue.png";
     public static String logoDarkTextSmallFilename = "hralogoblacktext-small-blue.png";
     public static String logoWhiteTextSmallFilename = "hralogowhitetext-small-blue.png";     
+
     
     public Report r;
     
@@ -59,8 +62,24 @@ public class ReportData
         this.objArray = objArray;
 
         reportRules = new ReportRules( o, s, p, r ); 
+        
+        init();
     }
 
+    
+    public static synchronized void init()
+    {
+        if( logoDarkTextFilename!=null && !logoDarkTextFilename.isBlank() )
+            return;
+        
+        logoDarkTextFilename = RuntimeConstants.getStringValue("logoDarkTextFilename");
+        logoWhiteTextFilename = RuntimeConstants.getStringValue("logoWhiteTextFilename");
+        logoDarkTextSmallFilename = RuntimeConstants.getStringValue("logoDarkTextSmallFilename");
+        logoWhiteTextSmallFilename = RuntimeConstants.getStringValue("logoWhiteTextSmallFilename");
+    }
+    
+    
+    @Override
     public String toString()
     {
         
@@ -213,12 +232,16 @@ public class ReportData
 
     public URL getLocalImageUrl( String fn )
     {
+        
        try
        {
-           return new URL( getBaseImageUrl() + "/" + fn );
+           if( fn.toLowerCase().startsWith("http") )
+               return (new URI(fn)).toURL();
+    
+           return (new URI(getBaseImageUrl() + "/" + fn)).toURL();
        }
 
-       catch( MalformedURLException e )
+       catch( MalformedURLException | URISyntaxException e )
        {
            LogService.logIt(e, "ReportData.getImageUrl() " );
            return null;
