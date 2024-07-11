@@ -300,7 +300,7 @@ public class BatchReportManager
                 n += ((new Date()).toString()) + " User must be a valid Account user. Batch Report has been disabled.";
                 br.setNote(n);                
                 autoReportFacade.saveBatchReport(br);
-                LogService.logIt( "BatchReportManager.executeSingleBatchReport() batchReportId=" + br.getBatchReportId() + ", User must be Named. Batch Report has been disabled. batchReport.userId=" + br.getUserId() );
+                LogService.logIt( "BatchReportManager.executeSingleBatchReport() batchReportId=" + br.getBatchReportId() + ", Originating user must be a valid account user for this org. Batch Report has been disabled. batchReport.userId=" + br.getUserId() );
                 return null;
             }
             
