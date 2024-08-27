@@ -12,8 +12,6 @@ import com.tm2batch.entity.purchase.Product;
 import com.tm2batch.entity.user.OrgAutoTest;
 import com.tm2batch.entity.user.Suborg;
 import com.tm2batch.entity.user.User;
-import com.tm2batch.event.ScoreCategoryType;
-import com.tm2batch.score.TextAndTitle;
 import java.util.Date;
 import java.util.List;
 

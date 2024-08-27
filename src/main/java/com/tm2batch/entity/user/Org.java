@@ -74,6 +74,9 @@ public class Org implements Serializable
     @Column(name="reportlogourl")
     private String reportLogoUrl;
 
+    @Column( name = "sharedemo" )
+    private int shareDemo = 0;
+                
     
     /*
      0 = none
@@ -484,6 +487,18 @@ public class Org implements Serializable
     public void setReportLogoUrl(String reportLogoUrl) {
         this.reportLogoUrl = reportLogoUrl;
     }
+
+    public int getShareDemo() {
+        return shareDemo;
+    }
+
+    public void setShareDemo(int shareDemo) {
+        this.shareDemo = shareDemo;
+    }
     
+    public boolean getShareDemoB() {
+        return shareDemo==1;
+    }
+
     
 }

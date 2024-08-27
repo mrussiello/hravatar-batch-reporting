@@ -457,6 +457,9 @@ public class ActivityReportExporter {
                 cell = row.createCell(colNum++);
                 cell.setCellValue( lmsg( "g.AverageScore" )  ); 
                 
+                cell = row.createCell(colNum++);
+                cell.setCellValue( lmsg( "g.AverageSeconds" )  ); 
+                
                 
                 for( ProductActivitySummary sas : byProd )
                 {
@@ -479,6 +482,8 @@ public class ActivityReportExporter {
                     cell = row.createCell(colNum++);
                     cell.setCellValue( Float.toString(sas.getAverageScore())  ); 
 
+                    cell = row.createCell(colNum++);
+                    cell.setCellValue( Float.toString(sas.getAverageSeconds())  ); 
                 }                
 
                 row = sheet.createRow( rowNum );

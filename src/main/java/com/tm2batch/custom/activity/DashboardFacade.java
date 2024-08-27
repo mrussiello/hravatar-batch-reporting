@@ -269,6 +269,9 @@ public class DashboardFacade {
         Map<Integer,Integer> productIdTotalScoredMap = new HashMap<>();
         Map<Integer,Float> productIdAverageMap = new HashMap<>();
 
+        // Map of productId, avgseconds 
+        Map<Integer,Float> productIdAverageSecondsMap = new HashMap<>();
+        
         Map<Integer,Map<Integer,Integer>> suborgUserCompanyStatusMap = new HashMap<>();
 
         // Map<Integer,Map<Integer,Integer>> productUserCompanyStatusMap = new HashMap<>();
@@ -1117,6 +1120,16 @@ public class DashboardFacade {
                     tempInteger = 0;
                 productIdCompletionMap.put( tempInt2, tempInt + tempInteger );                
                 
+                // avg test seconds
+                tempFloatVal = productIdAverageSecondsMap.get( tempInt2 );
+                if( tempFloatVal == null )
+                    tempFloatVal = (0f);
+
+                tempFloat = rs.getFloat( 4 ) ;
+                
+                productIdAverageSecondsMap.put( tempInt2, tempInt * tempFloat + tempFloatVal );
+                
+                
                 productIdSet.add( tempInt2 );
             }
 
@@ -1206,6 +1219,20 @@ public class DashboardFacade {
                 avg = productIdAverageMap.get( productId ) / ((float) (productIdTotalScoredMap.get( productId)) );
 
                 productIdAverageMap.put( productId, avg);
+            }
+            
+            // all products - Average Seconds
+            for( Integer productId : productIdTotalScoredMap.keySet() )
+            {
+                if( productIdAverageSecondsMap.get( productId )==null  )
+                {
+                    LogService.logIt( "DashboardFacade.productIdAverageSecondsMap cannot find productId=" + productId + " in productIdAverageSecondsMap" );
+                    continue;
+                }
+
+                avg = productIdAverageSecondsMap.get( productId ) / ((float) (productIdTotalScoredMap.get( productId)) );
+
+                productIdAverageSecondsMap.put( productId, avg);
             }
 
             StringBuilder pids = new StringBuilder();
@@ -1510,6 +1537,10 @@ public class DashboardFacade {
             if( tempFloatVal != null )
                 pas.setAverageScore(tempFloatVal );
 
+            tempFloatVal = productIdAverageSecondsMap.get( pas.getProduct().getProductId() );
+            if( tempFloatVal != null )
+                pas.setAverageSeconds(tempFloatVal );
+                        
             tempInteger = productIdCreditsUsedMap.get( pas.getProduct().getProductId() );
             if( tempInteger != null )
                 pas.setCreditsUsed( tempInteger );

@@ -69,6 +69,32 @@ public class User implements Serializable
     @Column(name="accountaccessleveltypeid")
     private int accountAccessLevelTypeId = 0;
 
+    /**
+     * 0 = unknown
+     * > 0  = Year of Birth
+     */
+    @Column(name="birthyear")
+    private int birthYear = 0;
+    
+    /**
+     * 0 = unknown
+     * 1 = Male
+     * 2 = Female
+     */
+    @Column(name="gendertypeid")
+    private int genderTypeId = 0;
+    
+    
+    @Column(name="nationality")
+    private String nationality;
+    
+    @Column(name="ethniccategoryid")
+    private int ethnicCategoryId = 0;
+
+    @Column(name="racialcategories")
+    private String racialCategories;
+
+    
     
     @Column(name="roleid")
     private int roleId = 0;
@@ -493,6 +519,46 @@ public class User implements Serializable
 
     public void setAccountAccessLevelTypeId(int accountAccessLevelTypeId) {
         this.accountAccessLevelTypeId = accountAccessLevelTypeId;
+    }
+
+    public int getBirthYear() {
+        return birthYear;
+    }
+
+    public void setBirthYear(int birthYear) {
+        this.birthYear = birthYear;
+    }
+
+    public int getGenderTypeId() {
+        return genderTypeId;
+    }
+
+    public void setGenderTypeId(int genderTypeId) {
+        this.genderTypeId = genderTypeId;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
+
+    public int getEthnicCategoryId() {
+        return ethnicCategoryId;
+    }
+
+    public void setEthnicCategoryId(int ethnicCategoryId) {
+        this.ethnicCategoryId = ethnicCategoryId;
+    }
+
+    public String getRacialCategories() {
+        return racialCategories;
+    }
+
+    public void setRacialCategories(String racialCategories) {
+        this.racialCategories = racialCategories;
     }
 
 

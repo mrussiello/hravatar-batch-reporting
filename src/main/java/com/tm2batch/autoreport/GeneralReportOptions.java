@@ -81,4 +81,8 @@ public interface GeneralReportOptions extends Serializable {
 
     boolean isUserStatus();
     
+    boolean isUserDemographics();
+    
+    public boolean isTotalSeconds();    
+    
 }

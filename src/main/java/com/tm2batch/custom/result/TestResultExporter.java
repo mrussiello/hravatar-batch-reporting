@@ -21,6 +21,9 @@ import com.tm2batch.global.Constants;
 import com.tm2batch.score.TextAndTitle;
 import com.tm2batch.service.LogService;
 import com.tm2batch.sim.SimCompetencyVisibilityType;
+import com.tm2batch.user.EthnicCategoryType;
+import com.tm2batch.user.GenderType;
+import com.tm2batch.user.RacialCategoryType;
 import com.tm2batch.user.UserCompanyStatusType;
 import com.tm2batch.user.UserFacade;
 import com.tm2batch.user.UserType;
@@ -294,6 +297,9 @@ public class TestResultExporter {
 
                     if( excelReportBean.isMobile())
                         count++;
+                    
+                    if( !forPerfUpload && excelReportBean.isUserDemographics() )
+                        count+=5;
 
                     if( excelReportBean.isUserStatus())
                         count++;
@@ -329,6 +335,9 @@ public class TestResultExporter {
                     if( excelReportBean.isCompleted())
                         count++;
 
+                    if( excelReportBean.isTotalSeconds())
+                        count++;
+
                     if( excelReportBean.isOverallScore())
                         count++;
 
@@ -343,7 +352,7 @@ public class TestResultExporter {
 
                     if( excelReportBean.isCountryPercentile())
                         count++;
-
+                    
                     if( excelReportBean.isDetailViewUrl())
                         count++;
 
@@ -472,6 +481,41 @@ public class TestResultExporter {
                 cellNum++;
             }
 
+            if( !forPerfUpload && excelReportBean.isUserDemographics())
+            {
+                cell = row.createCell( cellNum);
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.Age" ) );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+                
+                
+                cell = row.createCell( cellNum);
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.Gender" ) );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+
+                cell = row.createCell( cellNum);
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.Nationality" ) );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+
+                cell = row.createCell( cellNum);
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.Race" ) );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+
+                cell = row.createCell( cellNum);
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.Ethnicity" ) );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+            }
+            
+            
             if( forPerfUpload || excelReportBean.isUserStatus())
             {
                 cell = row.createCell( cellNum);
@@ -591,6 +635,15 @@ public class TestResultExporter {
                 cellNum++;
             }
 
+            if( !forPerfUpload && excelReportBean.isTotalSeconds())
+            {
+                cell = row.createCell( cellNum);
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.TotalSeconds" ) );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+            }
+
             if( forPerfUpload || excelReportBean.isOverallScore())
             {
                 cell = row.createCell( cellNum);
@@ -636,6 +689,7 @@ public class TestResultExporter {
                 cellNum++;
             }
 
+            
             if( !forPerfUpload && excelReportBean.isDetailViewUrl())
             {
                 cell = row.createCell( cellNum);
@@ -904,6 +958,41 @@ public class TestResultExporter {
                     cell.setCellValue( temp );
                     cellNum++;
                 }
+                
+                if( !forPerfUpload && excelReportBean.isUserDemographics())
+                {
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( tr.getUser().getBirthYear() );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(bold);
+                    cellNum++;
+
+
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( this.getGenderName(tr.getUser().getGenderTypeId(),locale) );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(bold);
+                    cellNum++;
+
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( tr.getUser().getNationality() );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(bold);
+                    cellNum++;
+
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( getRacialCategoriesStr(tr.getUser().getRacialCategories(),locale) );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(bold);
+                    cellNum++;
+
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( this.getEthnicName(tr.getUser().getEthnicCategoryId(),locale) );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(bold);
+                    cellNum++;
+                }
+                
 
                 if( forPerfUpload || excelReportBean.isUserStatus())
                 {
@@ -1006,6 +1095,14 @@ public class TestResultExporter {
                     cell.setCellValue( I18nUtils.getFormattedDateTime(locale, tr.getLastAccessDate(), DateFormat.LONG, DateFormat.LONG, timezone ) );
                     cellNum++;
                 }
+                
+                if( !forPerfUpload && excelReportBean.isTotalSeconds())
+                {
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( te==null ? "" : I18nUtils.getFormattedNumber(locale, te.getTotalTestTime(), 1) );
+                    cellNum++;
+                }
+                
 
                 if( forPerfUpload || excelReportBean.isOverallScore())
                 {
@@ -1052,21 +1149,21 @@ public class TestResultExporter {
                 if( !forPerfUpload && excelReportBean.isOverallPercentile())
                 {
                     cell = row.createCell( cellNum);
-                    cell.setCellValue( tr.getHasOverallPercentile()? new Integer( Math.round(tr.getOverallPercentile())).toString() : "NA" );
+                    cell.setCellValue( tr.getHasOverallPercentile()? Integer.toString(Math.round(tr.getOverallPercentile())) : "NA" );
                     cellNum++;
                 }
 
                 if( !forPerfUpload && excelReportBean.isAccountPercentile())
                 {
                     cell = row.createCell( cellNum);
-                    cell.setCellValue( tr.getHasValidAccountNorm()? new Integer( Math.round(tr.getAccountPercentile())).toString() : "NA" );
+                    cell.setCellValue( tr.getHasValidAccountNorm()? Integer.toString(Math.round(tr.getAccountPercentile())) : "NA" );
                     cellNum++;
                 }
                 
                 if( excelReportBean.isCountryPercentile())
                 {
                     cell = row.createCell( cellNum);
-                    cell.setCellValue( tr.getHasValidCountryNorm()? new Integer( Math.round(tr.getCountryPercentile())).toString() : "NA" );
+                    cell.setCellValue( tr.getHasValidCountryNorm()? Integer.toString(Math.round(tr.getCountryPercentile())) : "NA" );
                     cellNum++;
                 }
                 
@@ -1477,6 +1574,26 @@ public class TestResultExporter {
     }
     
     
+    private String getGenderName( int typ, Locale locale )
+    {
+        GenderType gt = GenderType.getValue(typ);
+        if( gt==null || gt.equals(GenderType.UNKNOWN) )
+            return "";
+        return gt.getName(locale);
+    }
+    
+    private String getEthnicName( int typ, Locale locale )
+    {
+        EthnicCategoryType gt = EthnicCategoryType.getValue(typ);
+        if( gt==null  )
+            return "";
+        return gt.getName(locale);
+    }
+
+    private String getRacialCategoriesStr( String cats, Locale locale )
+    {
+        return RacialCategoryType.getRacialCategoryStr(cats, locale);
+    }
     
     
 

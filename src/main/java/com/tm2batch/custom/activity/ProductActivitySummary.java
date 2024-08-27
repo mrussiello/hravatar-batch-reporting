@@ -22,6 +22,8 @@ public class ProductActivitySummary implements Serializable, Comparable<ProductA
     int completions;
     float averageScore;
     int creditsUsed;
+    float averageSeconds;
+    
 
     public ProductActivitySummary(Product product) {
         this.product = product;
@@ -131,6 +133,14 @@ public class ProductActivitySummary implements Serializable, Comparable<ProductA
     {
         return testEventStarts<=0 ? 0 : Math.round( 100f*((float)completions)/((float)testEventStarts));
         
+    }
+
+    public float getAverageSeconds() {
+        return averageSeconds;
+    }
+
+    public void setAverageSeconds(float averageSeconds) {
+        this.averageSeconds = averageSeconds;
     }
 
 

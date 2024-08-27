@@ -137,7 +137,13 @@ public class UserReportOptions implements GeneralReportOptions
     @Column(name="userstatus")
     private int userStatus=1;
 
-        
+    @Column(name="userdemo")
+    private int userDemo;
+    
+    @Column(name="totalseconds")
+    private int totalSeconds=0;
+            
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
     private Date createDate;
@@ -475,135 +481,200 @@ public class UserReportOptions implements GeneralReportOptions
     }
 
 
+    @Override
     public boolean isBattery() {
         return battery==1;
     }
 
+    @Override
     public boolean isMultiUseLink() {
         return multiUseLink==1;
     }
 
+    @Override
     public boolean isAccountPercentile() {
         return accountPercentile==1;
     }
 
+    @Override
     public boolean isAltScores() {
         return altScores==1;
     }
 
+    @Override
     public boolean isCompetencies() {
         return competencies==1;
     }
 
+    @Override
     public boolean isCompleted() {
         return completed==1;
     }
 
+    @Override
     public boolean isCountryPercentile() {
         return countryPercentile==1;
     }
 
+    @Override
     public boolean isCustom1() {
         return custom1==1;
     }
 
+    @Override
     public boolean isCustom2() {
         return custom2==1;
     }
+    @Override
     public boolean isCustom3() {
         return custom3==1;
     }
     
+    @Override
     public boolean isDepartment() {
         return department==1;
     }
 
+    @Override
     public boolean isDetailViewUrl() {
         return detailViewUrl==1;
     }
 
+    @Override
     public boolean isEmail() {
         return email==1;
     }
 
+    @Override
     public boolean isIdentifier() {
         return identifier==1;
     }
 
+    @Override
     public boolean isIncludeCandFbkReptsInPdfDwnld() {
         return includeCandFbkReptsInPdfDwnld==1;
     }
 
+    @Override
     public boolean isIncludeFieldsForPerfUpload() {
         return includeFieldsForPerfUpload==1;
     }
 
+    @Override
     public boolean isItemResponses() {
         return itemResponses==1;
     }
 
+    @Override
     public boolean isMobile() {
         return mobile==1;
     }
 
+    @Override
     public boolean isName() {
         return name==1;
     }
 
+    @Override
     public boolean isOverallPercentile() {
         return overallPercentile==1;
     }
 
+    @Override
     public boolean isOverallScore() {
         return overallScore==1;
     }
 
+    @Override
     public boolean isPerformanceValues() {
         return performanceValues==1;
     }
 
+    @Override
     public boolean isResponseRatings() {
         return responseRatings==1;
     }
 
+    @Override
     public boolean isSendCandidateFbkReports() {
         return sendCandidateFbkReports==1;
     }
 
+    @Override
     public boolean isStarted() {
         return started==1;
     }
 
+    @Override
     public boolean isTestAdminUser() {
         return testAdminUser==1;
     }
 
+    @Override
     public boolean isTestCreditsUsed() {
         return testCreditsUsed==1;
     }
 
+    @Override
     public boolean isTestEventType() {
         return testEventType==1;
     }
 
+    @Override
     public boolean isTestName() {
         return testName==1;
     }
 
+    @Override
     public boolean isTestTakerIdentifier() {
         return testTakerIdentifier==1;
     }
 
+    @Override
     public boolean isUserNoteDates() {
         return userNoteDates==1;
     }
 
+    @Override
     public boolean isUserNotes() {
         return userNotes==1;
     }
 
+    @Override
     public boolean isUserStatus() {
         return userStatus==1;
     }
+
+    public int getUserDemo() {
+        return userDemo;
+    }
+
+    public void setUserDemo(int userDemo) {
+        this.userDemo = userDemo;
+    }
+    
+    public boolean isUserDemo() {
+        return userDemo==1;
+    }
+
+    @Override
+    public boolean isUserDemographics()
+    {
+        return userDemo==1;
+    }
+
+    public int getTotalSeconds() {
+        return totalSeconds;
+    }
+
+    public void setTotalSeconds(int totalSeconds) {
+        this.totalSeconds = totalSeconds;
+    }
+    
+    @Override
+    public boolean isTotalSeconds() {
+        return totalSeconds==1;
+    }
+
 
 }
