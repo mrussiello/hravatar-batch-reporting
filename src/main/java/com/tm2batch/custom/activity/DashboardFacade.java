@@ -1083,9 +1083,9 @@ public class DashboardFacade {
 
             
             // product id completed and scored - test event completions and average score
-            sqlStr = "SELECT productid, COUNT(1), AVG(overallscore) FROM testevent WHERE orgid=" + orgId + " AND testeventstatustypeid >=110 AND testeventstatustypeid NOT IN (203,204) " +  suborgStr + " AND startdate>='" + sDate.toString() + "' AND startdate<='" + eDate.toString() + "' GROUP BY productid " +
+            sqlStr = "SELECT productid, COUNT(1), AVG(overallscore), AVG(totaltesttime) FROM testevent WHERE orgid=" + orgId + " AND testeventstatustypeid >=110 AND testeventstatustypeid NOT IN (203,204) " +  suborgStr + " AND startdate>='" + sDate.toString() + "' AND startdate<='" + eDate.toString() + "' GROUP BY productid " +
                     " UNION ALL " +
-                    " SELECT productid, COUNT(1), AVG(overallscore) FROM testeventarchive WHERE orgid=" + orgId + " AND testeventstatustypeid >=110  AND testeventstatustypeid NOT IN (203,204) " +  suborgStr + " AND startdate>='" + sDate.toString() + "' AND startdate<='" + eDate.toString() + "' GROUP BY productid ";
+                    " SELECT productid, COUNT(1), AVG(overallscore), AVG(totaltesttime) FROM testeventarchive WHERE orgid=" + orgId + " AND testeventstatustypeid >=110  AND testeventstatustypeid NOT IN (203,204) " +  suborgStr + " AND startdate>='" + sDate.toString() + "' AND startdate<='" + eDate.toString() + "' GROUP BY productid ";
 
             rs = stmt.executeQuery( sqlStr );
 
