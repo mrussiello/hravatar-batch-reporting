@@ -71,6 +71,9 @@ public class Org implements Serializable
     private String performanceNames;    
     
     
+    @Column(name="ratingnames")
+    private String ratingNames;    
+    
     @Column(name="reportlogourl")
     private String reportLogoUrl;
 
@@ -106,6 +109,10 @@ public class Org implements Serializable
     @Transient
     private RcOrgPrefs rcOrgPrefs;
 
+    @Transient
+    private String[] ratingNamesArray;
+    
+    
     @Override
     public boolean equals( Object o )
     {
@@ -193,6 +200,111 @@ public class Org implements Serializable
         
         return out;
     }
+    
+    
+    public String getRatingName1()
+    {
+        return getRatingName(1);
+    }
+
+    public String getRatingName2()
+    {
+        return getRatingName(2);
+    }
+
+    public String getRatingName3()
+    {
+        return getRatingName(3);
+    }
+
+    public String getRatingName4()
+    {
+        return getRatingName(4);
+    }
+
+    public String getRatingName5()
+    {
+        return getRatingName(5);
+    }
+
+    public String getRatingName6()
+    {
+        return getRatingName(6);
+    }
+
+    public String getRatingName7()
+    {
+        return getRatingName(7);
+    }
+
+    public String getRatingName8()
+    {
+        return getRatingName(8);
+    }
+
+    public String getRatingName9()
+    {
+        return getRatingName(9);
+    }
+
+    public String getRatingName10()
+    {
+        return getRatingName(10);
+    }
+
+    public int getRatingNameCount()
+    {
+        int ct = 0;
+        for( String s : getRatingNamesArray() )
+        {
+            if( s!=null && !s.isBlank() )
+                ct++;
+            else
+                break;
+        }
+        return ct;
+    }
+    
+    public String getRatingName(int idx)
+    {
+        return getRatingNamesArray()[idx-1];
+    }
+    
+    public String[] getRatingNamesArray()
+    {
+        if( ratingNamesArray!=null )
+            return ratingNamesArray;
+        
+        if( ratingNames == null || ratingNames.isBlank() )
+        {
+            ratingNamesArray = new String[10];
+            return ratingNamesArray;
+        }
+
+        List<String> out = new ArrayList<>();
+
+        for( String s : ratingNames.split( ";" ) )
+        {
+            if( s==null )
+                continue;
+
+            s = s.trim();
+
+            out.add( s );
+        }
+        
+        while( out.size()<10 )
+        {
+            out.add("");
+        }
+
+	String[] sa = new String[out.size()];
+        out.toArray(sa);
+        ratingNamesArray=sa;
+        return sa;
+    }
+    
+    
     
     public OrgCreditUsageType getOrgCreditUsageType()    
     {

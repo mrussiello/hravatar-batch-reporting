@@ -87,6 +87,10 @@ public enum ProductType
         return equals(FINDLY);
     }
 
+    public boolean getIsSimOrCt5Direct()
+    {
+        return equals(SIM) || equals(CT5DIRECTTEST);
+    }
 
     public boolean getIsIvr()
     {

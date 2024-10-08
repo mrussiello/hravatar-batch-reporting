@@ -85,4 +85,6 @@ public interface GeneralReportOptions extends Serializable {
     
     public boolean isTotalSeconds();    
     
+    public boolean isAvgRespRatings();
+    
 }

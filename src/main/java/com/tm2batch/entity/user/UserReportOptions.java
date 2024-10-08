@@ -143,6 +143,9 @@ public class UserReportOptions implements GeneralReportOptions
     @Column(name="totalseconds")
     private int totalSeconds=0;
             
+    @Column(name="avgrespratings")
+    private int avgRespRatings=1;
+        
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
@@ -676,5 +679,17 @@ public class UserReportOptions implements GeneralReportOptions
         return totalSeconds==1;
     }
 
+    public int getAvgRespRatings() {
+        return avgRespRatings;
+    }
+
+    public void setAvgRespRatings(int avgRespRatings) {
+        this.avgRespRatings = avgRespRatings;
+    }
+
+    @Override
+    public boolean isAvgRespRatings() {
+        return avgRespRatings==1;
+    }
 
 }

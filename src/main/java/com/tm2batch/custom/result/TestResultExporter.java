@@ -11,12 +11,15 @@ import com.tm2batch.account.results.ct2.CT3ScoreUtils;
 import com.tm2batch.autoreport.GeneralReportOptions;
 import com.tm2batch.entity.battery.BatteryScore;
 import com.tm2batch.entity.event.TestEvent;
+import com.tm2batch.entity.event.TestEventResponseRating;
 import com.tm2batch.entity.event.TestEventScore;
 import com.tm2batch.entity.profile.Profile;
 import com.tm2batch.entity.user.Org;
 import com.tm2batch.entity.user.User;
 import com.tm2batch.entity.user.UserNote;
 import com.tm2batch.event.EventFacade;
+import com.tm2batch.event.TestEventResponseRatingFacade;
+import com.tm2batch.event.TestEventResponseRatingUtils;
 import com.tm2batch.global.Constants;
 import com.tm2batch.score.TextAndTitle;
 import com.tm2batch.service.LogService;
@@ -38,6 +41,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -58,6 +62,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class TestResultExporter {
 
     UserFacade userFacade;
+    TestEventResponseRatingFacade terrFacade;
+    
     Locale locale;
     
     public byte[] getTestResultExcelFile( List<TestResult> trl, Locale locale, TimeZone timezone, GeneralReportOptions excelReportBean, Org org, Date startDate, Date endDate) throws Exception
@@ -79,6 +85,11 @@ public class TestResultExporter {
             Set<String> tnames = new TreeSet<>();
                         
             Set<String> cNames = new TreeSet<>();
+            
+            Set<String> terrCategoryNames = new TreeSet<>();
+            Map<String,String> avgRespRatingMap;
+            String respRatingVal;
+
 
             TestEvent te;
 
@@ -125,6 +136,34 @@ public class TestResultExporter {
                         else
                             cNames.add( ( hasMultTests ? "(" + tr.getName() + ") " : ""  ) + tes.getName() );                        
                     }
+                    
+                    if( te.getProduct()==null )
+                    {
+                        if( eventFacade == null )
+                            eventFacade = EventFacade.getInstance();
+                        te.setProduct( eventFacade.getProduct(te.getProductId()));
+                    }
+
+                    if( excelReportBean.isAvgRespRatings() )
+                    {
+                        if( te.getTestEventResponseRatingList()==null )
+                        {
+                            if( terrFacade==null )
+                                terrFacade=TestEventResponseRatingFacade.getInstance();
+                            te.setTestEventResponseRatingList( terrFacade.getTestEventResponseRatingsForTestEventId(te.getTestEventId()));
+                        }
+                        if( te.getTestEventResponseRatingList()!=null && !te.getTestEventResponseRatingList().isEmpty() )
+                        {
+                            for( TestEventResponseRating ter : te.getTestEventResponseRatingList() )
+                            {
+                                TestEventResponseRatingUtils.setTestEventResponseRatingNames(org, te.getProduct(), te.getTestEventScoreList(), locale, te.getTestEventResponseRatingList());
+
+                                if( ter.getRatingNameList()!=null )
+                                    terrCategoryNames.addAll( ter.getRatingNameList() );
+                            }
+                        }
+                    }
+                    
                 }
             }
             
@@ -313,6 +352,9 @@ public class TestResultExporter {
                     if( excelReportBean.isTestCreditsUsed())
                         count++;
 
+                    // Online views
+                    count++;
+                                        
                     if( excelReportBean.isTestTakerIdentifier())
                         count++;
 
@@ -381,7 +423,20 @@ public class TestResultExporter {
                             cell.setCellStyle(bold);
                             cellNum++;
                         }
-                    }                
+                    }
+                    
+                    if( excelReportBean.isAvgRespRatings() && !terrCategoryNames.isEmpty() )
+                    {
+                        for( String cname : terrCategoryNames )
+                        {
+                            cell = row.createCell( cellNum);
+                            cell.setCellValue( "" );
+                            colsToAutosize.add( cellNum );
+                            cell.setCellStyle(bold);
+                            cellNum++;
+                        }
+                    }
+                    
                 }
             }            
             
@@ -571,6 +626,17 @@ public class TestResultExporter {
                 
             }
 
+            if( !forPerfUpload)
+            {
+                cell = row.createCell( cellNum);
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "g.ResultViews" ) );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+            }            
+            
+            
+            
             if( forPerfUpload || excelReportBean.isTestTakerIdentifier())
             {
                 cell = row.createCell( cellNum);
@@ -715,6 +781,19 @@ public class TestResultExporter {
                     cellNum++;
                 }
             }
+            
+            if( !forPerfUpload && excelReportBean.isAvgRespRatings() && !terrCategoryNames.isEmpty() )
+            {
+                for( String cname : terrCategoryNames )
+                {
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( "Avg. " + cname );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(bold);
+                    cellNum++;
+                }
+            }
+            
 
             if( forPerfUpload || excelReportBean.isPerformanceValues() )
             {
@@ -1043,6 +1122,12 @@ public class TestResultExporter {
                     
                 }
 
+                if( !forPerfUpload )
+                {
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( te==null ? "" : Integer.toString(te.getSkinId()) );
+                    cellNum++;
+                }
                 
                 // Test Taker Identifier
                 if( forPerfUpload || excelReportBean.isTestTakerIdentifier())
@@ -1203,6 +1288,20 @@ public class TestResultExporter {
                             
                         else
                             cell.setCellValue( tes == null ? "" :  I18nUtils.getFormattedNumber(locale, tes.getScore(), scoreDigits) );
+                        cellNum++;
+                    }
+                }
+                
+                if( !forPerfUpload && excelReportBean.isAvgRespRatings()&& !terrCategoryNames.isEmpty() )
+                {
+                    avgRespRatingMap = te==null ? null : TestEventResponseRatingUtils.getOverallAverageRatingMap(te.getTestEventResponseRatingList(), locale);
+                    
+                    for( String cname : terrCategoryNames )
+                    {
+                        respRatingVal = avgRespRatingMap==null ? null : avgRespRatingMap.get(cname);
+                        
+                        cell = row.createCell( cellNum);
+                        cell.setCellValue( respRatingVal==null ? "" : respRatingVal );
                         cellNum++;
                     }
                 }
