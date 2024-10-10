@@ -108,6 +108,7 @@ public class RuntimeConstants
         cache.put( "stringEncryptorKey",  "" );
         cache.put( "stringEncryptorKeyFileSafe",  "" );
         
+        cache.put( "disableCertificateVerification", true );
         
         // ////////////////////////////////////////////////////////////////////////////
         // LV Live

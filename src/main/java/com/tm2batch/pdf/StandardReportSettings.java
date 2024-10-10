@@ -10,6 +10,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.BaseFont;
 import com.tm2batch.global.RuntimeConstants;
 import com.tm2batch.util.I18nUtils;
+import com.tm2batch.util.SSLUtils;
 import java.util.Locale;
 
 /**
@@ -148,6 +149,9 @@ public class StandardReportSettings implements ReportSettings
     @Override
     public void initSettings( ReportData reportData ) throws Exception
     {
+        if( RuntimeConstants.getBooleanValue( "disableCertificateVerification" ) )
+            SSLUtils.disableSslVerification();
+        
         initColors(); 
         
         rtl = I18nUtils.isTextRTL( reportData==null ? Locale.US :  reportData.getLocale() );
