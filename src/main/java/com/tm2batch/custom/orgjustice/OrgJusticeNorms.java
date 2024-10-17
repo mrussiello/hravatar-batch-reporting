@@ -10,12 +10,12 @@ package com.tm2batch.custom.orgjustice;
  */
 public class OrgJusticeNorms {
     
-    public static final float overallAvg = 4.30f;
-    public static final float overallAvgMale = 4.46f;
-    public static final float overallAvgFemale = 4.24f;
-    public static final float overallAvgOther = 9.99f;
-    public static final float overallAvgUrim = 4.03f;
-    public static final float overallAvgNonUrim = 4.40f;
+    public static final float overallAvg = 4.54f;
+    public static final float overallAvgMale = 4.61f;
+    public static final float overallAvgFemale = 4.57f;
+    public static final float overallAvgOther = 4.20f;
+    public static final float overallAvgUrim = 4.47f;
+    public static final float overallAvgNonUrim = 4.59f;
     
     /*
      0 - Clinical supervisor
@@ -26,17 +26,17 @@ public class OrgJusticeNorms {
      5- colleague
      6- patient family  
     */
-    public static final float[] groupAverages = new float[]{4.26f,4.42f,4.09f,4.79f,4.26f,4.47f,4.03f};
+    public static final float[] groupAverages = new float[]{4.56f,4.54f,4.48f,4.69f,4.42f,4.67f,4.41f};
     
-    public static final float[] groupAveragesMale = new float[]{4.44f,4.54f,4.32f,4.82f,4.44f,4.58f,4.08f};
+    public static final float[] groupAveragesMale = new float[]{4.65f,4.61f,4.57f,4.71f,4.50f,4.73f,4.48f};
 
-    public static final float[] groupAveragesFemale = new float[]{4.22f,4.35f,3.98f,4.78f,4.17f,4.47f,4.07f};
+    public static final float[] groupAveragesFemale = new float[]{4.59f,4.61f,4.49f,4.72f,4.41f,4.70f,4.41f};
 
-    public static final float[] groupAveragesOther = new float[]{9.99f,9.99f,9.99f,9.99f,9.99f,9.99f,9.99f};
+    public static final float[] groupAveragesOther = new float[]{4.18f,4.29f,4.25f,4.60f,3.98f,4.24f,4.20f};
 
-    public static final float[] groupAveragesUrim = new float[]{3.82f,4.15f,3.78f,4.75f,4.03f,4.27f,3.85f};
+    public static final float[] groupAveragesUrim = new float[]{4.46f,4.47f,4.42f,4.64f,4.37f,4.63f,4.36f};
 
-    public static final float[] groupAveragesNonUrim = new float[]{4.43f,4.51f,4.21f,4.82f,4.33f,4.54f,4.10f};
+    public static final float[] groupAveragesNonUrim = new float[]{4.64f,4.61f,4.53f,4.72f,4.46f,4.71f,4.44f};
     
     /*
        0 - Interpersonal Justice
@@ -44,16 +44,17 @@ public class OrgJusticeNorms {
        2 - Procedural Justice
        3 - Distributive Justice
     */
-    public static final float[] dimensionAverages = new float[]{4.33f,4.25f,4.40f,4.22f};
+    public static final float[] dimensionAverages = new float[]{4.55f,4.50f,4.56f,4.49f};
     
-    public static final float[] dimensionAveragesMale = new float[]{4.47f,4.41f,4.55f,4.42f};
+    public static final float[] dimensionAveragesMale = new float[]{4.62f,4.57f,4.64f,4.59f};
     
-    public static final float[] dimensionAveragesFemale = new float[]{4.43f,4.19f,4.34f,4.13f};
+    public static final float[] dimensionAveragesFemale = new float[]{4.58f,4.53f,4.59f,4.54f};
 
-    public static final float[] dimensionAveragesOther = new float[]{9.99f,9.99f,9.99f,9.99f};
+    public static final float[] dimensionAveragesOther = new float[]{4.25f,4.18f,4.18f,4.25f};
 
-    public static final float[] dimensionAveragesUrim = new float[]{4.13f,3.96f,4.01f,4.02f};
+    public static final float[] dimensionAveragesUrim = new float[]{4.50f,4.45f,4.51f,4.37f};
 
-    public static final float[] dimensionAveragesNonUrim = new float[]{4.43f,4.36f,4.50f,4.32f};
+    public static final float[] dimensionAveragesNonUrim = new float[]{4.61f,4.56f,4.62f,4.57f};
+    
 
 }
