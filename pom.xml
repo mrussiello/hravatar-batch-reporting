@@ -104,7 +104,7 @@
           <dependency>
               <groupId>org.primefaces</groupId>
               <artifactId>primefaces</artifactId>
-              <version>14.0.5</version>
+              <version>14.0.6</version>
 
               <type>jar</type>
               <classifier>jakarta</classifier>

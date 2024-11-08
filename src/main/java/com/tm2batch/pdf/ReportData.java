@@ -220,7 +220,7 @@ public class ReportData
     {
        try
        {
-           return hasCustLogo() ? new URI( s!=null && s.getReportLogoUrl()!= null && !s.getReportLogoUrl().isBlank() ? s.getReportLogoUrl() : o.getReportLogoUrl() ).toURL() : null; // new URL( baseImageUrl + custLogoFilename );
+           return hasCustLogo() ? new URI( s!=null && s.getReportLogoUrl()!= null && !s.getReportLogoUrl().isBlank() ? s.getReportLogoUrl() : o.getReportLogoUrl() ).toURL() : null; // com.tm2batch.util.HttpUtils.getURLFromString( baseImageUrl + custLogoFilename );
        }
        catch( Exception e )
        {
