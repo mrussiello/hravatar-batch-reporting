@@ -1,6 +1,5 @@
 package com.tm2batch.service;
 
-import com.tm2batch.global.Constants;
 import com.tm2batch.global.RuntimeConstants;
 import com.tm2batch.global.STException;
 import java.util.HashMap;
@@ -10,7 +9,6 @@ import jakarta.mail.internet.InternetAddress;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
-import javax.naming.InitialContext;
 //import org.apache.commons.validator.routines.EmailValidator;
 
 public class EmailUtils
