@@ -104,8 +104,8 @@ public class DashboardFacade {
         boolean isUnlimited = org.getOrgCreditUsageType().getUnlimited();
         out.put( "unlimited", isUnlimited );
 
-        java.sql.Date sDate = new java.sql.Date( startDate.getTime() );
-        java.sql.Date eDate = new java.sql.Date( endDate.getTime() );
+        java.sql.Timestamp sDate = new java.sql.Timestamp( startDate.getTime() );
+        java.sql.Timestamp eDate = new java.sql.Timestamp( endDate.getTime() );
 
         int orgId = org.getOrgId();
 
@@ -1590,7 +1590,7 @@ public class DashboardFacade {
 
 
     
-    private float getAverageBatteryScoreForProductId( int productId, int orgId, String suborgStrBs, java.sql.Date sDate, java.sql.Date eDate ) throws Exception
+    private float getAverageBatteryScoreForProductId( int productId, int orgId, String suborgStrBs, java.sql.Timestamp sDate, java.sql.Timestamp eDate ) throws Exception
     {
         DataSource pool = (DataSource) new InitialContext().lookup( "jdbc/tm2mirror" );
 
@@ -1655,8 +1655,8 @@ public class DashboardFacade {
 
         java.sql.Timestamp sTs = new java.sql.Timestamp( startDate.getTime() );
         java.sql.Timestamp eTs = new java.sql.Timestamp( endDate.getTime() );
-        //java.sql.Date sDate = new java.sql.Date( startDate.getTime() );
-        //java.sql.Date eDate = new java.sql.Date( endDate.getTime() );
+        //java.sql.Timestamp sDate = new java.sql.Timestamp( startDate.getTime() );
+        //java.sql.Timestamp eDate = new java.sql.Timestamp( endDate.getTime() );
 
         int orgId = org.getOrgId();
 
@@ -1848,8 +1848,8 @@ public class DashboardFacade {
         out.put( "startdate", startDate );
         out.put( "enddate", endDate );
 
-        java.sql.Date sDate = new java.sql.Date( startDate.getTime() );
-        java.sql.Date eDate = new java.sql.Date( endDate.getTime() );
+        java.sql.Timestamp sDate = new java.sql.Timestamp( startDate.getTime() );
+        java.sql.Timestamp eDate = new java.sql.Timestamp( endDate.getTime() );
 
         int orgId = org.getOrgId();
 
@@ -2012,8 +2012,8 @@ public class DashboardFacade {
     {
         Set<Long> out = new HashSet<>();
         
-        java.sql.Date sDate = new java.sql.Date( startDate.getTime() );
-        java.sql.Date eDate = new java.sql.Date( endDate.getTime() );
+        java.sql.Timestamp sDate = new java.sql.Timestamp( startDate.getTime() );
+        java.sql.Timestamp eDate = new java.sql.Timestamp( endDate.getTime() );
 
         int orgId = org.getOrgId();
 
