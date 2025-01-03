@@ -9,6 +9,11 @@ public enum SimCompetencyClass
     CORESKILL(2,"Core Skill"),
     KNOWLEDGE(3,"Knowledge"),
     EQ(4,"Emotional Intelligence"),
+    CUSTOM(21,"Custom 1"),
+    CUSTOM2(22,"Custom 2"),
+    CUSTOM3(23,"Custom 3"),
+    CUSTOM4(24,"Custom 4"),
+    CUSTOM5(25,"Custom 5"),
     SCOREDTASK(100,"Scored Task"),
     SCOREDINTEREST(120,"Scored Interest"),
     SCOREDEXPERIENCE(130,"Scored Experience"),
@@ -24,6 +29,8 @@ public enum SimCompetencyClass
     SKILL_COMBO(151,"Skill Combination"),
     NONCOG_COMBO(152,"Non-Cognitive Combination" ),
     VOICE_PERFORMANCE_INDEX(153,"Voice Performance Index"),
+    INTERESTS_COMBO(154,"Interests Combination" ),
+    CUSTOM_COMBO(155,"Custom Combination"),
     AGGREGATEABILITY(200,"AggregateAbility"),
     AGGREGATESKILL(201,"AggregateSkill"),
     AGGREGATEKNOWLEDGE(202,"AggregateKnowledge"),
@@ -99,7 +106,11 @@ public enum SimCompetencyClass
         return equals( SCOREDIMAGEUPLOAD );
     }
     
-    
+    public boolean isAnyCustom()
+    {
+        return equals( CUSTOM ) ||equals( CUSTOM2 ) || equals( CUSTOM3 ) || equals( CUSTOM4 ) || equals( CUSTOM5 ) || equals( CUSTOM_COMBO );
+    }
+            
     public boolean isAbility()
     {
         return  equals( ABILITY ) || equals( AGGREGATEABILITY ) || equals( ABILITY_COMBO );

@@ -616,6 +616,38 @@ public class TestEvent implements Serializable, Comparable<TestEvent>, TestResul
         return out;
     }
     
+    public List<TestEventScore> scoredCustomTestEventScoreList( int customIndex )
+    {
+        List<TestEventScore> out = new ArrayList<>();
+
+        if( testEventScoreList == null )
+            return out;
+
+        for( TestEventScore tes : testEventScoreList )
+        {
+            // need scores
+            if( !tes.getTestEventScoreType().getIsCompetency() || !tes.getHasScore() || !SimCompetencyVisibilityType.getValue( tes.getHide() ).getShowInReports()  )
+                continue;
+
+            if( SimCompetencyClass.getValue( tes.getSimCompetencyClassId() ).isAnyCustom())
+            {
+                if( customIndex<=0 || 
+                    (customIndex==1 && (tes.getSimCompetencyClassId()==SimCompetencyClass.CUSTOM.getSimCompetencyClassId() || tes.getSimCompetencyClassId()==SimCompetencyClass.CUSTOM_COMBO.getSimCompetencyClassId())) ||
+                    (customIndex==2 && tes.getSimCompetencyClassId()==SimCompetencyClass.CUSTOM2.getSimCompetencyClassId()) ||
+                    (customIndex==3 && tes.getSimCompetencyClassId()==SimCompetencyClass.CUSTOM3.getSimCompetencyClassId()) ||
+                    (customIndex==4 && tes.getSimCompetencyClassId()==SimCompetencyClass.CUSTOM4.getSimCompetencyClassId()) ||
+                    (customIndex==5 && tes.getSimCompetencyClassId()==SimCompetencyClass.CUSTOM5.getSimCompetencyClassId())  )
+                out.add( tes );
+            }
+        }
+
+        Collections.sort( out, new DisplayOrderComparator() ); //new TESNameComparator() );
+        
+        return out;
+    }
+    
+    
+    
     
     public List<TestEventScore> getScoredAbilityTestEventScoreList()
     {

@@ -179,8 +179,32 @@ public class CT3ScoreUtils {
         String title;
         
         
+        List<TestEventScore> ctesl;
+        
+        // Custom Groups
+        for( int i=1;i<=5;i++ )
+        {
+            ctesl = te.scoredCustomTestEventScoreList(i);
+            if( !ctesl.isEmpty() )
+            {
+                cl = new ArrayList<>();
+                for( TestEventScore tes : ctesl )
+                {
+                    scoreDigits = te.getReport()!=null && te.getReport().getIntParam3()>=0 ? te.getReport().getIntParam3() : ScoreFormatType.getValue( tes.getScoreFormatTypeId() ).getScorePrecisionDigits();
+                    cl.add(new Competency( tes, te.getReportRangeProfile(), Constants.CT2_COLORGRAPHWID, scoreDigits, locale, false, te.getUseScoreText4CompetencyNumeric()  ) );
+                }
 
-        List<TestEventScore> ctesl = te.getScoredAbilityTestEventScoreList();
+                title = te.getReport()!=null ? te.getReport().getReportFlagValueAsString( "competencygrouptitle" + (100+i) ) : null;
+                if( title==null )
+                    title = MessageFactory.getStringMessage(locale, "g.CustomTitleX" , new String[]{Integer.toString(i)});
+
+                cg = new CompetencyGroup( title, cl, SimCompetencyClass.getValue(20+i).getSupportsPercentiles() );
+                cgl.add( cg );
+            }
+        }        
+        
+
+        ctesl = te.getScoredAbilityTestEventScoreList();
         if( !ctesl.isEmpty() )
         {
             cl = new ArrayList<>();
