@@ -43,6 +43,11 @@ public enum OnlineProctoringType
     }
     
     
+    public boolean getIsAnyPremiumWithSuspAct()
+    {
+        return equals( PREMIUM ) || equals( PREMIUM_SUSPICIOUS_IMAGES ) || equals( PREMIUM_SUSPICIOUS ) || equals( PREMIUM_VIDNOREC_SUSPICIOUS_IMAGES );
+    }    
+    
     public boolean getIsAnyBasic()
     {
         return onlineProctoringTypeId>0 && onlineProctoringTypeId<100;

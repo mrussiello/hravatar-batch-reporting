@@ -18,6 +18,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -50,51 +52,51 @@ public class RemoteProctorEvent implements Serializable
 
     @Column( name = "testserverid" )
     private String testServerId;
-    
+
     @Column( name = "onlineproctoringtypeid" )
     private int onlineProctoringTypeId;
-    
+
     @Column( name = "suspiciousactivitythresholdtypeid" )
     private int suspiciousActivityThresholdTypeId;
-    
+
     /*
      0 = Event Not Completed
-     10 = Event completed. 
+     10 = Event completed.
      20 = Post Media Processing and Conversion Completed
      100 = Analysis Completed
-     
+
     */
     @Column( name = "remoteproctoreventstatustypeid" )
     private int remoteProctorEventStatusTypeId;
-    
+
     @Column( name = "mediatypeid" )
     private int mediaTypeId;
-    
+
     /*
      0 = Not started
      10 = Ready for Post Media Processing
      20 = Post Media Processing Complete
-     30 = Conversions Completed    
-     100 = All recordings ready     
+     30 = Conversions Completed
+     100 = All recordings ready
     */
     @Column( name = "recordingstatustypeid" )
     private int recordingStatusTypeId;
 
-    
+
     /**
      * Number of uploaded user files.
      */
     @Column( name = "uploadedfilecount" )
     private int uploadedFileCount;
-    
+
 
     /**
-     * 
+     *
      */
     @Column( name = "totaldurationsecs" )
     private int totalDurationSecs;
-    
-    
+
+
     /*
      0 = Normal. Minimal or no issues detected.
      10 = Low Risk Issues Detected
@@ -104,22 +106,22 @@ public class RemoteProctorEvent implements Serializable
     @Column( name = "analysisresulttypeid" )
     private int analysisResultTypeId;
 
-    
+
     @Column( name = "ovserverbaseurl" )
     private String ovServerBaseUrl;
-    
-    
-    
+
+
+
     /**
-     * Packed String 
+     * Packed String
      * 0=suspended, 1=unsuspended
-     * 
+     *
      * Date (Long MS);0 or 1;Date (Long MS);0 or 1; ..
      */
     @Column( name = "suspensionhistory" )
     private String suspensionHistory;
 
-        
+
     @Column( name = "unsuspendedsuspiciousactivitycount" )
     private int unsuspendedSuspiciousActivityCount;
 
@@ -134,31 +136,31 @@ public class RemoteProctorEvent implements Serializable
      */
     @Column( name = "thumbsprocessed" )
     private int thumbsProcessed;
-    
+
     /**
      * Thumbs that had a face.
      */
     @Column( name = "thumbspassed" )
     private int thumbsPassed;
-    
+
     /**
      * thumb pairs that had same face
      */
     @Column( name = "thumbpairspassed" )
     private int thumbPairsPassed;
-    
+
     /**
      * thumb pairs that had different faces
      */
     @Column( name = "thumbpairsfailed" )
     private int thumbPairsFailed;
-    
+
     /**
      * thumbs that had more than one face
      */
     @Column( name = "multifacethumbs" )
     private int multiFaceThumbs;
-        
+
     /**
      * this is a score based on thumb comparison.
      * 100=same face, consistent.
@@ -170,30 +172,32 @@ public class RemoteProctorEvent implements Serializable
 
     /**
      * combination of multi-face, thumbscore, and id score
-     * 
+     *
      */
     @Column( name = "overallproctorscore" )
     private float overallProctorScore  = -1;
 
-    
-    
-    
-    
+
+
+
+
     @Column( name = "note" )
     private String note;
-    
+
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="eventcompletedate")
     private Date eventCompleteDate;
 
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
     private Date createDate;
 
-    
-    
+    @Transient
+    private List<SuspiciousActivity> suspiciousActivityList;
+
+
     @Override
     public String toString() {
         return "RemoteProctorEvent{" + "remoteProctorEventId=" + remoteProctorEventId + ", testEventId=" + testEventId + ", onlineProctoringTypeId=" + onlineProctoringTypeId + ", remoteProctorEventStatusTypeId=" + remoteProctorEventStatusTypeId + ", recordingStatusTypeId=" + recordingStatusTypeId + ", uploadedFileCount=" + uploadedFileCount + '}';
@@ -227,8 +231,38 @@ public class RemoteProctorEvent implements Serializable
         }
         return true;
     }
-                
-    
+
+    public Map<Integer,Integer> getSuspciousActivityCountByType()
+    {
+        Map<Integer,Integer> out = new HashMap<>();
+
+        if( this.suspiciousActivityList==null || this.suspiciousActivityList.isEmpty() )
+            return out;
+
+        Integer ct;
+        for( SuspiciousActivity sa : this.suspiciousActivityList )
+        {
+            if( sa.getSuspiciousActivityType().getIsUserNote() )
+                continue;
+
+            ct = out.get( sa.getSuspiciousActivityTypeId() );
+
+            if( ct==null )
+                ct = 0;
+
+            if( sa.getSuspiciousActivityType().getUsesCounter() )
+                ct += sa.getIntParam1();
+            else
+                ct++;
+
+            out.put( sa.getSuspiciousActivityTypeId(), ct);
+        }
+
+        return out;
+    }
+
+
+
     public long getRemoteProctorEventId() {
         return remoteProctorEventId;
     }
@@ -340,7 +374,7 @@ public class RemoteProctorEvent implements Serializable
     public void setEventCompleteDate(Date eventCompleteDate) {
         this.eventCompleteDate = eventCompleteDate;
     }
-    
+
     public int getTotalDurationSecs() {
         return totalDurationSecs;
     }
@@ -429,7 +463,7 @@ public class RemoteProctorEvent implements Serializable
         this.idFaceMatchPercent = idFaceMatchPercent;
     }
 
- 
+
 
     public float getIdFaceMatchConfidence() {
         return idFaceMatchConfidence;
@@ -439,7 +473,15 @@ public class RemoteProctorEvent implements Serializable
         this.idFaceMatchConfidence = idFaceMatchConfidence;
     }
 
-    
-    
-    
+    public List<SuspiciousActivity> getSuspiciousActivityList() {
+        return suspiciousActivityList;
+    }
+
+    public void setSuspiciousActivityList(List<SuspiciousActivity> suspiciousActivityList) {
+        this.suspiciousActivityList = suspiciousActivityList;
+    }
+
+
+
+
 }

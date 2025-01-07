@@ -87,4 +87,8 @@ public interface GeneralReportOptions extends Serializable {
     
     public boolean isAvgRespRatings();
     
+    public boolean isSuspiciousActivity();
+    
+    public boolean isPlagiarism();    
+    
 }

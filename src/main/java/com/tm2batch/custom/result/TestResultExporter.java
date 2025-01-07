@@ -21,6 +21,8 @@ import com.tm2batch.event.EventFacade;
 import com.tm2batch.event.TestEventResponseRatingFacade;
 import com.tm2batch.event.TestEventResponseRatingUtils;
 import com.tm2batch.global.Constants;
+import com.tm2batch.proctor.ProctorFacade;
+import com.tm2batch.proctor.SuspiciousActivityType;
 import com.tm2batch.score.TextAndTitle;
 import com.tm2batch.service.LogService;
 import com.tm2batch.sim.SimCompetencyVisibilityType;
@@ -63,9 +65,10 @@ public class TestResultExporter {
 
     UserFacade userFacade;
     TestEventResponseRatingFacade terrFacade;
-    
+    ProctorFacade proctorFacade;
+
     Locale locale;
-    
+
     public byte[] getTestResultExcelFile( List<TestResult> trl, Locale locale, TimeZone timezone, GeneralReportOptions excelReportBean, Org org, Date startDate, Date endDate) throws Exception
     {
         byte[] out = null;
@@ -73,22 +76,26 @@ public class TestResultExporter {
         if( locale==null )
             locale=Locale.US;
         this.locale=locale;
-        
+
         try
         {
 
             // Indicates this is for performance upload. Sets Certain fields.
             boolean forPerfUpload = excelReportBean.isIncludeFieldsForPerfUpload();
-            
+
             boolean addOverallNumScore2 = false;
-                       
+
             Set<String> tnames = new TreeSet<>();
-                        
+
             Set<String> cNames = new TreeSet<>();
-            
+
+            Set<Integer> suspActTypeIds = new TreeSet<>();
+
             Set<String> terrCategoryNames = new TreeSet<>();
             Map<String,String> avgRespRatingMap;
             String respRatingVal;
+
+            Map<Integer,Integer> susActTypeIdMap;
 
 
             TestEvent te;
@@ -97,14 +104,14 @@ public class TestResultExporter {
 
             for( TestResult tr : trl )
             {
-                tnames.add( tr.getName() );  
-                
+                tnames.add( tr.getName() );
+
                 if( tr.getAddOverallNumericToExcel() )
                     addOverallNumScore2=true;
             }
-            
+
             boolean hasMultTests = tnames.size()>1;
-                        
+
             for( TestResult tr : trl )
             {
                 if( tr instanceof TestEvent )
@@ -123,20 +130,20 @@ public class TestResultExporter {
                     {
                         if( !tes.getTestEventScoreType().getIsCompetency() )
                             continue;
-                        
+
                         if( !SimCompetencyVisibilityType.getValue( tes.getHide() ).getShowInExcel() )
                             continue;
-                        
+
                         if( SimCompetencyVisibilityType.getValue( tes.getHide() ).getShowItemResponsesOnly())
-                            continue;                        
+                            continue;
 
                         if( tes.getSimCompetencyClass().isScoredImageUpload() )
                             cNames.add(( hasMultTests ? "(" + tr.getName() + ") " : ""  ) + MessageFactory.getStringMessage(locale, "g.ImgCapRiskLevel" ) );
-                        
+
                         else
-                            cNames.add( ( hasMultTests ? "(" + tr.getName() + ") " : ""  ) + tes.getName() );                        
+                            cNames.add( ( hasMultTests ? "(" + tr.getName() + ") " : ""  ) + tes.getName() );
                     }
-                    
+
                     if( te.getProduct()==null )
                     {
                         if( eventFacade == null )
@@ -163,26 +170,57 @@ public class TestResultExporter {
                             }
                         }
                     }
-                    
+
+                    if( excelReportBean.isSuspiciousActivity() && tr.getTestKey()!=null && tr.getTestKey().getOnlineProctoringType().getIsAnyPremium() )
+                    {
+                        if( te.getRemoteProctorEvent()==null )
+                        {
+                            if( proctorFacade==null )
+                                proctorFacade=ProctorFacade.getInstance();
+                            te.setRemoteProctorEvent( proctorFacade.getRemoteProctorEventForTestEventId(te.getTestEventId()));
+                        }
+
+                        if( tr.getTestKey().getOnlineProctoringType().getIsAnyPremiumWithSuspAct() && te.getRemoteProctorEvent()!=null && te.getRemoteProctorEvent().getSuspiciousActivityList()==null )
+                        {
+                            if( proctorFacade==null )
+                                proctorFacade=ProctorFacade.getInstance();
+                            te.getRemoteProctorEvent().setSuspiciousActivityList( proctorFacade.getSuspiciousActivityForTestEventId(te.getTestKeyId(), te.getTestEventId()));
+                        }
+
+                        if( te.getRemoteProctorEvent()!=null && te.getRemoteProctorEvent().getSuspiciousActivityList()!=null )
+                        {
+                            susActTypeIdMap=te.getRemoteProctorEvent().getSuspciousActivityCountByType();
+                            for( Integer suspActTypeId : susActTypeIdMap.keySet() )
+                            {
+                                if( !suspActTypeIds.contains(suspActTypeId) )
+                                    suspActTypeIds.add(suspActTypeId);
+                            }
+                        }
+                    }
+
                 }
             }
-            
+
             String langKey;
-            
+
             List<String> cNameList = new ArrayList<>();
-            
+
             cNameList.addAll( cNames );
-            
+
             Collections.sort( cNameList );
-            
-            
+
+
             boolean orgUsesRawOverallScore = org.getShowOverallRawScore()==1;
-            
-            
-            
+
+
+
             List<TestEventScore> altTesl;
             int maxAlts = 0;
+            SuspiciousActivityType sat;
+            Map<Integer,Integer> saMap;
+            int saCount;
             
+
             if( !forPerfUpload && excelReportBean.isAltScores() )
             {
                 for( TestResult tr : trl )
@@ -192,19 +230,19 @@ public class TestResultExporter {
                         if( tr.getAltScoreProfileList().size() > maxAlts )
                             maxAlts = tr.getAltScoreProfileList().size();
                     }
-                    
+
                     else if( tr instanceof TestEvent )
                     {
                         altTesl = ((TestEvent)tr).getAltScoreTestEventScoreList();
-                        
+
                         if( altTesl!=null && !altTesl.isEmpty() && altTesl.size()>maxAlts )
                             maxAlts = altTesl.size();
                     }
                 }
             }
-                
-            Set<String> itemNames = null;            
-            
+
+            Set<String> itemNames = null;
+
             if( !forPerfUpload && excelReportBean.isItemResponses() )
                 itemNames = getAllItemNameSet( trl );
 
@@ -213,7 +251,7 @@ public class TestResultExporter {
             boolean hasPerfData1 = forPerfUpload ? true : false;
             boolean hasPerfData2 = hasPerfData1;
             boolean hasPerfData3 = hasPerfData1;
-            
+
             if( !forPerfUpload )
             {
                 for( TestResult tr : trl )
@@ -236,9 +274,9 @@ public class TestResultExporter {
                         hasPerfData3 = true;
 
                     if(hasPerfData1 && hasPerfData2 && hasPerfData3 )
-                        break;                
-                }  
-            }                        
+                        break;
+                }
+            }
 
             Workbook wb = new XSSFWorkbook();
 
@@ -252,7 +290,7 @@ public class TestResultExporter {
             wrap.setWrapText( true );
 
             List<Integer> colsToAutosize = new ArrayList<>();
-            
+
             Sheet sheet = wb.createSheet( MessageFactory.getStringMessage(locale, "exrpt.TestResults" ) );
 
             int rowNum = 0;
@@ -268,11 +306,11 @@ public class TestResultExporter {
                 rowNum++;
 
                 cell = row.createCell(0);
-                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.TestResultsForC" )  ); 
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.TestResultsForC" )  );
                 cell.setCellStyle(bold);
 
                 cell = row.createCell(1);
-                cell.setCellValue( org.getName() );            
+                cell.setCellValue( org.getName() );
                 cell.setCellStyle(bold);
 
 
@@ -280,26 +318,26 @@ public class TestResultExporter {
                 rowNum++;
 
                 cell = row.createCell(0);
-                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.DatePrepC" ) );            
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.DatePrepC" ) );
                 cell.setCellStyle(bold);
 
                 cell = row.createCell(1);
-                cell.setCellValue( I18nUtils.getFormattedDate(locale, new Date(), TimeZone.getTimeZone("UTC")) );            
+                cell.setCellValue( I18nUtils.getFormattedDate(locale, new Date(), TimeZone.getTimeZone("UTC")) );
                 cell.setCellStyle(bold);
 
                 String sDateStr = I18nUtils.getFormattedDate(locale, startDate, timezone );
                 String eDateStr = I18nUtils.getFormattedDate(locale, endDate, timezone );
 
                 row = sheet.createRow( rowNum );
-                rowNum++;                
+                rowNum++;
                 cell = row.createCell(0);
-                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.DateRange" )+":" );            
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.DateRange" )+":" );
                 cell.setCellStyle(bold);
-                cell = row.createCell(1);                
-                cell.setCellValue( sDateStr + " - " + eDateStr );            
+                cell = row.createCell(1);
+                cell.setCellValue( sDateStr + " - " + eDateStr );
                 cell.setCellStyle(bold);
-                
-                
+
+
                 row = sheet.createRow( rowNum );
                 rowNum++;
 
@@ -336,7 +374,7 @@ public class TestResultExporter {
 
                     if( excelReportBean.isMobile())
                         count++;
-                    
+
                     if( !forPerfUpload && excelReportBean.isUserDemographics() )
                         count+=5;
 
@@ -354,7 +392,7 @@ public class TestResultExporter {
 
                     // Online views
                     count++;
-                                        
+
                     if( excelReportBean.isTestTakerIdentifier())
                         count++;
 
@@ -394,14 +432,20 @@ public class TestResultExporter {
 
                     if( excelReportBean.isCountryPercentile())
                         count++;
-                    
+
                     if( excelReportBean.isDetailViewUrl())
                         count++;
 
-                    // First Header Row. 
+                    if( !forPerfUpload && excelReportBean.isPlagiarism() )
+                        count++;
+
+                    if( !forPerfUpload && excelReportBean.isSuspiciousActivity() && !suspActTypeIds.isEmpty() )
+                        count += (suspActTypeIds.size() + 1);
+
+                    // First Header Row.
                     for( int i=0;i<count;i++ )
                     {
-                        cell = row.createCell( cellNum);                
+                        cell = row.createCell( cellNum);
                         cell.setCellValue( "" );
                         colsToAutosize.add( cellNum );
                         cell.setCellStyle(bold);
@@ -416,7 +460,7 @@ public class TestResultExporter {
 
                             if( cname.startsWith("(") && cname.indexOf(") ")>0 )
                                 testName = cname.substring(1, cname.indexOf(") ") );
-                            
+
                             cell = row.createCell( cellNum);
                             cell.setCellValue( testName );
                             colsToAutosize.add( cellNum );
@@ -424,7 +468,7 @@ public class TestResultExporter {
                             cellNum++;
                         }
                     }
-                    
+
                     if( excelReportBean.isAvgRespRatings() && !terrCategoryNames.isEmpty() )
                     {
                         for( String cname : terrCategoryNames )
@@ -436,17 +480,17 @@ public class TestResultExporter {
                             cellNum++;
                         }
                     }
-                    
+
                 }
-            }            
-            
+            }
+
             // Next HEADER ROW
             String compName;
-            
+
             cellNum = 0;
             row = sheet.createRow( rowNum );
             rowNum++;
-            
+
             if( forPerfUpload || excelReportBean.isIdentifier() )
             {
                 cell = row.createCell( cellNum);
@@ -496,12 +540,12 @@ public class TestResultExporter {
             {
                 cell = row.createCell( cellNum );
                 langKey = "exrpt.LastName";
-                
+
                 if( org.getUserAnonymityType().getHasUsername() )
                     langKey = "exrpt.Username";
                 else if( org.getUserAnonymityType().getHasUserId() )
                     langKey = "exrpt.UserId";
-                
+
                 cell.setCellValue( forPerfUpload ? "LastName" : MessageFactory.getStringMessage(locale, langKey ) );
                 colsToAutosize.add( cellNum );
                 cell.setCellStyle(bold);
@@ -510,7 +554,7 @@ public class TestResultExporter {
                 langKey = "exrpt.FirstName";
                 if( org.getUserAnonymityType().getHasUsername() )
                     langKey = "exrpt.Password";
-                
+
                 cell = row.createCell( cellNum );
                 cell.setCellValue( forPerfUpload ? "FirstName" : MessageFactory.getStringMessage(locale, langKey ) );
                 colsToAutosize.add( cellNum );
@@ -543,8 +587,8 @@ public class TestResultExporter {
                 colsToAutosize.add( cellNum );
                 cell.setCellStyle(bold);
                 cellNum++;
-                
-                
+
+
                 cell = row.createCell( cellNum);
                 cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.Gender" ) );
                 colsToAutosize.add( cellNum );
@@ -569,8 +613,8 @@ public class TestResultExporter {
                 cell.setCellStyle(bold);
                 cellNum++;
             }
-            
-            
+
+
             if( forPerfUpload || excelReportBean.isUserStatus())
             {
                 cell = row.createCell( cellNum);
@@ -603,27 +647,27 @@ public class TestResultExporter {
                 //colsToAutosize.add( cellNum );
                 //cell.setCellStyle(bold);
                 //cellNum++;
-                
+
                 cell = row.createCell( cellNum);
                 if( org.getOrgCreditUsageType().getUsesLegacyCredits() || org.getOrgCreditUsageType().getUnlimited() )
                     cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.CreditsUsed" ) );
                 else
                     cell.setCellValue( "Credit Id" );
-                
+
                 colsToAutosize.add( cellNum );
                 cell.setCellStyle(bold);
                 cellNum++;
-                
+
                 if( org.getOrgCreditUsageType().getAnyResultCredit() )
                 {
                     cell = row.createCell( cellNum);
                     cell.setCellValue( "Credit Index" );
                     colsToAutosize.add( cellNum );
                     cell.setCellStyle(bold);
-                    cellNum++;                    
+                    cellNum++;
                 }
-                
-                
+
+
             }
 
             if( !forPerfUpload)
@@ -633,10 +677,10 @@ public class TestResultExporter {
                 colsToAutosize.add( cellNum );
                 cell.setCellStyle(bold);
                 cellNum++;
-            }            
-            
-            
-            
+            }
+
+
+
             if( forPerfUpload || excelReportBean.isTestTakerIdentifier())
             {
                 cell = row.createCell( cellNum);
@@ -673,7 +717,7 @@ public class TestResultExporter {
                 cell.setCellStyle(bold);
                 cellNum++;
             }
-            
+
             if( !forPerfUpload && excelReportBean.isMultiUseLink())
             {
                 cell = row.createCell( cellNum);
@@ -718,14 +762,14 @@ public class TestResultExporter {
                 cell.setCellStyle(bold);
                 cellNum++;
             }
-            
+
             if( !forPerfUpload && addOverallNumScore2 )
             {
                 cell = row.createCell( cellNum);
                 cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.OverallScoreNumeric" ) );
                 colsToAutosize.add( cellNum );
                 cell.setCellStyle(bold);
-                cellNum++;                
+                cellNum++;
             }
 
             if( !forPerfUpload && excelReportBean.isOverallPercentile())
@@ -755,7 +799,7 @@ public class TestResultExporter {
                 cellNum++;
             }
 
-            
+
             if( !forPerfUpload && excelReportBean.isDetailViewUrl())
             {
                 cell = row.createCell( cellNum);
@@ -765,15 +809,44 @@ public class TestResultExporter {
                 cellNum++;
             }
 
+            if( !forPerfUpload && excelReportBean.isPlagiarism() )
+            {
+                cell = row.createCell( cellNum);
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.PlagCnt" ) );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+            }
+
+            if( !forPerfUpload && excelReportBean.isSuspiciousActivity() && !suspActTypeIds.isEmpty()  )
+            {
+                for( Integer satypeid : suspActTypeIds )
+                {
+                    sat = SuspiciousActivityType.getValue(satypeid);
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.SAX", new String[]{ sat.getName(locale)} ) );
+                    colsToAutosize.add( cellNum );
+                    cell.setCellStyle(bold);
+                    cellNum++;
+                }
+
+                cell = row.createCell( cellNum);
+                cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.SAALL" ) );
+                colsToAutosize.add( cellNum );
+                cell.setCellStyle(bold);
+                cellNum++;
+            }
+
+
             if( !forPerfUpload && excelReportBean.isCompetencies())
             {
                 for( String cname : cNameList )
                 {
                     compName = cname;
-                    
+
                     if( hasMultTests && cname.startsWith("(") && cname.indexOf(") ")>0 )
                         compName = cname.substring(cname.indexOf(") ")+2, cname.length() );
-                    
+
                     cell = row.createCell( cellNum);
                     cell.setCellValue( compName );
                     colsToAutosize.add( cellNum );
@@ -781,7 +854,7 @@ public class TestResultExporter {
                     cellNum++;
                 }
             }
-            
+
             if( !forPerfUpload && excelReportBean.isAvgRespRatings() && !terrCategoryNames.isEmpty() )
             {
                 for( String cname : terrCategoryNames )
@@ -793,7 +866,7 @@ public class TestResultExporter {
                     cellNum++;
                 }
             }
-            
+
 
             if( forPerfUpload || excelReportBean.isPerformanceValues() )
             {
@@ -803,7 +876,7 @@ public class TestResultExporter {
                     cell.setCellValue( forPerfUpload ? "Performance1" : getOrgPerformName( locale, 1, org.getPerformanceName1() )  );
                     colsToAutosize.add( cellNum );
                     cell.setCellStyle(bold);
-                    cellNum++;                
+                    cellNum++;
                 }
 
                 if( forPerfUpload || hasPerfData2 )
@@ -812,7 +885,7 @@ public class TestResultExporter {
                     cell.setCellValue( forPerfUpload ? "Performance2" : getOrgPerformName( locale, 2, org.getPerformanceName2() )  );
                     colsToAutosize.add( cellNum );
                     cell.setCellStyle(bold);
-                    cellNum++;                
+                    cellNum++;
                 }
 
                 if( forPerfUpload || hasPerfData3 )
@@ -821,25 +894,25 @@ public class TestResultExporter {
                     cell.setCellValue( forPerfUpload ? "Performance3" : getOrgPerformName( locale, 3, org.getPerformanceName3() )  );
                     colsToAutosize.add( cellNum );
                     cell.setCellStyle(bold);
-                    cellNum++;                
+                    cellNum++;
                 }
-                
+
                 if( !forPerfUpload && (hasPerfData1 || hasPerfData2 || hasPerfData3) )
                 {
                     cell = row.createCell( cellNum );
                     cell.setCellValue( MessageFactory.getStringMessage(locale, "g.PerformanceDate", null ) );
                     colsToAutosize.add( cellNum );
                     cell.setCellStyle(bold);
-                    cellNum++;                
+                    cellNum++;
                 }
-                
-                
-            }            
+
+
+            }
 
             altTesl = null;
-            
+
             if( !forPerfUpload && excelReportBean.isAltScores() )
-            {                
+            {
                 for( int m=1; m<= maxAlts; m++ )
                 {
                     cell = row.createCell( cellNum );
@@ -847,15 +920,15 @@ public class TestResultExporter {
                     colsToAutosize.add( cellNum );
                     cell.setCellStyle(bold);
                     cellNum++;
-                    
+
                     cell = row.createCell( cellNum );
                     cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.AlternateScoreX", new String[]{ Integer.toString(m) } )  );
                     colsToAutosize.add( cellNum );
                     cell.setCellStyle(bold);
-                    cellNum++;                    
+                    cellNum++;
                 }
             }
-            
+
             if( !forPerfUpload && excelReportBean.isItemResponses() && itemNames!=null && !itemNames.isEmpty() )
             {
                 for( String inm : itemNames )
@@ -863,12 +936,12 @@ public class TestResultExporter {
                     cell = row.createCell( cellNum );
                     cell.setCellValue( MessageFactory.getStringMessage(locale, "exrpt.QX", new String[]{ inm }) );
                     cell.setCellStyle(bold);
-                    cellNum++;                                        
+                    cellNum++;
                 }
             }
 
-            
-            
+
+
             UserType ut;
 
             EventFacade ef = null;
@@ -877,18 +950,13 @@ public class TestResultExporter {
             //BatteryFacade bf = null;
 
             boolean isBattery = false;
-
             TestEventScore tes;
-            
             int scoreDigits = 0;
-            
             float overall;
-            
             String itemValue;
-            
             String temp;
-            
             String rsk;
+            int saCt;
 
             for( TestResult tr : trl )
             {
@@ -898,9 +966,9 @@ public class TestResultExporter {
                 rowNum++;
 
                 scoreDigits = tr.getOverallScorePrecisionDigits();
-                
+
                 isBattery =  tr instanceof TestEvent ? false : true;
-                
+
                 te = isBattery ? null : (TestEvent) tr;
 
                 if( tr.getUser()==null || tr.getUser().getUserId()<=0 )
@@ -910,36 +978,36 @@ public class TestResultExporter {
 
                     tr.setUser( uf.getUser( tr.getUserId() ) );
                 }
-                
+
                 if( tr.getTestKey()==null )
                 {
                     if( ef == null )
-                        ef = EventFacade.getInstance();                    
+                        ef = EventFacade.getInstance();
                     tr.setTestKey( ef.getTestKey( tr.getTestKeyId(), true ) );
                 }
 
                 if( isBattery && ((BatteryScore)tr).getBattery()==null )
                 {
                     if( ef == null )
-                        ef = EventFacade.getInstance();                    
+                        ef = EventFacade.getInstance();
                     ((BatteryScore)tr).setBattery( ef.getBattery( ((BatteryScore)tr).getBatteryId() ) );
                 }
-                
+
                 if( !isBattery && tr.getTestKey()!=null && tr.getTestKey().getBatteryId()>0 && te.getBattery()==null )
                 {
                     if( ef == null )
-                        ef = EventFacade.getInstance();                    
+                        ef = EventFacade.getInstance();
                     te.getTestKey().setBattery( ef.getBattery( tr.getTestKey().getBatteryId() ) );
                 }
-                
-                
+
+
                 if( !isBattery && tr.getProduct()==null )
                 {
                     if( ef == null )
-                        ef = EventFacade.getInstance();                    
+                        ef = EventFacade.getInstance();
                     tr.setProduct( ef.getProduct( te.getProductId() ) );
                 }
-                
+
                 ut = UserType.getValue( tr.getUser().getUserTypeId() );
 
                 if( forPerfUpload || excelReportBean.isIdentifier())
@@ -981,21 +1049,21 @@ public class TestResultExporter {
                 if( forPerfUpload || excelReportBean.isName())
                 {
                     temp = tr.getUser().getLastName();
-                    
+
                     if( ut.getAnonymous() )
                         temp = "Anonymous";
                     else if ( ut.getPseudo() )
                         temp = "Pseudo";
                     else if ( ut.getUsername() || ut.getUserId() )
                         temp = tr.getUser().getEmail();
-                    
-                    
+
+
                     cell = row.createCell( cellNum);
                     cell.setCellValue(temp );
                     cellNum++;
 
                     temp = tr.getUser().getFirstName();
-                    
+
                     if( ut.getAnonymous() )
                         temp = "Anonymous";
                     else if ( ut.getPseudo() )
@@ -1017,7 +1085,7 @@ public class TestResultExporter {
                         temp = "Pseudo";
                     else if ( ut.getUserId() || ut.getUsername() )
                         temp = tr.getUser().getEmail();
-                    
+
                     cell = row.createCell( cellNum);
                     cell.setCellValue( temp );
                     cellNum++;
@@ -1032,12 +1100,12 @@ public class TestResultExporter {
                         temp = "Pseudo";
                     else if ( ut.getUserId() || ut.getUsername() )
                         temp = "";
-                    
+
                     cell = row.createCell( cellNum);
                     cell.setCellValue( temp );
                     cellNum++;
                 }
-                
+
                 if( !forPerfUpload && excelReportBean.isUserDemographics())
                 {
                     cell = row.createCell( cellNum);
@@ -1071,7 +1139,7 @@ public class TestResultExporter {
                     cell.setCellStyle(bold);
                     cellNum++;
                 }
-                
+
 
                 if( forPerfUpload || excelReportBean.isUserStatus())
                 {
@@ -1102,24 +1170,24 @@ public class TestResultExporter {
                     //cell.setCellStyle(wrap);
                     //cell.setCellValue( Integer.toString( tr.getCreditsUsed() ) );
                     //cellNum++;
-                    
+
                     cell = row.createCell( cellNum);
                     cell.setCellStyle(wrap);
-                    if( org.getOrgCreditUsageType().getUsesLegacyCredits() || org.getOrgCreditUsageType().getUnlimited() )                    
+                    if( org.getOrgCreditUsageType().getUsesLegacyCredits() || org.getOrgCreditUsageType().getUnlimited() )
                         cell.setCellValue( Integer.toString( tr.getCreditsUsed() ) );
                     else
                         cell.setCellValue(  tr.getTestKey()==null ? "" : Long.toString( tr.getTestKey().getCreditId() ) );
                     cellNum++;
-                    
+
                     if( org.getOrgCreditUsageType().getAnyResultCredit() )
                     {
                         cell = row.createCell( cellNum);
                         cell.setCellStyle(wrap);
                         cell.setCellValue( tr.getTestKey()==null ? "" : Integer.toString( tr.getTestKey().getCreditIndex() ) );
-                        cellNum++;                        
+                        cellNum++;
                     }
-                    
-                    
+
+
                 }
 
                 if( !forPerfUpload )
@@ -1128,7 +1196,7 @@ public class TestResultExporter {
                     cell.setCellValue( te==null ? "" : Integer.toString(te.getSkinId()) );
                     cellNum++;
                 }
-                
+
                 // Test Taker Identifier
                 if( forPerfUpload || excelReportBean.isTestTakerIdentifier())
                 {
@@ -1159,7 +1227,7 @@ public class TestResultExporter {
                     cellNum++;
                 }
 
-                
+
                 if( !forPerfUpload && excelReportBean.isMultiUseLink())
                 {
                     cell = row.createCell( cellNum);
@@ -1180,41 +1248,41 @@ public class TestResultExporter {
                     cell.setCellValue( I18nUtils.getFormattedDateTime(locale, tr.getLastAccessDate(), DateFormat.LONG, DateFormat.LONG, timezone ) );
                     cellNum++;
                 }
-                
+
                 if( !forPerfUpload && excelReportBean.isTotalSeconds())
                 {
                     cell = row.createCell( cellNum);
                     cell.setCellValue( te==null ? "" : I18nUtils.getFormattedNumber(locale, te.getTotalTestTime(), 1) );
                     cellNum++;
                 }
-                
+
 
                 if( forPerfUpload || excelReportBean.isOverallScore())
                 {
                     overall = tr.getOverallScore();
-                                        
+
                     cell = row.createCell( cellNum);
                     // cell.setCellValue( tr.getHasScore() ? new Integer( Math.round( tr.getOverallScore() )).toString() : "NA" );
-                    
+
                     if( isBattery )
                         cell.setCellValue( tr.getHasScore() ? I18nUtils.getFormattedNumber(locale, overall, scoreDigits) : "NA" );
-                    
+
                     else
                     {
-                        if( orgUsesRawOverallScore && 
-                                tr.getProduct()!=null && 
-                                ( tr.getProduct().getConsumerProductType().getIsJobSpecificOrCompetency() ) // && !tr.getForceShowScaledScore() 
+                        if( orgUsesRawOverallScore &&
+                                tr.getProduct()!=null &&
+                                ( tr.getProduct().getConsumerProductType().getIsJobSpecificOrCompetency() ) // && !tr.getForceShowScaledScore()
                           )
-                        {    
+                        {
                             overall = tr.getOverallRawScore();
                             cell.setCellValue( tr.getHasScore() ? I18nUtils.getFormattedNumber(locale, overall, scoreDigits) : "NA" );
                         }
-                        
+
                         else if( te !=null )
                             cell.setCellValue( tr.getHasScore() ? te.getOverallScore4Show() : "NA" );
-                        else 
+                        else
                             cell.setCellValue( tr.getHasScore() ? I18nUtils.getFormattedNumber(locale, overall, scoreDigits) : "NA" );
-                        
+
                     }
                     cellNum++;
                 }
@@ -1227,10 +1295,10 @@ public class TestResultExporter {
                     {
                          cell.setCellValue( tr.getHasScore() ? I18nUtils.getFormattedNumber(locale, tr.getOverallScore(), scoreDigits) : "NA" );
                     }
-                    
+
                     cellNum++;
-                }            
-                
+                }
+
                 if( !forPerfUpload && excelReportBean.isOverallPercentile())
                 {
                     cell = row.createCell( cellNum);
@@ -1244,20 +1312,54 @@ public class TestResultExporter {
                     cell.setCellValue( tr.getHasValidAccountNorm()? Integer.toString(Math.round(tr.getAccountPercentile())) : "NA" );
                     cellNum++;
                 }
-                
+
                 if( excelReportBean.isCountryPercentile())
                 {
                     cell = row.createCell( cellNum);
                     cell.setCellValue( tr.getHasValidCountryNorm()? Integer.toString(Math.round(tr.getCountryPercentile())) : "NA" );
                     cellNum++;
                 }
-                
+
                 if( !forPerfUpload && excelReportBean.isDetailViewUrl())
                 {
                     cell = row.createCell( cellNum);
                     cell.setCellValue( tr.getDirectLinkUrl() );
                     cellNum++;
                 }
+                
+                if( !forPerfUpload && excelReportBean.isPlagiarism() )
+                {
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( getPlagiarismCount(te) );
+                    cellNum++;
+                }
+
+                if( !forPerfUpload && excelReportBean.isSuspiciousActivity() && !suspActTypeIds.isEmpty()  )
+                {
+                    saCt=0;
+                    saMap = te==null || te.getRemoteProctorEvent()==null ? null : te.getRemoteProctorEvent().getSuspciousActivityCountByType();
+                    for( Integer satypeid : suspActTypeIds )
+                    {
+                        sat = SuspiciousActivityType.getValue(satypeid);
+                        saCount = 0;
+
+                        if( saMap!=null && saMap.get(satypeid)!=null )
+                            saCount = saMap.get(satypeid);
+
+                        cell = row.createCell( cellNum);
+                        cell.setCellValue( saCount );
+                        colsToAutosize.add( cellNum );
+                        cellNum++;
+
+                        saCt += saCount;
+                    }
+
+                    cell = row.createCell( cellNum);
+                    cell.setCellValue( saCt );
+                    colsToAutosize.add( cellNum );
+                    cellNum++;
+                }
+                
 
                 if( !forPerfUpload && excelReportBean.isCompetencies())
                 {
@@ -1267,79 +1369,79 @@ public class TestResultExporter {
                         tes = getTestEventScoreForCompetencyName(cname, hasMultTests, locale, tr );
 
                         cell = row.createCell( cellNum);
-                        
+
                         if( tes!=null && tes.getSimCompetencyClass().isScoredImageUpload() )
                         {
-                            
+
                             if( tes.getScore()<0 )
                                 rsk = "";
-                            
+
                             else if( tes.getScore() <= Constants.IMAGE_CAPTURE_HIGH_RISK_CUTOFF )
                                 rsk = MessageFactory.getStringMessage(locale, "g.HighRisk" );
-                            
+
                             else if( tes.getScore() <= Constants.IMAGE_CAPTURE_MED_RISK_CUTOFF )
                                 rsk = MessageFactory.getStringMessage(locale, "g.MediumRisk" );
-                            
+
                             else
                                 rsk = MessageFactory.getStringMessage(locale, "g.LowRisk" );
 
                             cell.setCellValue( rsk );
                         }
-                            
+
                         else
                             cell.setCellValue( tes == null ? "" :  I18nUtils.getFormattedNumber(locale, tes.getScore(), scoreDigits) );
                         cellNum++;
                     }
                 }
-                
+
                 if( !forPerfUpload && excelReportBean.isAvgRespRatings()&& !terrCategoryNames.isEmpty() )
                 {
                     avgRespRatingMap = te==null ? null : TestEventResponseRatingUtils.getOverallAverageRatingMap(te.getTestEventResponseRatingList(), locale);
-                    
+
                     for( String cname : terrCategoryNames )
                     {
                         respRatingVal = avgRespRatingMap==null ? null : avgRespRatingMap.get(cname);
-                        
+
                         cell = row.createCell( cellNum);
                         cell.setCellValue( respRatingVal==null ? "" : respRatingVal );
                         cellNum++;
                     }
                 }
-                
+
                 if( forPerfUpload || (excelReportBean.isPerformanceValues() && hasPerfData1) )
                 {
                     cell = row.createCell( cellNum );
                     cell.setCellValue( Float.toString( tr.getUser().getPerform1() ) );
-                    cellNum++;                
+                    cellNum++;
                 }
-                
+
                 if( forPerfUpload || (excelReportBean.isPerformanceValues() && hasPerfData2) )
                 {
                     cell = row.createCell( cellNum );
                     cell.setCellValue( Float.toString( tr.getUser().getPerform2() ) );
-                    cellNum++;                
+                    cellNum++;
                 }
-                
+
                 if( forPerfUpload || (excelReportBean.isPerformanceValues() && hasPerfData3) )
                 {
                     cell = row.createCell( cellNum );
                     cell.setCellValue( Float.toString( tr.getUser().getPerform3() ) );
-                    cellNum++;                
+                    cellNum++;
                 }
 
                 if( !forPerfUpload && excelReportBean.isPerformanceValues() && ( hasPerfData1 || hasPerfData2 || hasPerfData3) )
                 {
                     cell = row.createCell( cellNum );
                     cell.setCellValue( tr.getUser().getPerformDate()==null ? "" : I18nUtils.getFormattedDateTime(locale, tr.getUser().getPerformDate(), DateFormat.LONG, DateFormat.LONG, timezone ) );
-                    cellNum++;                
+                    cellNum++;
                 }
-                                
+
                 if( !forPerfUpload && excelReportBean.isAltScores() )
                 {
                     if( tr.getAltScoreProfileList()!=null && !tr.getAltScoreProfileList().isEmpty() )
                     {
                         scoreDigits = tr.getOverallScorePrecisionDigits();
-                        
+
                         for( Profile profile : tr.getAltScoreProfileList() )
                         {
                             cell = row.createCell( cellNum );
@@ -1350,9 +1452,9 @@ public class TestResultExporter {
 
                             cell.setCellValue( I18nUtils.getFormattedNumber(locale, profile.getAltScoreCalculator().getScore(), scoreDigits)  );
                             // cell.setCellValue( "" + Math.round( profile.getAltScoreCalculator().getScore() )  );
-                            cellNum++;                    
+                            cellNum++;
                         }
-                        
+
                         if( tr.getAltScoreProfileList().size()<maxAlts )
                         {
                             for( int k=0;k<maxAlts-tr.getAltScoreProfileList().size();k++ )
@@ -1363,18 +1465,18 @@ public class TestResultExporter {
 
                                 cell = row.createCell( cellNum );
                                 cell.setCellValue("");
-                                cellNum++;                    
-                                
+                                cellNum++;
+
                             }
                         }
                     }
-                    
+
                     else if( tr instanceof TestEvent )
                     {
                         altTesl = ((TestEvent)tr).getAltScoreTestEventScoreList();
-                        
+
                         scoreDigits = tr.getOverallScorePrecisionDigits();
-                        
+
                         for( TestEventScore tesx : altTesl )
                         {
                             cell = row.createCell( cellNum );
@@ -1383,9 +1485,9 @@ public class TestResultExporter {
 
                             cell = row.createCell( cellNum );
                             cell.setCellValue( I18nUtils.getFormattedNumber(locale, tesx.getScore(), scoreDigits)  );
-                            cellNum++;                    
+                            cellNum++;
                         }
-                        
+
                         if( altTesl.size()<maxAlts )
                         {
                             for( int k=0;k<maxAlts-altTesl.size();k++ )
@@ -1396,37 +1498,37 @@ public class TestResultExporter {
 
                                 cell = row.createCell( cellNum );
                                 cell.setCellValue("");
-                                cellNum++;                    
-                                
+                                cellNum++;
+
                             }
                         }
-                        
+
                     }
-                    
-                    
-                    
+
+
+
                 }
-                
+
                 if( !forPerfUpload && excelReportBean.isItemResponses() && itemNames!=null && !itemNames.isEmpty() )
                 {
                     List<ItemResponseGroup> irgl = (tr instanceof TestEvent) ? CT3ScoreUtils.computeItemResponseGroupData((TestEvent)tr, te.getLocale(), true ) : null;
-                    
+
                     for( String inm : itemNames )
                     {
-                        itemValue = getItemValue(tr, inm, irgl );                        
+                        itemValue = getItemValue(tr, inm, irgl );
                         cell = row.createCell( cellNum );
                         cell.setCellValue(itemValue);
-                        cellNum++;                    
+                        cellNum++;
                     }
                 }
             }
-            
+
             for( Integer n : colsToAutosize )
             {
                 sheet.autoSizeColumn(n);
             }
 
-            sheet.createFreezePane(0,hasMultTests ? 5 : 4 );            
+            sheet.createFreezePane(0,hasMultTests ? 5 : 4 );
 
             ByteArrayOutputStream bais = new ByteArrayOutputStream();
 
@@ -1442,7 +1544,7 @@ public class TestResultExporter {
 
         return out;
     }
-    
+
 
     private String getUserNoteStr( Locale locale, User user, boolean includeNamesDates )
     {
@@ -1495,7 +1597,7 @@ public class TestResultExporter {
         return sb.toString();
     }
 
-    
+
     private String lmsg( String key )
     {
         return MessageFactory.getStringMessage(locale, key);
@@ -1528,34 +1630,34 @@ public class TestResultExporter {
                 return null;
 
             String n2 = cname; // ( hasMultTests ? "(" + tr.getName() + ") " : "" ) + cname;
-            
+
             // int idx;
-            
+
             // Clean out test name.
             if( hasMultTests )
             {
                 if( !cname.contains("(" + tr.getName() + ") " ) )
                     return null;
-                
+
                 // LogService.logIt( "TestResultExporter.getTestEventScoreForCompetencyName() adjusting name. cname=" + " " + cname + ", tr.getName()=" + tr.getName() );
                 n2 = cname.substring(((new String( "(" + tr.getName() + ") " ) ) ).length(), cname.length() );
             }
-                        
-            // Look for exact match. 
+
+            // Look for exact match.
             for( TestEventScore tes : te.getTestEventScoreList() )
             {
                 if( !SimCompetencyVisibilityType.getValue( tes.getHide() ).getShowInExcel() )
                     continue;
 
                 if( SimCompetencyVisibilityType.getValue( tes.getHide() ).getShowItemResponsesOnly())
-                    continue;                        
-                                
+                    continue;
+
                 // if( tes.getName().equalsIgnoreCase(cname))
                 if( StringUtils.isValidNameMatch( n2,n2, tes.getName(),tes.getNameEnglish() ) )
                     return tes;
             }
-            
-            // No match found. But n2 is for Image Capture Proctoring. Find TES for that. 
+
+            // No match found. But n2 is for Image Capture Proctoring. Find TES for that.
             if( n2.contains( MessageFactory.getStringMessage(locale, "g.ImgCapRiskLevel" )) )
             {
                 for( TestEventScore tes : te.getTestEventScoreList() )
@@ -1568,51 +1670,51 @@ public class TestResultExporter {
 
         return null;
     }
-    
+
     public static String getOrgPerformName( Locale locale, int idx, String orgName )
     {
         if( orgName==null || orgName.isEmpty() )
             return  MessageFactory.getStringMessage( locale, "g.TestTakerPerfNameDefaultX", new String[] {Integer.toString(idx)} );
-        
+
         return orgName;
     }
-    
+
     public static Set<String> getAllItemNameSet( List<TestResult> trl ) throws Exception
     {
         Set<String> out = new TreeSet<>();
-        
+
         TestEvent te;
         List<TextAndTitle> ttl;
-        
+
         for( TestResult tr : trl )
         {
             if( tr instanceof TestEvent )
             {
                 te = (TestEvent) tr;
-                
+
                 ttl = getAllItemResponseTextAndTitleList( te );
-                
+
                 for( TextAndTitle tt : ttl )
                 {
                     out.add( tt.getTitle() );
                 }
             }
         }
-        
+
         return out;
     }
-    
+
     public static List<TextAndTitle> getAllItemResponseTextAndTitleList( TestEvent te ) throws Exception
     {
         List<TextAndTitle> out = new ArrayList<>();
-        
+
         List<ItemResponseGroup> irgl = CT3ScoreUtils.computeItemResponseGroupData( te, te.getLocale(), true );
-        
+
         if( irgl==null || irgl.isEmpty() )
             return out;
-        
+
         List<TextAndTitle> ttl;
-        
+
         for( ItemResponseGroup irg : irgl )
         {
             ttl = irg.getTextTitleList();
@@ -1620,23 +1722,23 @@ public class TestResultExporter {
                 continue;
             out.addAll(ttl);
         }
-        
+
         return out;
     }
-    
+
     private static String getItemValue( TestResult tr, String itemName, List<ItemResponseGroup> irgl)
     {
         if( itemName==null || itemName.isEmpty() )
             return "";
-        
-        if( tr instanceof TestEvent )   
+
+        if( tr instanceof TestEvent )
         {
             TestEvent te = (TestEvent) tr;
-            
+
             // if( te.getItemResponseGroupList()==null )
             if( irgl==null )
                 return "";
-            
+
             for( ItemResponseGroup irg : irgl )
             {
                 for( TextAndTitle tt : irg.getTextTitleList() )
@@ -1649,11 +1751,11 @@ public class TestResultExporter {
                 }
             }
         }
-        
+
         return "";
     }
 
-    
+
     public boolean getBooleanFlagValue( String name, Org org )
     {
         //if( product == null || product.getDetailView()==null || product.getDetailView().isEmpty() || user==null ) // || user.getOrg()==null )
@@ -1662,17 +1764,17 @@ public class TestResultExporter {
         List<NVPair> pl = org.getReportFlagList();
 
         // LogService.logIt( "TestEvent.getBooleanFlagValue() " + name + ", Report Flag list is " + pl.size() + ", reportId=" + report.getReportId() );
-        
+
         for( NVPair p : pl )
         {
             if( p.getName().equals( name ) && p.getValue().equals( "1" ) )
                 return true;
         }
 
-        return false;        
+        return false;
     }
-    
-    
+
+
     private String getGenderName( int typ, Locale locale )
     {
         GenderType gt = GenderType.getValue(typ);
@@ -1680,7 +1782,7 @@ public class TestResultExporter {
             return "";
         return gt.getName(locale);
     }
-    
+
     private String getEthnicName( int typ, Locale locale )
     {
         EthnicCategoryType gt = EthnicCategoryType.getValue(typ);
@@ -1693,6 +1795,24 @@ public class TestResultExporter {
     {
         return RacialCategoryType.getRacialCategoryStr(cats, locale);
     }
+
+    private Integer getPlagiarismCount( TestEvent te )
+    {
+        if( te==null || te.getTestEventScoreList()==null )
+            return 0;
+
+        int ct = 0;
+
+        for( TestEventScore tes : te.getTestEventScoreList() )
+        {
+            if( tes.getSimCompetencyClass().isScoredEssay() && tes.getScore8()>0 )
+                ct += ((int)tes.getScore8());
+        }
+
+        return ct;
+    }
+
+
     
     
 

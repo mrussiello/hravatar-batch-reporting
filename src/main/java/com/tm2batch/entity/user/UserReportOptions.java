@@ -146,6 +146,13 @@ public class UserReportOptions implements GeneralReportOptions
     @Column(name="avgrespratings")
     private int avgRespRatings=1;
         
+    @Column(name="suspiciousactivity")
+    private int suspiciousActivity=0;
+        
+    @Column(name="plagiarism")
+    private int plagiarism=0;
+        
+    
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="createdate")
@@ -691,5 +698,33 @@ public class UserReportOptions implements GeneralReportOptions
     public boolean isAvgRespRatings() {
         return avgRespRatings==1;
     }
+
+    public int getSuspiciousActivity() {
+        return suspiciousActivity;
+    }
+
+    public void setSuspiciousActivity(int suspiciousActivity) {
+        this.suspiciousActivity = suspiciousActivity;
+    }
+
+    public int getPlagiarism() {
+        return plagiarism;
+    }
+
+    public void setPlagiarism(int plagiarism) {
+        this.plagiarism = plagiarism;
+    }
+    
+    @Override
+    public boolean isSuspiciousActivity() {
+        return suspiciousActivity==1;
+    }
+    
+    @Override
+    public boolean isPlagiarism() {
+        return plagiarism==1;
+    }
+    
+    
 
 }

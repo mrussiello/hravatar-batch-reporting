@@ -70,6 +70,12 @@ public enum SuspiciousActivityType
         return equals( PROCTOR_NOTE ) || equals( USER_NOTE );
     }
     
+    public boolean getUsesCounter()
+    {
+        return !getIsAnyNote() && !equals(NONE) && !equals( SAME_IP_TEST_EVENTS );
+    }
+        
+    
     public boolean getIsHighPitch()
     {
         return equals( HIGH_PITCH );

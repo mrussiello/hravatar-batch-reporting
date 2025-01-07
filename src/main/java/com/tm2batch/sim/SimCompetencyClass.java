@@ -91,6 +91,12 @@ public enum SimCompetencyClass
                 equals( AGGREGATESKILL );
     }
     
+
+    public boolean isScoredEssay()
+    {
+        return  equals( SCOREDESSAY );
+    }
+        
     public boolean isScoredAudio()
     {
         return  equals( SCOREDAUDIO );
