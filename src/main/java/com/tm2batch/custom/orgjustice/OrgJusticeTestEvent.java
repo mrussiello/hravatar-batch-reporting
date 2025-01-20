@@ -209,9 +209,9 @@ public class OrgJusticeTestEvent {
             // URIM Immigrant
             if( urim==0 &&  ir.getSimletNodeUniqueId()!=null && ir.getSimletNodeUniqueId().equalsIgnoreCase( "OJDEM-14-firstgen" ) )
             {
-                // 1=yes 0=no
+                // 1=yes 0=no 99=Prefer not to answer
                 points = (int) ir.getItemScore();
-                if( points>=1 )
+                if( points>=1 && points<99 )
                     urim=1;                
                 else
                 {
