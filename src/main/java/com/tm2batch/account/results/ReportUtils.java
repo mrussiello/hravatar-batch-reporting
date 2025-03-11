@@ -6,24 +6,13 @@
 package com.tm2batch.account.results;
 
 
-import com.tm2batch.entity.event.TestEvent;
-import com.tm2batch.entity.event.TestEventScore;
-import com.tm2batch.event.ScoreCategoryType;
 import com.tm2batch.global.Constants;
-import com.tm2batch.service.Tracker;
 import com.tm2batch.sim.SimCompetencyClass;
-import com.tm2batch.sim.SimCompetencyVisibilityType;
 import com.tm2batch.util.MessageFactory;
 import com.tm2batch.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.optionconfig.elements.Elements;
-import org.primefaces.model.charts.optionconfig.elements.ElementsLine;
-import org.primefaces.model.charts.radar.RadarChartDataSet;
-import org.primefaces.model.charts.radar.RadarChartModel;
-import org.primefaces.model.charts.radar.RadarChartOptions;
 
 /**
  *
