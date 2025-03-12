@@ -45,15 +45,69 @@ public enum FrequencyType
         this.weeks=w;
         this.days=d;
     }
-
     
-    public boolean isThisHourOkToSend( int hourToSendGmt )
+    public boolean isThisHourOkToSend( int hourToSendGmt, Date lastSendDate, TimeZone tz )
     {
         if( hourToSendGmt<0 )
             hourToSendGmt=10;
         
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Etc/GMT"));            
-        return now.getHour()==hourToSendGmt;
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Etc/GMT"));   
+        if( now.getHour()==hourToSendGmt )
+            return true;
+        
+        // past the hour to send, but sent before too long ago - send now. 
+        // try to see if the last send date is too far back.
+        if( lastSendDate!=null && tz!=null && now.getHour()>hourToSendGmt  )
+        {
+            // after time to send.
+            int daysBack=0;
+            
+            if( equals( ANNUAL )  )
+                daysBack = 365;
+            
+            else if( equals( QUARTERLY )  )
+                daysBack = 81;
+            
+            else if( equals( MONTHLY )  )
+                daysBack = 30;
+            
+            else if( equals( BIWEEKLY )  )
+                daysBack = 14;
+            
+            else if(  frequencyTypeId>=18 && frequencyTypeId>=24 )
+                daysBack = 7;
+            
+            else if( equals( DAILY )  )
+                daysBack = 1;
+            
+            else if( equals( DAILY_MWF ) || equals( DAILY_TTH ) )
+            {
+                Calendar cal = new GregorianCalendar( tz );
+                int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+                
+                if( equals(DAILY_MWF) && dayOfWeek==Calendar.MONDAY )
+                    daysBack = 3;
+                    
+                else if( equals(DAILY_MWF) && (dayOfWeek==Calendar.WEDNESDAY || dayOfWeek==Calendar.FRIDAY) )
+                    daysBack = 2;
+
+                else if( equals(DAILY_TTH) && dayOfWeek==Calendar.TUESDAY )
+                    daysBack = 5;
+                
+                else if( equals(DAILY_TTH) && dayOfWeek==Calendar.THURSDAY )
+                    daysBack = 2;
+            }
+            
+            if( daysBack>0 )
+            {
+                Calendar cal = new GregorianCalendar( tz );
+                cal.add( Calendar.HOUR, -1*24*daysBack );
+                if( lastSendDate.before(cal.getTime()) )
+                    return true;                
+            }
+        }
+        
+        return false;
     }
     
     public boolean isTodayOkToSend( TimeZone tz)
@@ -72,7 +126,7 @@ public enum FrequencyType
             return monthOfYear==0 && dayOfMonth==1;
         
         if( equals(QUARTERLY) )
-            return (monthOfYear+1) % 3 == 1;
+            return (monthOfYear+1) % 3 == 1 && dayOfMonth==1;
 
         if( equals(MONTHLY) )
             return dayOfMonth == 1;

@@ -243,7 +243,7 @@ public class BatchReportManager
         }
 
         // Not ok to send today based on freq
-        if( !freqType.isThisHourOkToSend( br.getHourToSend() ) )
+        if( !freqType.isThisHourOkToSend(br.getHourToSend(), br.getLastSendDate(), br.getTimeZone() ) )
         {
             // LogService.logIt( "BatchReportManager.readyForExecution() Not Ready because freq type returned NOT OK to send based on set hour to send=" + br.getHourToSend() + ", current date/time=" + (new Date()).toString() + ", batchReportId=" + br.getBatchReportId() + ", " + br.getTitle() );
             return false;
