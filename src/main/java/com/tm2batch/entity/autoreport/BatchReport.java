@@ -101,6 +101,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
      * StandardLiveVideoReport - this userId as initiating user only
      * StandardRefCheckReport - this userId as admin user only
      * StandardRefCheckReferralsReport - this userId as admin user only
+     * DiscGroupReport - this userId as authorizing user only
      */
     @Column(name="intparam1")
     private int intParam1;
@@ -109,6 +110,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
      * StandardResultReport - OrgAutoTestId
      * StandardLiveVideoReport - lvCallStatusTypeId (-1 for all)
      * StandardRefCheckReport - RcCheckTypeId (-1 for all)
+     * DiscGroupReport - OrgAutoTestId
      */
     @Column(name="intparam2")
     private int intParam2;
@@ -117,6 +119,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
      * StandardResultReport - ProductId
      * StandardLiveVideoReport - Min lvCallStatusTypeId (-1 for Completed)
      * StandardRefCheckReport - RcCheckStatusTypeId (-1 for all)
+     * DiscGroupReport - ProductId
      */
     @Column(name="intparam3")
     private int intParam3;
@@ -125,6 +128,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
      * StandardResultReport - ProductTypeId
      * StandardLiveVideoReport - LvScriptId
      * StandardRefCheckReport - MIN RcCheckStatusTypeId (-1 for all)
+     * DiscGroupReport - SuborgId
      * 
      */
     @Column(name="intparam4")

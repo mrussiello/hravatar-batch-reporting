@@ -18,7 +18,6 @@ public class ExecutableReportFactory {
     {
         BatchReportContentType brct = BatchReportContentType.getValue( br.getBatchReportContentTypeId() );
         
-        
         Class<ExecutableReport> tc = (Class<ExecutableReport>) Class.forName(  brct.getClassName() );
 
         Constructor ctor = tc.getDeclaredConstructor();

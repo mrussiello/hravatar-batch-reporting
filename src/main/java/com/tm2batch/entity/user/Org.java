@@ -14,6 +14,7 @@ import java.util.List;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 
 
 @Cacheable
@@ -37,6 +38,11 @@ public class Org implements Serializable
 
     @Column( name = "orgcreditusagetypeid" )
     private int orgCreditUsageTypeId;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="orgcreditusageenddate")
+    private Date orgCreditUsageEndDate;
+
     
     @Column(name="adminuserid")
     private long adminUserId = 0;
@@ -610,6 +616,14 @@ public class Org implements Serializable
     
     public boolean getShareDemoB() {
         return shareDemo==1;
+    }
+
+    public Date getOrgCreditUsageEndDate() {
+        return orgCreditUsageEndDate;
+    }
+
+    public void setOrgCreditUsageEndDate(Date orgCreditUsageEndDate) {
+        this.orgCreditUsageEndDate = orgCreditUsageEndDate;
     }
 
     

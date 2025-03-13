@@ -216,6 +216,29 @@ public class BatchReportManager
             return false;
         }
         
+        if( br.getBatchReportContentTypeId()==BatchReportContentType.STD_CREDIT_USAGE.getBatchReportContentTypeId() )
+        {
+            if( br.getOrg()==null )
+            {
+                if( userFacade==null )
+                    userFacade=UserFacade.getInstance();
+                br.setOrg( userFacade.getOrg( br.getOrgId()));
+            }
+            
+            if( !br.getOrg().getOrgCreditUsageType().getAnyResultCredit() )
+            {
+                if( br.getOrg().getOrgCreditUsageType().getUnlimited() )
+                {
+                    if( br.getOrg().getOrgCreditUsageEndDate()!=null && br.getOrg().getOrgCreditUsageEndDate().after(new Date()))
+                        return false;
+                    
+                    // null end date or expired end date is OK.
+                }
+                else if( br.getOrg().getOrgCreditUsageType().getUsesLegacyCredits() )
+                    return false;
+            }
+        }
+        
         //if( br.getReportClassName()==null || br.getReportClassName().isBlank() )
         //    return false;
         
@@ -325,7 +348,8 @@ public class BatchReportManager
                 br.getUser().setUserReportOptions(uro);
             }
             
-            br.setOrg( userFacade.getOrg( br.getOrgId() ));
+            if( br.getOrg()==null )
+                br.setOrg( userFacade.getOrg( br.getOrgId() ));
 
             if( br.getOrg()==null )
                 throw new Exception( "Cannot find a org with orgId=" + br.getOrgId() + ", batchReportId=" + br.getBatchReportId() );
