@@ -8,7 +8,6 @@ package com.tm2batch.custom.credit;
 
 import com.tm2batch.entity.purchase.Credit;
 import com.tm2batch.entity.user.Org;
-import com.tm2batch.event.EventFacade;
 import com.tm2batch.global.STException;
 import com.tm2batch.purchase.CreditSourceType;
 import com.tm2batch.purchase.CreditType;

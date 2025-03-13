@@ -6,8 +6,8 @@
 package com.tm2batch.custom.credit;
 
 
-import com.tm2batch.custom.activity.*;
 import com.tm2batch.autoreport.GeneralReportOptions;
+import com.tm2batch.entity.purchase.Credit;
 import com.tm2batch.entity.user.Org;
 import com.tm2batch.service.LogService;
 import com.tm2batch.user.UserFacade;
@@ -50,6 +50,7 @@ public class CreditUsageReportExporter {
      * creditsperweek String
      * weeksremaining String    
      * creditactivity List<CandidateCreditUse>
+     * creditlist     List<Credit>
     
     */
     public byte[] getCreditUsageExcelFile( Map<String,Object> dm, Locale locale, TimeZone timezone, GeneralReportOptions excelReportBean, Org org, Date startDate, Date endDate) throws Exception
@@ -172,6 +173,73 @@ public class CreditUsageReportExporter {
             cell = row.createCell(colNum);
             cell.setCellValue( (String)dm.get("weeksremaining")); 
 
+            List<Credit> cl = (List<Credit>) dm.get("creditlist");
+            if( cl!=null && !cl.isEmpty() )
+            {
+                row = sheet.createRow( rowNum );
+                rowNum++;            
+
+                // Title Row
+                row = sheet.createRow( rowNum );
+                rowNum++;
+                colNum=0;
+                cell = row.createCell(colNum);
+                cell.setCellValue( lmsg( "curpt.CreditsExpirations" )  ); 
+                cell.setCellStyle(bold);
+
+                row = sheet.createRow( rowNum );
+                rowNum++;            
+                
+                // Header Row
+                row = sheet.createRow( rowNum );
+                rowNum++;
+                colNum=0;
+                
+                cell = row.createCell(colNum++);
+                cell.setCellValue( lmsg( "g.CreditId" )  ); 
+                cell.setCellStyle(bold);
+
+                cell = row.createCell(colNum++);
+                cell.setCellValue( lmsg( "g.InitialAmount" )  ); 
+                cell.setCellStyle(bold);
+
+                cell = row.createCell(colNum++);
+                cell.setCellValue( lmsg( "g.RemainingAmount" )  ); 
+                cell.setCellStyle(bold);
+
+                cell = row.createCell(colNum++);
+                cell.setCellValue( lmsg( "g.Created" )  ); 
+                cell.setCellStyle(bold);
+                
+                cell = row.createCell(colNum++);
+                cell.setCellValue( lmsg( "g.ExpirationDate" )  ); 
+                cell.setCellStyle(bold);
+                
+                for( Credit c : cl )
+                {
+                    row = sheet.createRow( rowNum );
+                    rowNum++;
+                    colNum=0;
+                    
+                    cell = row.createCell(colNum++);
+                    cell.setCellValue( c.getCreditId()); 
+
+                    cell = row.createCell(colNum++);
+                    cell.setCellValue( c.getInitialCount()); 
+
+                    cell = row.createCell(colNum++);
+                    cell.setCellValue( c.getRemainingCount()  ); 
+
+                    cell = row.createCell(colNum++);
+                    cell.setCellValue(  I18nUtils.getFormattedDate(locale, c.getCreateDate(), TimeZone.getTimeZone("UTC")) ); 
+                    
+                    cell = row.createCell(colNum++);
+                    cell.setCellValue(  I18nUtils.getFormattedDate(locale, c.getExpireDate(), TimeZone.getTimeZone("UTC")) ); 
+                    
+                }
+            }
+            
+            
             List<CandidateCreditUse> usagelist = (List<CandidateCreditUse>) dm.get("creditactivity");
             if( usagelist!=null && !usagelist.isEmpty() )
             {
@@ -272,6 +340,8 @@ public class CreditUsageReportExporter {
                 }
             }
             
+
+
             
             for( int n=0;n<7;n++ )
             {
