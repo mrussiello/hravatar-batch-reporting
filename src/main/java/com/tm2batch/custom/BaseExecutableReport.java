@@ -70,10 +70,10 @@ public class BaseExecutableReport {
         // check freq.
         FrequencyType freqType = FrequencyType.getValue( batchReport.getFrequencyTypeId() );
         
-        if( !overrideSendFreq && freqType.equals( FrequencyType.NEVER) )
+        if( !overrideSendFreq && !batchReport.getSpecialProcessingCheck() && freqType.equals( FrequencyType.NEVER) )
             throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport.Frequency is NEVER" );
         
-        if( !overrideSendFreq && batchReport.getLastSendDate()!=null && batchReport.getLastSendDate().after( freqType.getCutoffDate() ))
+        if( !overrideSendFreq && !batchReport.getSpecialProcessingCheck() && batchReport.getLastSendDate()!=null && batchReport.getLastSendDate().after( freqType.getCutoffDate() ))
             throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport.Frequency is " + freqType.getName() + ", but last execution date was " + batchReport.getLastSendDate().toString() );
                 
     }
@@ -181,7 +181,7 @@ public class BaseExecutableReport {
         EmailUtils emu = new EmailUtils();     
         emu.sendEmailWithSingleAttachment(subject, content, sb.toString(), contentMime, attachMime, attachFn, bytes);
         
-        if( users.size()>0 )
+        if( !users.isEmpty() )
             LogService.logIt( "BaseExecutableReport.sendReportEmail() BBB.3 Saving UserActions for " + users.size() + " users." );
         
         for( User u : users )
@@ -194,6 +194,8 @@ public class BaseExecutableReport {
         return emailsSentTo;        
     }
 
+
+    
     public void setBatchReport(BatchReport batchReport) {
         this.batchReport = batchReport;
     }

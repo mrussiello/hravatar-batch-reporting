@@ -6,7 +6,6 @@
 package com.tm2batch.custom.credit;
 
 import com.tm2batch.account.results.TestReportingUtils;
-import com.tm2batch.autoreport.AutoReportFacade;
 import com.tm2batch.autoreport.ExecutableReport;
 import com.tm2batch.custom.BaseExecutableReport;
 import com.tm2batch.global.BatchReportException;
@@ -28,6 +27,7 @@ public class StandardCreditUsageReport extends BaseExecutableReport implements E
     public static String DEFAULT_CONTENT_KEY = "g.StdCreditUsageReport.content";
     public static String DEFAULT_CONTENTSUPP_KEY = "g.StdCreditUsageReport.contentsupp";
     public static String DEFAULT_SUBJECT_KEY = "g.StdCreditUsageReport.subject";
+    public static String DEFAULT_SUBJECT_KEY_WARNING = "g.StdCreditUsageReport.subject.warning";
     
     byte[] bytes = null;
     
@@ -82,7 +82,22 @@ public class StandardCreditUsageReport extends BaseExecutableReport implements E
                                                                                 batchReport.getLocaleToUseDefaultUS(),
                                                                                 batchReport.getTimeZone() );
             
-            
+            boolean warning = false;
+            if( (Integer)dm.get("creditsremaining")<=0 || (Float)dm.get("weeksremainingfloat")<=1 )
+                warning = true;
+                                    
+            // indicates that this is not a single request or a freq-based request.             
+            if( batchReport.getSpecialProcessingCheck() )
+            {
+                int creditsremaining = (Integer) dm.get("creditsremaining");
+                
+                float weeksremainingfloat = (Float) dm.get( "weeksremainingfloat");
+
+                LogService.logIt( "StandardCreditUsageReport.executeReport() Doing Special Processing Check. creditsremaining=" + creditsremaining + ", weeksremainingfloat=" + weeksremainingfloat + ",  batchReportId=" + this.batchReport.getBatchReportId() );
+                // if special processing and there are credits and more than one week remaining, do not send
+                if(  creditsremaining>0 && weeksremainingfloat>1f )
+                    return out;                
+            }
             
             
             CreditUsageReportExporter are = new CreditUsageReportExporter();
@@ -108,7 +123,7 @@ public class StandardCreditUsageReport extends BaseExecutableReport implements E
             String sDateStr = I18nUtils.getFormattedDate(batchReport.getLocaleToUseDefaultUS(), dates[0], tz );
             String eDateStr = I18nUtils.getFormattedDate(batchReport.getLocaleToUseDefaultUS(), dates[1], tz );
             
-            int sentCount = sendReportEmail( EXCEL_MIME_TYPE, excelFilename, DEFAULT_CONTENT_KEY, DEFAULT_CONTENTSUPP_KEY, DEFAULT_SUBJECT_KEY, Integer.toString(0), sDateStr, eDateStr, bytes );
+            int sentCount = sendReportEmail( EXCEL_MIME_TYPE, excelFilename, DEFAULT_CONTENT_KEY, DEFAULT_CONTENTSUPP_KEY, warning ? DEFAULT_SUBJECT_KEY_WARNING : DEFAULT_SUBJECT_KEY, Integer.toString(0), sDateStr, eDateStr, bytes );
             // String attachMime, String attachFn, String contentKey, String subjectKey, String parm1, String parm2, byte[] bytes
             
             if( sentCount>0 )
@@ -143,6 +158,7 @@ public class StandardCreditUsageReport extends BaseExecutableReport implements E
 
     
     
+    
     @Override
     public void validateBatchReportForExecution() throws Exception
     {
@@ -150,17 +166,17 @@ public class StandardCreditUsageReport extends BaseExecutableReport implements E
         super.validateBatchReportForExecution();
         
         // specific checks
-        if( batchReport.getYearsBack()<=0 && batchReport.getMonthsBack()<=0 && batchReport.getDaysBack()<=0 && batchReport.getHoursBack()<=0 )
-        {
-            LogService.logIt( "StandardCreditUsageReport.validateBatchReportForExecution() BatchReport id=" + batchReport.getBatchReportId() + " does not look back at least one day or one hour or month or year. daysBack=" + batchReport.getDaysBack() + ", hoursBack=" + batchReport.getHoursBack() + ", setting to 1 day back." );
-            batchReport.setDaysBack(1);
-            if( autoReportFacade==null )
-                autoReportFacade=AutoReportFacade.getInstance();
-            autoReportFacade.saveBatchReport(batchReport);
-        }        
+        //if( batchReport.getYearsBack()<=0 && batchReport.getMonthsBack()<=0 && batchReport.getDaysBack()<=0 && batchReport.getHoursBack()<=0 )
+        //{
+        //    LogService.logIt( "StandardCreditUsageReport.validateBatchReportForExecution() BatchReport id=" + batchReport.getBatchReportId() + " does not look back at least one day or one hour or month or year. daysBack=" + batchReport.getDaysBack() + ", hoursBack=" + batchReport.getHoursBack() + ", setting to 1 day back." );
+        //    batchReport.setDaysBack(1);
+        //    if( autoReportFacade==null )
+        //        autoReportFacade=AutoReportFacade.getInstance();
+        //    autoReportFacade.saveBatchReport(batchReport);
+        //}        
         
-        if( batchReport.getUser().getUserReportOptions()==null )
-            throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport User (userId=" + batchReport.getUser().getUserId() + ", orgId=" + batchReport.getOrgId() + ") does not have any UserReportOptions. Please create a UserReportOptions object for this User." );
+        //if( batchReport.getUser().getUserReportOptions()==null )
+        //    throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport User (userId=" + batchReport.getUser().getUserId() + ", orgId=" + batchReport.getOrgId() + ") does not have any UserReportOptions. Please create a UserReportOptions object for this User." );
             
 
     }

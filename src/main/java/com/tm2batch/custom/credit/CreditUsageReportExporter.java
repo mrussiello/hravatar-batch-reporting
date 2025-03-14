@@ -23,6 +23,7 @@ import java.util.TimeZone;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -62,7 +63,11 @@ public class CreditUsageReportExporter {
         this.locale=locale;
         
         try
-        {                       
+        {             
+            boolean warning = false;
+            if( (Integer)dm.get("creditsremaining")<=0 || (Float)dm.get("weeksremainingfloat")<=1 )
+                warning = true;
+            
             Workbook wb = new XSSFWorkbook();
 
             Font f=wb.createFont();
@@ -70,6 +75,12 @@ public class CreditUsageReportExporter {
             f.setBold(true);
             bold.setFont(f);
 
+            Font fb=wb.createFont();
+            CellStyle boldRed = wb.createCellStyle();
+            fb.setBold(true);
+            fb.setColor( IndexedColors.RED.getIndex());
+            boldRed.setFont(fb);
+            
             XSSFCellStyle wrap = (XSSFCellStyle) wb.createCellStyle();
             wrap.setWrapText( true );
 
@@ -127,8 +138,12 @@ public class CreditUsageReportExporter {
             colNum=0;
             cell = row.createCell(colNum++);
             cell.setCellValue( lmsg( "curpt.TotalRemC" )  ); 
+            if( warning )
+                cell.setCellStyle( boldRed );
             cell = row.createCell(colNum);
-            cell.setCellValue( Integer.toString( (Integer)dm.get("creditsremaining"))); 
+            cell.setCellValue( Integer.toString( (Integer)dm.get("creditsremaining")));             
+            if( warning )
+                cell.setCellStyle( boldRed );
 
             row = sheet.createRow( rowNum );
             rowNum++;            
@@ -170,8 +185,14 @@ public class CreditUsageReportExporter {
             colNum=0;
             cell = row.createCell(colNum++);
             cell.setCellValue( lmsg( "curpt.WeeksRemainingC" )  ); 
+            if( warning )
+                cell.setCellStyle( boldRed );
             cell = row.createCell(colNum);
             cell.setCellValue( (String)dm.get("weeksremaining")); 
+            if( warning )
+                cell.setCellStyle( boldRed );
+                
+            
 
             List<Credit> cl = (List<Credit>) dm.get("creditlist");
             if( cl!=null && !cl.isEmpty() )

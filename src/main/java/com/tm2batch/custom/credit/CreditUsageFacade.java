@@ -79,6 +79,7 @@ public class CreditUsageFacade {
      * creditsperweek String
      * creditsperweekfloat float
      * weeksremaining String    
+     * weeksremainingfloat float    
      * creditactivity List<CandidateCreditUse>
      * creditlist     List<Credit>
 
@@ -146,6 +147,9 @@ public class CreditUsageFacade {
         
         String weeksLeft = getCreditWeeksRemaining(out );
         out.put( "weeksremaining", weeksLeft );
+        
+        float weeksLeftFloat = getCreditWeeksRemainingFloat(out );;
+        out.put( "weeksremainingfloat", weeksLeftFloat);
         
         LogService.logIt( "CreditUsageFacade.getCreditUsageDataMap() avgCreditsPerWeekFloat=" + avgCreditsPerWeekFloat + ", avgCreditsPerWeek=" + avgCreditsPerWeek + ", weeksLeft=" + weeksLeft );
         
@@ -227,8 +231,20 @@ public class CreditUsageFacade {
         if( creditsRemaining<=0 || cpwf<=0 )
             return "0";
         
-        float weeks = creditsRemaining/cpwf;        
+        float weeks = ((float)creditsRemaining)/cpwf;        
         return String.format("%.1f", weeks);    
+    }
+    
+    public float getCreditWeeksRemainingFloat(Map<String, Object> dm)
+    {
+        int creditsRemaining = (Integer) dm.get("creditsremaining");
+        
+        float cpwf = (Float) dm.get("creditsperweekfloat" );
+        
+        if( creditsRemaining<=0 || cpwf<=0 )
+            return 0;
+        
+        return ((float)creditsRemaining)/cpwf;        
     }
     
     

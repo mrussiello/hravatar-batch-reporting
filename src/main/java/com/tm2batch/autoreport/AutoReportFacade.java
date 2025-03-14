@@ -61,6 +61,21 @@ public class AutoReportFacade
     }
     
     
+    public List<BatchReport> getSpeciallyActiveBatchReportList() throws Exception
+    {
+        try
+        {
+            Query q = em.createNamedQuery( "BatchReport.findSpecialActive" ).setParameter( "batchReportStatusTypeId", BatchReportStatusType.ACTIVE.getBatchReportStatusTypeId() ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" );
+            return q.getResultList();
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "AutoReportFacade.getSpeciallyActiveBatchReportList() " );
+            throw new STException( e );
+        }        
+        
+    }
+    
     public List<BatchReport> getOneTimeActiveBatchReportList() throws Exception
     {
         try

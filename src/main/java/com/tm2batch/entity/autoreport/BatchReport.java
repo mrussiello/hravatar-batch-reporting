@@ -35,7 +35,8 @@ import jakarta.persistence.Transient;
     
     @NamedQuery ( name="BatchReport.findById", query="SELECT o FROM BatchReport AS o WHERE o.batchReportId = :batchReportId" ),
     @NamedQuery ( name="BatchReport.findByStatusAndScheduleDate", query="SELECT o FROM BatchReport AS o WHERE o.batchReportStatusTypeId=:batchReportStatusTypeId AND o.scheduleDate IS NOT NULL AND o.scheduleDate<=:maxScheduleDate" ),
-    @NamedQuery ( name="BatchReport.findByStatusAndMinFreq", query="SELECT o FROM BatchReport AS o WHERE o.batchReportStatusTypeId=:batchReportStatusTypeId AND o.frequencyTypeId>=:minFrequencyTypeId" )
+    @NamedQuery ( name="BatchReport.findByStatusAndMinFreq", query="SELECT o FROM BatchReport AS o WHERE o.batchReportStatusTypeId=:batchReportStatusTypeId AND o.frequencyTypeId>=:minFrequencyTypeId" ),
+    @NamedQuery ( name="BatchReport.findSpecialActive", query="SELECT o FROM BatchReport AS o WHERE o.batchReportStatusTypeId=:batchReportStatusTypeId AND o.batchReportContentTypeId=3 AND o.intParam2=1" )
 })
 public class BatchReport implements Serializable, Comparable<BatchReport>
 {
@@ -111,6 +112,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
      * StandardLiveVideoReport - lvCallStatusTypeId (-1 for all)
      * StandardRefCheckReport - RcCheckTypeId (-1 for all)
      * DiscGroupReport - OrgAutoTestId
+     * CreditUsageReport - send Daily MF when credits are low or empty.
      */
     @Column(name="intparam2")
     private int intParam2;
@@ -301,6 +303,9 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     
     @Transient
     private Suborg suborg;
+    
+    @Transient
+    private boolean specialProcessingCheck;
     
     
     @Override
@@ -948,6 +953,14 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
 
     public void setHourToSend(int hourToSend) {
         this.hourToSend = hourToSend;
+    }
+
+    public boolean getSpecialProcessingCheck() {
+        return specialProcessingCheck;
+    }
+
+    public void setSpecialProcessingCheck(boolean specialProcessingCheck) {
+        this.specialProcessingCheck = specialProcessingCheck;
     }
 
     
