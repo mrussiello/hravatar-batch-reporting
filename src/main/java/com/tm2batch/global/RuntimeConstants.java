@@ -76,7 +76,10 @@ public class RuntimeConstants
         cache.put( "mediaServerProtocol", "https" );
         cache.put( "mediaServerDomain", "cdn.hravatar.com" );
         cache.put( "mediaServerWebapp", "web" );
-
+        
+        cache.put( "default-site-name", "HR Avatar" );
+        cache.put( "default-site-name-cap", "HR Avatar" );
+                
         cache.put( "no-reply-email", "no-reply@hravatar.com" );
         cache.put( "support-email", "support@hravatar.com" );
         cache.put( "system-admin-email", "mike@hravatar.com" );

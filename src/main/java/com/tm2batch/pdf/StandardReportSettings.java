@@ -119,6 +119,7 @@ public class StandardReportSettings implements ReportSettings
     public Font fontXSmallLight;
     public Font fontXSmallBold;
     public Font fontXSmallItalic;
+    public Font fontXSmallLightItalic;
     public Font fontXSmallBoldItalic;
 
     public Font fontXXSmall;
@@ -340,6 +341,7 @@ public class StandardReportSettings implements ReportSettings
             fontXSmallLight = new Font( baseFont, XSFONTSZ );
             fontXSmallBold = new Font( baseFontBold, XSFONTSZ, Font.BOLD );
             fontXSmallItalic = new Font( baseFontItalic, XSFONTSZ, Font.ITALIC );
+            fontXSmallLightItalic = new Font( baseFontItalic, XSFONTSZ, Font.ITALIC );
             fontXSmallBoldItalic = new Font( baseFontBoldItalic, XSFONTSZ, Font.BOLDITALIC );
 
             fontXXSmall = new Font( baseFont, XXSFONTSZ );
@@ -428,6 +430,7 @@ public class StandardReportSettings implements ReportSettings
             fontXSmallLight.setColor( lightFontColor  );
             fontXSmallBold.setColor( baseFontColor  );
             fontXSmallItalic.setColor( baseFontColor  );
+            fontXSmallLightItalic.setColor( lightFontColor  );
             fontXSmallBoldItalic.setColor( baseFontColor  );
 
             fontXXSmall.setColor( baseFontColor  );
@@ -1097,6 +1100,11 @@ public class StandardReportSettings implements ReportSettings
         this.fontXSmallItalic = fontXSmallItalic;
     }
 
+    public Font getFontXSmallLightItalic() {
+        return fontXSmallLightItalic;
+    }
+
+    
     @Override
     public Font getFontXSmallBoldItalic() {
         return fontXSmallBoldItalic;

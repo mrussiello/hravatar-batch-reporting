@@ -62,7 +62,14 @@ public class DiscGroupReportTemplate extends BaseDiscGroupReportTemplate impleme
 
             addFooterBar( lmsg( "g.LearnMore").toUpperCase(), true, fontXLargeBoldWhite );
                 
-            addNewPage();            
+            addNewPage(); 
+            
+            for( int i=0;i<4;i++ )
+            {
+                addHowToWorkWithYSection( i );                
+                addFooterBar( lmsg( "g.Teamwork").toUpperCase(), false, fontXLargeBoldWhite );
+                addNewPage();             
+            }
             
             addKeyActionsToTakeSection();
             

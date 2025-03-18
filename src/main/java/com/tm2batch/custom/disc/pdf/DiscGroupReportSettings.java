@@ -54,6 +54,15 @@ public abstract class DiscGroupReportSettings extends StandardReportSettings imp
          
     public boolean rtl = false;
     public boolean usesNonAscii = false;
+    
+    public static String[] sideTabIconUris = new String[] {
+        "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_3x1742049764524.png",
+        "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_5x1742049764529.png",
+        "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_4x1742049764527.png",
+        "https://s3.amazonaws.com/cfmedia-hravatar-com/web/orgimage/zrWvh1uNWrg-/img_2x1742049764524.png"
+    };
+
+    
 
     
     @Override

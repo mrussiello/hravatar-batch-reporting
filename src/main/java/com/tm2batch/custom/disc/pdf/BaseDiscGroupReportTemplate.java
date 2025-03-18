@@ -66,7 +66,7 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
 {
     static String BULLET = "\u2022";
     
-    static boolean DEBUG = true;
+    static boolean DEBUG = false;
         
     DiscGroupDataSet discDataSet;
     
@@ -99,7 +99,7 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
     public String bundleToUse = null;
 
     public float footerHeight = 50;
-    public float footerBarHeight = 12;
+    public float footerBarHeight = 18;
     public int footerImageIndex = 0;
     
     public String groupReportCoverImageUrl = "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_14x1741970464999.png";
@@ -1330,6 +1330,15 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
             List<DiscResult> drl = new ArrayList<>();
             drl.addAll( discDataSet.getDiscResultList());
             
+            if( DEBUG )
+            {
+                drl.addAll( discDataSet.getDiscResultList());
+                drl.addAll( discDataSet.getDiscResultList());
+                drl.addAll( discDataSet.getDiscResultList());
+                drl.addAll( discDataSet.getDiscResultList());
+                
+            }
+            
             // sort by doubletrait 
             if( sortTypeId==0 )
                 Collections.sort( drl, new DiscResultTwoLevelScoreComparator() );
@@ -1606,6 +1615,22 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
             setRunDirection( c );
             touter.addCell(c);
 
+            Paragraph par = new Paragraph();
+            Chunk chk = new Chunk( lmsg_spec("disc.reference.title") + ": ", this.fontSmall );
+            par.add(chk );
+            chk = new Chunk( lmsg_spec("disc.reference"), this.fontSmallItalic );
+            par.add(chk );
+            
+            c = new PdfPCell( par );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setVerticalAlignment( Element.ALIGN_TOP );
+            c.setBorderWidth( 0 );
+            c.setPadding( 2 );
+            setRunDirection( c );
+            touter.addCell(c);
+            
+            
             float ulY = currentYLevel - 6*PAD;  // 4* PAD;
             float tableHeight = touter.calculateHeights(); //  + 500;
             if( tableHeight > (ulY - footerHgt - 3*PAD) )
@@ -2138,6 +2163,142 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
             throw e;
         }
     }
+    
+    
+    public void addHowToWorkWithYSection( int yTraitIndex ) throws Exception
+    {
+        try
+        {
+            previousYLevel =  currentYLevel;
+
+            String yTraitLetter = DiscReportUtils.getCompetencyStubLetter(yTraitIndex );
+            String yTraitName = lmsg_spec(yTraitLetter+".name");
+            String yTraitNameUpper = yTraitName.toUpperCase();
+
+            // String xTraitLetter = DiscReportUtils.getCompetencyStubLetter( topTraitIndexes[0] );
+
+            BaseColor bgColor = DiscReportUtils.sliceBaseColors[yTraitIndex];
+
+            String titleKey = "disc.HowWorkWithX";
+
+            String sectionTitle = lmsg_spec( titleKey, new String[]{yTraitName});
+
+            Font titleFont = fontXLargeBold;
+            BaseFont bf = titleFont.getBaseFont();
+            titleFont = new Font(bf, XLFONTSZ);
+            titleFont.setColor( ct2Colors.hraBlue );
+
+
+            float y = addTitleLarge( previousYLevel, lmsg_spec("disc.CollaboratingWithHighY", new String[]{yTraitName} ), titleFont );
+
+            y -= TPAD;
+
+            PdfPCell c;
+            PdfPTable touter = new PdfPTable( 1 );
+            // touter.setWidths(new float[] {0.5f, 10f} );
+            setRunDirection( touter );
+            // float importanceWidth = 25;
+
+            touter.setTotalWidth( pageWidth - 2*CT2_MARGIN - 2*CT2_BOX_EXTRAMARGIN );
+            // touter.setWidths( new float[]{1f} );
+            touter.setLockedWidth( true );
+            // t.setHeaderRows( 1 );
+
+            // Create header
+            c = new PdfPCell();
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setBorderWidth( scoreBoxBorderWidth );
+            c.setPadding( 1 );
+            c.setPaddingBottom( 5 );
+            c.setPaddingLeft( CT2_BOXHEADER_LEFTPAD );
+            setRunDirection( c );
+            // touter.addCell(c);
+
+            c = new PdfPCell( new Phrase( sectionTitle, fontLargeWhite ) );
+            c.setBorder( Rectangle.NO_BORDER );
+            c.setHorizontalAlignment( Element.ALIGN_LEFT );
+            c.setBorderWidth( scoreBoxBorderWidth );
+            c.setPadding( 1 );
+            c.setPaddingBottom( 5 );
+            c.setPaddingLeft( CT2_BOXHEADER_LEFTPAD );
+            c.setBackgroundColor( ct2Colors.hraBlue );
+            c.setCellEvent(new CellBackgroundCellEvent(reportData.getIsLTR(), ct2Colors.hraBlue,true, true, true, true) );
+            setRunDirection( c );
+            // touter.addCell(c);
+
+
+            c = touter.getDefaultCell();
+            c.setPadding( 0 );
+            c.setBorder( Rectangle.NO_BORDER );
+            setRunDirection( c );
+
+            Font listHeaderFont = fontLargeBold;
+            Font listItemFont = fontLarge;
+            bf = listHeaderFont.getBaseFont();
+
+            listHeaderFont = new Font(bf, LFONTSZ);
+            listHeaderFont.setColor( ct2Colors.hraBlue );
+
+            String listTitle = lmsg_spec( "disc.OnATeam");
+            List<String> itemList = lmsg_spec_list(yTraitLetter + ".howwork.onteam");
+            addListItemGroupToTable(touter, listTitle, itemList, listHeaderFont, listItemFont, 0);
+
+            listTitle = lmsg_spec( "disc.WhenWorkingWithXStyles", new String[]{yTraitName});
+            itemList = lmsg_spec_list(yTraitLetter + ".howwork.with");
+            addListItemGroupToTable(touter, listTitle, itemList, listHeaderFont, listItemFont, 0);
+
+
+            for( String xTraitLetter : DiscReportUtils.DISC_COMPETENCY_STUBS )
+            {
+                if( xTraitLetter.equalsIgnoreCase(yTraitLetter ) )
+                    listTitle = lmsg_spec( "disc.HowXWorksWithX", new String[]{xTraitLetter.toUpperCase()} );
+                else
+                    listTitle = lmsg_spec("disc.HowXWorksWithY", new String[]{xTraitLetter.toUpperCase(), yTraitLetter.toUpperCase()} );
+
+
+                c = new PdfPCell( new Phrase( listTitle, listHeaderFont ) );
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setVerticalAlignment( Element.ALIGN_TOP );
+                c.setBorderWidth( 0 );
+                c.setPadding( 2 );
+                c.setPaddingTop(6);
+                setRunDirection( c );
+                touter.addCell(c);
+            
+                String howWorkTogetherStr = lmsg_spec(xTraitLetter + ".howworkwith." + yTraitLetter + ".1");
+                c = new PdfPCell( new Phrase( howWorkTogetherStr, listItemFont ) );
+                c.setBorder( Rectangle.NO_BORDER );
+                c.setHorizontalAlignment( Element.ALIGN_LEFT );
+                c.setVerticalAlignment( Element.ALIGN_TOP );
+                c.setBorderWidth( 0 );
+                c.setPadding( 2 );
+                setRunDirection( c );
+                touter.addCell(c);
+            }
+            
+            String imgUri = sideTabIconUris[yTraitIndex];
+            URL imgURL = reportData.getLocalImageUrl( imgUri );
+            Image iconImage = ITextUtils.getITextImage( imgURL );
+            iconImage.scalePercent(30);
+            touter.setTableEvent( new DiscCollaboratingTabTableEvent(bgColor,fontXLargeBoldWhite.getBaseFont(),yTraitNameUpper, iconImage) );
+
+            touter.writeSelectedRows(0, -1,CT2_MARGIN + CT2_BOX_EXTRAMARGIN, y, pdfWriter.getDirectContent() );
+
+            currentYLevel = y - touter.calculateHeights();
+
+            currentYLevel -= TPAD;
+
+            previousYLevel = currentYLevel;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "BaseDiscReportTemplate.addHowXShouldWorkWithYSection()" );
+            throw e;
+        }
+    }
+
     
     
     

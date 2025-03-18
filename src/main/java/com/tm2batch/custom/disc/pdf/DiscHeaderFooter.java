@@ -454,7 +454,7 @@ public class DiscHeaderFooter extends PdfPageEventHelper
                 return getFooterTableRTL();
 
             //  t.setTableEvent( tableEvent );
-            Font f = reportSettings.getFontSmallLightItalic();
+            Font f = reportSettings.getFontXSmallLightItalic();
             t.setWidths( new int[] { 24, 6 } );
             // t.setWidths( reportData.getIsLTR() ?  new int[] { 24,24,2 } :new int[] { 2,24,24 } );
 
@@ -489,26 +489,6 @@ public class DiscHeaderFooter extends PdfPageEventHelper
             c.setRunDirection( reportData.getTextRunDirection() );
             c.setCellEvent( new DiscPageNumberCellEvent(pageStr, new BaseColor( 0xee, 0xee, 0xee), new BaseColor(0xa0,0xa0,0xa0), f)  );
             t.addCell(c);
-
-
-            /*
-            if( totalPages != null )
-            {
-                c = new PdfPCell( Image.getInstance(totalPages ) );
-                c.setBorderWidth(0);
-                c.setHorizontalAlignment( reportData.getIsLTR() ? Element.ALIGN_LEFT : Element.ALIGN_RIGHT );
-                c.setVerticalAlignment( Element.ALIGN_MIDDLE );
-                c.setBorder( Rectangle.NO_BORDER );
-                // c.setPadding( 2 );
-                c.setPaddingTop(4);
-                c.setRunDirection( reportData.getTextRunDirection() );
-                c.setCellEvent( new DiscPageNumberCellEvent(pageStr, new BaseColor( 0xee, 0xee, 0xee), new BaseColor(0xb2,0xb2,0xb2), f)  );
-                t.addCell(c);
-            }
-
-            else
-                t.addCell( new Phrase( "X", f ) );
-            */
         }
 
         catch( Exception e )
@@ -527,7 +507,7 @@ public class DiscHeaderFooter extends PdfPageEventHelper
         try
         {
             //  t.setTableEvent( tableEvent );
-            Font f = reportSettings.getFontSmallLightItalic();
+            Font f = reportSettings.getFontXSmallLightItalic();
             //t.setWidths( new int[] { 24, 24, 2 } );
             t.setWidths( new int[] { 8, 48 } );
             // t.setWidths( reportData.getIsLTR() ?  new int[] { 24,24,2 } :new int[] { 2,24,24 } );
