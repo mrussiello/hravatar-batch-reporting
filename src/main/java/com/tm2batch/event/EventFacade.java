@@ -16,6 +16,7 @@ import com.tm2batch.entity.event.TestKey;
 import com.tm2batch.entity.event.TestKeyArchive;
 import com.tm2batch.entity.purchase.Product;
 import com.tm2batch.entity.report.Report;
+import com.tm2batch.entity.user.OrgAutoTest;
 import com.tm2batch.global.Constants;
 import com.tm2batch.global.STException;
 import com.tm2batch.service.LogService;
@@ -102,6 +103,26 @@ public class EventFacade
         }
     }   
     
+    public OrgAutoTest getOrgAutoTest( int orgAutoTestId ) throws Exception
+    {
+        try
+        {
+            if( orgAutoTestId <= 0 )
+                throw new Exception( "orgAutoTestId is invalid " + orgAutoTestId );
+
+            // else it's a system type (0 or 1)
+            return em.find( OrgAutoTest.class, (Integer)( orgAutoTestId ) );
+        }
+        catch( NoResultException e )
+        {
+            return null;
+        }
+        catch( Exception e )
+        {
+            LogService.logIt( e, "EventFacade.getOrgAutoTest( " + orgAutoTestId + " )" );
+            throw new STException( e );
+        }
+    }    
     
     public List<TestEvent> getTestEventsForTestKey( long testKeyId) throws Exception
     {
@@ -217,7 +238,7 @@ public class EventFacade
                 return tka != null ? tka.getTestKey() : null;
             }
 
-            TestKey tk =  em.find( TestKey.class, new Long( testKeyId ) );
+            TestKey tk =  em.find(TestKey.class, testKeyId);
 
             if( tk!= null )
                 return tk;
@@ -252,7 +273,7 @@ public class EventFacade
             if( reportId <= 0 )
                 throw new Exception( "reportId is invalid " + reportId );
 
-            return em.find( Report.class, new Long( reportId ) );
+            return em.find(Report.class, reportId);
         }
 
         catch( NoResultException e )
@@ -356,7 +377,7 @@ public class EventFacade
 
             // EntityManager em = tm2Factory.createEntityManager();
 
-            Query q = em.createNamedQuery( testEventScoreTypeId<0 ? "TestEventScore.findByTestEventId" : "TestEventScore.findByTestEventIdAndTypeId" );
+            Query q = em.createNamedQuery( testEventScoreTypeId<0 ? "TestEventScore.findByTestEventId" : "TestEventScore.findByTestEventIdAndTestEventScoreTypeId" );
 
             q.setParameter( "testEventId", testEventId );
             
@@ -391,6 +412,7 @@ public class EventFacade
                                         int productTypeId, // testResultBean.getProductTypeId(),
                                         int consumerProductTypeId, // testResultBean.getConsumerProductTypeId(),
                                         int batteryId, // testResultBean.getBatteryId(),
+                                        int orgAutoTestId, // testResultBean.getProductId(),
                                         Date startDate, // testResultBean.getCompletedAfter(),
                                         Date endDate, // testResultBean.getCompletedBefore(),
                                         int sortTypeId, // testResultBean.getTestResultSortTypeId(),
@@ -448,6 +470,10 @@ public class EventFacade
             whereStr += " AND t.productid=" + productId;
         }
 
+        else if( orgAutoTestId > 0 )
+        {
+            whereStr += " AND t.orgautotestid=" + orgAutoTestId;
+        }
 
 
         // java.sql.Date sDate;
@@ -520,6 +546,7 @@ public class EventFacade
                                             String emailKeyword,
                                             int orgAutoTestId,
                                             int productId,
+                                            String productIdStr,
                                             int productTypeId,
                                             int consumerProductTypeId,
                                             int batteryId,
@@ -659,26 +686,30 @@ public class EventFacade
         //    whereStr += " AND t.productid=" + productId;
         //}
 
-        if( productTypeId > 0 )
+        if( productTypeId>0 )
         {
             whereStr += " AND t.producttypeid=" + productTypeId;
         }
 
-        if( consumerProductTypeId >= 0 )
+        if( consumerProductTypeId>=0 )
         {
             whereStr += " AND p.consumerproducttypeid=" + consumerProductTypeId;
         }
 
-        if( batteryId > 0 )
+        if( batteryId>0 )
         {
             whereStr += " AND t.batteryid=" + batteryId;
         }
 
-        else if( productId > 0 )
+        if( productId>0 )
         {
             whereStr += " AND t.productid=" + productId;
         }
-
+        
+        else if( productIdStr!=null && !productIdStr.isBlank() )
+        {
+            whereStr += " AND t.productid IN (" + productIdStr + ")";
+        }
 
         if( userId > 0 )
         {

@@ -251,9 +251,9 @@ public class OrgJusticeReport extends BaseExecutableReport implements Executable
         
         if( batchReport.getUser().getUserReportOptions()==null )
             throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport User (userId=" + batchReport.getUser().getUserId() + ", orgId=" + batchReport.getOrgId() + ") does not have any UserReportOptions. Please create a UserReportOptions object for this User." );
-            
-
     }
+    
+    
     
     @Override
     public String getFilename()

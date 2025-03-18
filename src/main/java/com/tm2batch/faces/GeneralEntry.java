@@ -29,6 +29,7 @@ public class GeneralEntry
      
     public void doIdleReset( ComponentSystemEvent ev )
     {
+        LogService.logIt( "GeneralEntry.doLogonReset() START " );
         try
         {
             FacesContext fc = FacesContext.getCurrentInstance();

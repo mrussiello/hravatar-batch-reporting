@@ -278,7 +278,12 @@ public class UserUtils
             getUserBean();
 
             if( userBean.getUserLoggedOnAsAdmin()&& userBean.getLogonHistoryId() > 0 )
-               userFacade.addUserLogout( userBean.getLogonHistoryId(), logoffTypeId );
+            {
+                if( userFacade==null )
+                    userFacade=UserFacade.getInstance();
+                
+                userFacade.addUserLogout( userBean.getLogonHistoryId(), logoffTypeId );
+            }
 
             userBean.setLogonHistoryId( 0 );
 

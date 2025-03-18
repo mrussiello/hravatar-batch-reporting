@@ -33,7 +33,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
     @NamedQuery ( name="User.findByEmailAndOrgId", query="SELECT o FROM User AS o WHERE o.email = :uemail AND o.orgId=:orgId" ),
     @NamedQuery ( name="User.findByUsername", query="SELECT o FROM User AS o  WHERE o.username = :uname" )
 })
-public class User implements Serializable
+public class User implements Serializable, Comparable<User>
 {
     @Transient
     private static final long serialVersionUID = 1L;
@@ -179,6 +179,13 @@ public class User implements Serializable
     public RoleType getRoleType()
     {
         return RoleType.getValue( roleId );
+    }
+
+    @Override
+    public int compareTo(User o) {
+        if( lastName!=null && !lastName.isBlank() && o.getLastName()!=null )
+            return lastName.compareTo(o.getLastName());
+        return Long.valueOf( userId).compareTo(o.getUserId());
     }
 
 

@@ -31,25 +31,37 @@ public class ReportData
     public static String logoDarkTextFilename = "hralogoblacktext-blue.png";
     public static String logoWhiteTextFilename = "hralogowhitetext-blue.png";
     public static String logoDarkTextSmallFilename = "hralogoblacktext-small-blue.png";
-    public static String logoWhiteTextSmallFilename = "hralogowhitetext-small-blue.png";     
+    public static String logoWhiteTextSmallFilename = "hralogowhitetext-small-blue.png";
 
-    
+    public static String hraLogoBlackTextFilename;
+    public static String hraLogoBlackTextPurpleFilename;
+    public static String hraLogoWhiteTextFilename;
+    public static String hraLogoWhiteTextPurpleFilename;
+    public static String hraLogoBlackTextSmallFilename;
+    public static String hraLogoBlackTextSmallPurpleFilename;
+    public static String hraLogoWhiteTextSmallFilename;
+    public static String hraLogoWhiteTextSmallPurpleFilename;
+    public static String hraCoverPageFilename;
+    public static String hraCoverPageBlueArrowFilename;
+
+
+
     public Report r;
-    
+
     public  User u;
 
     public Org o;
 
     public Suborg s;
-    
+
     public Product p;
 
     // public List<NVPair> reportRules;
     public ReportRules reportRules;
-    
+
     Locale reportLocale;
-    
-    public Object[] objArray;   
+
+    public Object[] objArray;
 
 
     public ReportData( Report r, User u, Org o, Suborg s, Product p, Object[] objArray)
@@ -61,42 +73,59 @@ public class ReportData
         this.p = p;
         this.objArray = objArray;
 
-        reportRules = new ReportRules( o, s, p, r ); 
-        
+        reportRules = new ReportRules( o, s, p, r );
+
         init();
     }
 
-    
+
     public static synchronized void init()
     {
-        if( logoDarkTextFilename!=null && !logoDarkTextFilename.isBlank() )
+        if( hraLogoBlackTextFilename!=null && !hraLogoBlackTextFilename.isBlank() )
             return;
-        
+
         logoDarkTextFilename = RuntimeConstants.getStringValue("logoDarkTextFilename");
         logoWhiteTextFilename = RuntimeConstants.getStringValue("logoWhiteTextFilename");
         logoDarkTextSmallFilename = RuntimeConstants.getStringValue("logoDarkTextSmallFilename");
         logoWhiteTextSmallFilename = RuntimeConstants.getStringValue("logoWhiteTextSmallFilename");
+        
+        hraLogoBlackTextFilename = RuntimeConstants.getStringValue("hraLogoBlackTextFilename");
+        hraLogoBlackTextPurpleFilename = RuntimeConstants.getStringValue("hraLogoBlackTextPurpleFilename");
+
+        hraLogoWhiteTextFilename = RuntimeConstants.getStringValue("hraLogoWhiteTextFilename");
+        hraLogoWhiteTextPurpleFilename = RuntimeConstants.getStringValue("hraLogoWhiteTextPurpleFilename");
+
+        hraLogoBlackTextSmallFilename = RuntimeConstants.getStringValue("hraLogoBlackTextSmallFilename");
+        hraLogoBlackTextSmallPurpleFilename = RuntimeConstants.getStringValue("hraLogoBlackTextSmallPurpleFilename");
+
+
+        hraLogoWhiteTextSmallFilename = RuntimeConstants.getStringValue("hraLogoWhiteTextSmallFilename");    
+        hraLogoWhiteTextSmallPurpleFilename = RuntimeConstants.getStringValue("hraLogoWhiteTextSmallPurpleFilename");
+        
+        hraCoverPageFilename = RuntimeConstants.getStringValue("hraCoverPageFilename");
+        hraCoverPageBlueArrowFilename = RuntimeConstants.getStringValue("hraCoverIncludedArrowFilename");
+        
     }
-    
-    
+
+
     @Override
     public String toString()
     {
-        
+
         String out = "ReportData: ";
-                
+
         if( r!=null )
             out += r.toString();
-        
+
         return out;
     }
-    
-    
+
+
     public URL getLogoDarkTextUrl()
     {
         return getLocalImageUrl( logoDarkTextFilename );
     }
-    
+
     public URL getLogoDarkTextSmallUrl()
     {
         return getLocalImageUrl( logoDarkTextSmallFilename );
@@ -117,46 +146,46 @@ public class ReportData
     {
        if( reportRules!=null )
            return reportRules.getReportRuleAsString(name);
-        
+
        return null;
-    }    
-    
+    }
+
     public boolean getReportRuleAsBoolean( String name )
     {
        if( reportRules!=null )
            return reportRules.getReportRuleAsBoolean(name);
-        
+
        return false;
-    }    
-    
+    }
+
     public int getReportRuleAsInt( String name )
     {
        if( reportRules!=null )
            return reportRules.getReportRuleAsInt(name);
-        
+
        // LogService.logIt( "ReportData.getReportRuleAsInt(" + name + ") tk: " + (tk==null) + ", sub: " + (this.getSuborg()==null) + ", org: " + (this.getOrg()==null) + ", r2u: " + this.r  );
        return 0;
-    }    
-    
-    
-    
+    }
+
+
+
     public boolean hasUserInfo()
     {
         return  u!=null && u.getUserType().getNamedUserIdUsername();
     }
 
-    
+
     public boolean getUsesNonAscii()
     {
         Locale l = getLocale();
-        
+
         // Any right to left
         if( I18nUtils.isTextRTL( l ) )
             return true;
-        
+
         if( I18nUtils.isTextNonAscii(l) )
             return true;
-                
+
         // Check the product language
         if( p!=null && p.getLangStr()!=null && !p.getLangStr().isEmpty() && I18nUtils.isTextRTL( I18nUtils.getLocaleFromCompositeStr(p.getLangStr() ) ) )
             return true;
@@ -164,14 +193,14 @@ public class ReportData
         return false;
     }
 
-    
-   
-    
+
+
+
     public Locale getLocale()
     {
         if( reportLocale!=null )
             return reportLocale;
-        
+
         if( r!=null && r.getLocaleForReportGen()!=null )
             return r.getLocaleForReportGen();
 
@@ -181,7 +210,7 @@ public class ReportData
         return Locale.US;
     }
 
-    
+
     public Locale getTestContentLocale()
     {
         return p!=null && p.getLangStr()!=null && !p.getLangStr().isBlank() ? I18nUtils.getLocaleFromCompositeStr(p.getLangStr()) : Locale.US;
@@ -232,12 +261,15 @@ public class ReportData
 
     public URL getLocalImageUrl( String fn )
     {
-        
+
+       if( fn==null || fn.isBlank() )
+           return null;
+       
        try
        {
            if( fn.toLowerCase().startsWith("http") )
                return (new URI(fn)).toURL();
-    
+
            return (new URI(getBaseImageUrl() + "/" + fn)).toURL();
        }
 
@@ -249,17 +281,72 @@ public class ReportData
     }
 
 
+    public URL getHRALogoBlackTextUrl()
+    {
+        return getLocalImageUrl( hraLogoBlackTextFilename );
+    }
+
+    public URL getHRALogoBlackTextUrl( boolean devel )
+    {
+        return getLocalImageUrl( devel ? hraLogoBlackTextPurpleFilename : hraLogoBlackTextFilename );
+    }
+
+
+
+    public URL getHRALogoBlackTextSmallUrl()
+    {
+        return getLocalImageUrl( hraLogoBlackTextSmallFilename );
+    }
+
+
+    public URL getHRALogoBlackTextSmallUrl( boolean devel )
+    {
+        return getLocalImageUrl(  devel ? hraLogoBlackTextSmallPurpleFilename : hraLogoBlackTextSmallFilename );
+    }
+
+    public URL getHRALogoWhiteTextSmallUrl()
+    {
+        return getLocalImageUrl( hraLogoWhiteTextSmallFilename );
+    }
+
+    public URL getHRALogoWhiteTextSmallUrl( boolean devel )
+    {
+        return getLocalImageUrl( devel ? hraLogoWhiteTextSmallPurpleFilename : hraLogoWhiteTextSmallFilename );
+    }
+
+
+    public URL getHRALogoWhiteTextUrl()
+    {
+        return getLocalImageUrl( hraLogoWhiteTextFilename );
+    }
+
+    public URL getHRALogoWhiteTextUrl( boolean devel )
+    {
+        return getLocalImageUrl( devel ? hraLogoWhiteTextPurpleFilename : hraLogoWhiteTextFilename );
+    }
+
+    public URL getHRACoverPageUrl()
+    {
+        return getLocalImageUrl( hraCoverPageFilename );
+    }
+
+    public URL getHRACoverPageBlueArrowUrl()
+    {
+        return getLocalImageUrl( hraCoverPageBlueArrowFilename );
+    }
+
+
 
     public String getOrgName() {
         return o.getName();
     }
 
-    public String getReportName() 
+    public String getReportName()
     {
         return r.getTitle();
     }
 
-    public String getUserName() 
+    public String getUserName()
     {
         return u==null ? "" : u.getFullname();
     }
@@ -273,6 +360,11 @@ public class ReportData
         return o;
     }
 
+    public Report getR2Use()
+    {
+        return getReport();
+    }
+    
     public Report getReport() {
         return r;
     }
@@ -290,7 +382,7 @@ public class ReportData
     }
 
 
-    
+
 
 
 }

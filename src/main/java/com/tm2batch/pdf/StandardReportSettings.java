@@ -28,9 +28,8 @@ public class StandardReportSettings implements ReportSettings
     public static float MAX_CUSTLOGO_H = 40;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // NOTE: NONE OF THESE ARE PUBLIC SO THAT OTHER REPORTS CAN OVERRIDE THEM FOR THAT REPORT but still extend from this class.
+    // NOTE: NONE OF THESE ARE STATIC SO THAT OTHER REPORTS CAN OVERRIDE THEM FOR THAT REPORT but still extend from this class.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // int MIN_COUNT_FOR_PERCENTILE = 10;
     
     public int XXLFONTSZ = 32;
     public int XLFONTSZ = 14;
@@ -48,8 +47,15 @@ public class StandardReportSettings implements ReportSettings
     public BaseFont baseFontItalic;
     public BaseFont baseFontBoldItalic;
     public BaseFont headerBaseFont;
+    
+    public BaseFont baseFontCalibri;
+    public BaseFont baseFontCalibriBold;
+    public BaseFont baseFontCalibriItalic;
+    public BaseFont baseFontCalibriBoldItalic;
+    
 
     public Font fontXXLarge;
+    public Font fontXXLargeBoldDarkBlue;
     public Font fontXXLargeWhite;
     public Font fontXXLargeLight;
     public Font fontXXLargeBold;
@@ -60,6 +66,7 @@ public class StandardReportSettings implements ReportSettings
     public Font headerFontXXLargeWhite;
 
     public Font fontXLarge;
+    public Font fontXLargeBoldDarkBlue;
     public Font fontXLargeLight;
     public Font fontXLargeLightBold;
     public Font fontXLargeWhite;
@@ -72,6 +79,8 @@ public class StandardReportSettings implements ReportSettings
     public Font headerFontXLargeWhite;
 
     public Font fontLarge;
+    public Font fontLargeWhiteBold;
+    public Font fontLargeBlueBold;
     public Font fontLargeWhite;
     public Font fontLargeLight;
     public Font fontLargeLightBold;
@@ -82,6 +91,10 @@ public class StandardReportSettings implements ReportSettings
     public Font headerFontLarge;
     public Font headerFontLargeWhite;
 
+    public Font fontLm;
+    public Font fontLmBold;
+    
+    
     public Font font;
     public Font fontWhite;
     public Font fontLight;
@@ -117,6 +130,7 @@ public class StandardReportSettings implements ReportSettings
 
     public Font fontSectionTitle;
 
+    BaseColor hraBlueFontColor; // #0077cc
     BaseColor whiteFontColor;  // #ffffff
     BaseColor darkFontColor;   // #282828
     BaseColor lightFontColor;  // #525252
@@ -136,6 +150,16 @@ public class StandardReportSettings implements ReportSettings
     Image logoDarkTextSmall;
     Image logoWhiteText;
     Image logoWhiteTextSmall;
+    
+    public Image hraLogoBlackText;
+    public Image hraLogoBlackTextSmall;
+
+    public Image hraLogoWhiteText;
+    public Image hraLogoWhiteTextSmall;
+    public Image hraCoverPageImage;
+    public Image hraCoverPageImage2;
+    public Image hraCoverPageBlueArrowImage;
+    
 
     public ReportColors reportColors = null;
     
@@ -145,10 +169,13 @@ public class StandardReportSettings implements ReportSettings
     // must start as -1
     public int fontTypeId = -1;
     
+    public ReportData reportData;
 
     @Override
     public void initSettings( ReportData reportData ) throws Exception
     {
+        this.reportData=reportData;
+        
         if( RuntimeConstants.getBooleanValue( "disableCertificateVerification" ) )
             SSLUtils.disableSslVerification();
         
@@ -177,17 +204,25 @@ public class StandardReportSettings implements ReportSettings
                 baseFontBold = BaseFont.createFont(filesRoot + "calibrib.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
                 baseFontItalic = BaseFont.createFont(filesRoot + "calibrii.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
                 baseFontBoldItalic = BaseFont.createFont(filesRoot + "calibriz.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibri = BaseFont.createFont(filesRoot + "calibri.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibriBold = BaseFont.createFont(filesRoot + "calibrib.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibriItalic = BaseFont.createFont(filesRoot + "calibrii.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibriBoldItalic = BaseFont.createFont(filesRoot + "calibriz.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
 
                 headerBaseFont = BaseFont.createFont(filesRoot + "calibrib.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
             }
 
             else if( fontTypeId == 1 || (fontTypeId==0 && usesNonAscii) )
             {
-                // Mike R 9/8/2016 - Changed for this to Embedded Fonts.
                 baseFont = BaseFont.createFont(filesRoot + "arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED); // BaseFont.createFont( BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED );
                 baseFontBold = BaseFont.createFont(filesRoot + "arialbd.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 baseFontItalic = BaseFont.createFont(filesRoot + "ariali.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 baseFontBoldItalic = BaseFont.createFont(filesRoot + "arialbi.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibri = BaseFont.createFont(filesRoot + "arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibriBold = BaseFont.createFont(filesRoot + "arialbd.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibriItalic = BaseFont.createFont(filesRoot + "ariali.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibriBoldItalic = BaseFont.createFont(filesRoot + "arialbi.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+
                 headerBaseFont = BaseFont.createFont(filesRoot + "arialbd.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
             }
 
@@ -198,7 +233,10 @@ public class StandardReportSettings implements ReportSettings
                 baseFontBold = BaseFont.createFont(filesRoot + "msyhbd.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 baseFontItalic = BaseFont.createFont(filesRoot + "msyh.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 baseFontBoldItalic = BaseFont.createFont(filesRoot + "msyhbd.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-
+                baseFontCalibri = BaseFont.createFont(filesRoot + "msyh.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibriBold = BaseFont.createFont(filesRoot + "msyhbd.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibriItalic = BaseFont.createFont(filesRoot + "msyh.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibriBoldItalic = BaseFont.createFont(filesRoot + "msyhbd.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 headerBaseFont = BaseFont.createFont(filesRoot + "msyh.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
             }
 
@@ -209,6 +247,10 @@ public class StandardReportSettings implements ReportSettings
                 baseFontBold = BaseFont.createFont(filesRoot + "KozMinPro-Bold.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 baseFontItalic = BaseFont.createFont(filesRoot + "KozMinPro-Regular.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 baseFontBoldItalic = BaseFont.createFont(filesRoot + "KozMinPro-Bold.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibri = BaseFont.createFont(filesRoot + "KozMinPro-Regular.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibriBold = BaseFont.createFont(filesRoot + "KozMinPro-Bold.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibriItalic = BaseFont.createFont(filesRoot + "KozMinPro-Regular.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                baseFontCalibriBoldItalic = BaseFont.createFont(filesRoot + "KozMinPro-Bold.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                 headerBaseFont = BaseFont.createFont(filesRoot + "KozMinPro-Regular.otf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
             }
 
@@ -218,6 +260,10 @@ public class StandardReportSettings implements ReportSettings
                 baseFontBold = BaseFont.createFont(filesRoot + "timesbd.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
                 baseFontItalic = BaseFont.createFont(filesRoot + "timesi.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
                 baseFontBoldItalic = BaseFont.createFont(filesRoot + "timesbi.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibri = BaseFont.createFont(filesRoot + "times.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibriBold = BaseFont.createFont(filesRoot + "timesbd.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibriItalic = BaseFont.createFont(filesRoot + "timesi.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibriBoldItalic = BaseFont.createFont(filesRoot + "timesbi.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
                 headerBaseFont = BaseFont.createFont(filesRoot + "timesbd.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
             }
 
@@ -228,17 +274,17 @@ public class StandardReportSettings implements ReportSettings
                 baseFontBold = BaseFont.createFont(filesRoot + "clearsans-b.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
                 baseFontItalic = BaseFont.createFont(filesRoot + "clearsans-i.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
                 baseFontBoldItalic = BaseFont.createFont(filesRoot + "clearsans-bi.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibri = BaseFont.createFont(filesRoot + "clearsans.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibriBold = BaseFont.createFont(filesRoot + "clearsans-b.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibriItalic = BaseFont.createFont(filesRoot + "clearsans-i.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
+                baseFontCalibriBoldItalic = BaseFont.createFont(filesRoot + "clearsans-bi.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
                 headerBaseFont = BaseFont.createFont(filesRoot + "clearsans-b.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);
             }
 
 
-            //baseFont = BaseFont.createFont( BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED );
-            //baseFontBold = baseFont; 
-            //baseFontItalic = baseFont; 
-            //baseFontBoldItalic = baseFont; 
-            //headerBaseFont = BaseFont.createFont( filesRoot + "BNKGOTHM.TTF", BaseFont.WINANSI, BaseFont.EMBEDDED );
 
             fontXXLarge = new Font( baseFont, XXLFONTSZ );
+            fontXXLargeBoldDarkBlue = new Font( baseFont, XXLFONTSZ );
             fontXXLargeWhite = new Font( baseFont, XXLFONTSZ );
             fontXXLargeLight = new Font( baseFont, XXLFONTSZ );
             fontXXLargeBold = new Font( baseFontBold, XXLFONTSZ, Font.BOLD );
@@ -246,6 +292,7 @@ public class StandardReportSettings implements ReportSettings
             fontXXLargeBoldItalic = new Font( baseFontBoldItalic, XXLFONTSZ, Font.BOLDITALIC );
 
             fontXLarge = new Font( baseFont, XLFONTSZ );
+            fontXLargeBoldDarkBlue = new Font( baseFont, XLFONTSZ );
             fontXLargeWhite = new Font( baseFont, XLFONTSZ );
             fontXLargeLight = new Font( baseFont, XLFONTSZ );
             fontXLargeLightBold = new Font( baseFontBold, XLFONTSZ );
@@ -255,6 +302,8 @@ public class StandardReportSettings implements ReportSettings
             fontXLargeBoldWhite = new Font( baseFontBold, XLFONTSZ, Font.BOLDITALIC );
 
             fontLarge = new Font( baseFont, LFONTSZ );
+            fontLargeWhiteBold = new Font( baseFont, LFONTSZ );
+            fontLargeBlueBold = new Font( baseFont, LFONTSZ );
             fontLargeWhite = new Font( baseFont, LFONTSZ );
             fontLargeLight = new Font( baseFont, LFONTSZ );
             fontLargeLightBold = new Font( baseFontBold, LFONTSZ );
@@ -262,6 +311,9 @@ public class StandardReportSettings implements ReportSettings
             fontLargeItalic = new Font( baseFontItalic, LFONTSZ, Font.ITALIC );
             fontLargeBoldItalic = new Font( baseFontBoldItalic, LFONTSZ, Font.BOLDITALIC );
 
+            fontLm = new Font(baseFontCalibri, LMFONTSZ);
+            fontLmBold = new Font(baseFontCalibriBold, LMFONTSZ, Font.NORMAL);
+                        
             fontSectionTitle = fontLargeLight;
 
             font = new Font( baseFont, FONTSZ );
@@ -304,6 +356,7 @@ public class StandardReportSettings implements ReportSettings
             headerFontLarge = new Font( headerBaseFont, LFONTSZ );
             headerFontLargeWhite = new Font( headerBaseFont, LFONTSZ );
 
+            hraBlueFontColor = new BaseColor( 0x00, 0x77, 0xcc );
             whiteFontColor = new BaseColor( 255,255,255 );  // #ffffff
             darkFontColor = new BaseColor( 40,40,40 );   // #282828
             lightFontColor = new BaseColor( 82,82,82 );  // #525252
@@ -312,7 +365,7 @@ public class StandardReportSettings implements ReportSettings
             scoreBoxBgColor = new BaseColor( 255,255,255 );  // #ffffff
             scoreBoxBorderColor = new BaseColor( 82,82,82 );  // #525252
 
-            headerDarkBgColor =  new BaseColor(33, 150, 243); // new BaseColor(39,178,231); // #27b2e7 // new BaseColor( 58,58,58 );    // #3a3a3a
+            headerDarkBgColor =  new BaseColor(0x00, 0x77, 0xcc); // new BaseColor(33, 150, 243); // new BaseColor(39,178,231); // #27b2e7 // new BaseColor( 58,58,58 );    // #3a3a3a
             titlePageBgColor = new BaseColor( 255,255,255 ); // #ffffff
             pageBgColor = new BaseColor( 234,234,234 );      // #eaeaea
             hraBaseReportColor =  new BaseColor(33, 150, 243); // = new BaseColor( 39,178,231 ); // #27b2e7   //   new BaseColor( 241,90,41 );   // #f1592a
@@ -321,6 +374,7 @@ public class StandardReportSettings implements ReportSettings
             BaseColor baseFontColor = darkFontColor;
 
             fontXXLarge.setColor( baseFontColor  );
+            fontXXLargeBoldDarkBlue.setColor(new BaseColor( 0x0b, 0x50, 0x8b));
             fontXXLargeWhite.setColor( whiteFontColor  );
             fontXXLargeLight.setColor( lightFontColor  );
             fontXXLargeBold.setColor( baseFontColor  );
@@ -328,6 +382,7 @@ public class StandardReportSettings implements ReportSettings
             fontXXLargeBoldItalic.setColor( baseFontColor  );
 
             fontXLarge.setColor( baseFontColor  );
+            fontXLargeBoldDarkBlue.setColor(new BaseColor( 0x0b, 0x50, 0x8b));
             fontXLargeWhite.setColor( whiteFontColor  );
             fontXLargeLight.setColor( lightFontColor  );
             fontXLargeLightBold.setColor( lightFontColor  );
@@ -337,13 +392,18 @@ public class StandardReportSettings implements ReportSettings
             fontXLargeBoldWhite.setColor( whiteFontColor );
 
             fontLarge.setColor( baseFontColor  );
+            fontLargeWhiteBold.setColor(whiteFontColor);
             fontLargeWhite.setColor( whiteFontColor  );
             fontLargeLight.setColor( lightFontColor  );
             fontLargeLightBold.setColor( lightFontColor  );
             fontLargeBold.setColor( baseFontColor  );
             fontLargeItalic.setColor( baseFontColor  );
             fontLargeBoldItalic.setColor( baseFontColor  );
+            fontLargeBlueBold.setColor( hraBlueFontColor );
 
+            fontLm.setColor(baseFontColor);
+            fontLmBold.setColor(baseFontColor);
+            
             font.setColor( baseFontColor  );
             fontWhite.setColor( whiteFontColor  );
             fontLight.setColor( lightFontColor  );
@@ -596,6 +656,10 @@ public class StandardReportSettings implements ReportSettings
     @Override
     public Font getFontXXLargeBold() {
         return fontXXLargeBold;
+    }
+    
+    public Font getFontXXLargeBoldDarkBlue() {
+        return fontXXLargeBoldDarkBlue;
     }
 
     @Override
@@ -1267,4 +1331,38 @@ public class StandardReportSettings implements ReportSettings
         this.scoreBoxBorderColor = scoreBoxBorderColor;
     }
 
+    public BaseColor getHraBlueFontColor() {
+        return hraBlueFontColor;
+    }
+
+    public Image getHraLogoBlackText() {
+        return hraLogoBlackText;
+    }
+
+    public Image getHraLogoBlackTextSmall() {
+        return hraLogoBlackTextSmall;
+    }
+
+    public Image getHraLogoWhiteText() {
+        return hraLogoWhiteText;
+    }
+
+    public Image getHraLogoWhiteTextSmall() {
+        return hraLogoWhiteTextSmall;
+    }
+
+    public Image getHraCoverPageImage() {
+        return hraCoverPageImage;
+    }
+
+    public Image getHraCoverPageImage2() {
+        return hraCoverPageImage2;
+    }
+
+    public Image getHraCoverPageBlueArrowImage() {
+        return hraCoverPageBlueArrowImage;
+    }
+
+    
+    
 }

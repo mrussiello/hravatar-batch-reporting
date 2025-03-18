@@ -93,6 +93,7 @@ public class StandardUnfinishedTestKeyReport extends BaseExecutableReport implem
                                                batchReport.getIntParam4(), // int productTypeId,
                                                batchReport.getIntParam5(), // int consumerProductTypeId,
                                                batchReport.getIntParam7(), // int batteryId,
+                                               0,
                                                dates[0], // Date startDate, 
                                                dates[1], // Date endDate, 
                                                0, // int testResultSortTypeId,

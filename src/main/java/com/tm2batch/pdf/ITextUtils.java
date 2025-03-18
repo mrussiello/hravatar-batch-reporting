@@ -15,10 +15,12 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfGState;
-import com.itextpdf.text.pdf.PdfShading;
-import com.itextpdf.text.pdf.PdfShadingPattern;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.ShadingColor;
+import com.tm2batch.service.EmailUtils;
+import com.tm2batch.service.LogService;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  *
@@ -43,65 +45,48 @@ public class ITextUtils
 
 
 
-    public static void addDirectShadedRect( PdfWriter pdfWriter, BaseColor color1, BaseColor color2, float x, float y, float w, float h, float r, float opacity, boolean isUnder, boolean isVertical ) throws Exception
+    public static Image getITextImage( URL url ) throws Exception
     {
-            PdfShading axial = PdfShading.simpleAxial(pdfWriter, x, y, x+w, y+h, color1, color2);
-
-            PdfShadingPattern shading = new PdfShadingPattern(axial);
-
-            addDirectColorRect(  pdfWriter, new ShadingColor( shading ), x, y, w, h, r, opacity, isUnder);
+        return getITextImage( url, 0 );
     }
-
-
-    public static void addDirectVerticalGrid(PdfWriter pdfWriter, BaseColor color, float x, float y, float w, float h, float interval,  boolean isUnder) throws Exception
+    
+    public static Image getITextImage( URL url, int count ) throws Exception
     {
-            PdfContentByte cb = isUnder ? pdfWriter.getDirectContentUnder() : pdfWriter.getDirectContent();
-
-            // draw the border
-            // addDirectBox( pdfWriter, color, 0.8f, x, y, w, h, isUnder );
-
-            // now draw each vert dashed line.
-            cb.saveState();
-            cb.setColorStroke(color);
-            cb.setLineWidth(0.5f);
-            cb.setLineDash(3,1);
-
-            float llx = x + interval;
-            float lly = y;
-            float uly = y + h;
-
-            while( llx < x + w - 0.1 )
+        try
+        {
+            return Image.getInstance(url);
+        }
+        catch( Exception e )
+        {
+            // this can happen when the 
+            if( e instanceof FileNotFoundException )
             {
-                cb.moveTo( llx, uly );
-                cb.lineTo( llx, lly );
-
-                llx += interval;
+                LogService.logIt( "ITextUtils.getITextImage() FILE NOT FOUND. Returning null. " + e.toString() + ",  count=" + count + ", url=" + url.toString() );
+                return null;
+                //EmailUtils eu = new EmailUtils();
+                //eu.sendEmailToAdmin("Tm2Score ItextUtils Unable to Load Image", "com.tm2score.custom.coretest.ITextUtils.getITextImage() error=" +  e.toString() + ", url=" + url.toString() + ", " + url.toExternalForm() );                    
             }
-
-            cb.stroke();
-            cb.restoreState();
+            if( count>=2 )
+            {
+                if( e instanceof IOException )
+                {
+                    LogService.logIt( "ITextUtils.getITextImage() " + e.toString() + ",  count=" + count + ", url=" + url.toString() );
+                    EmailUtils eu = new EmailUtils();
+                    eu.sendEmailToAdmin("Tm2Score ItextUtils Unable to Load Image", "com.tm2score.custom.coretest.ITextUtils.getITextImage() error=" +  e.toString() + ", url=" + url.toString() + ", " + url.toExternalForm() );
+                }
+                else
+                   LogService.logIt( e, "ITextUtils.getITextImage() count=" + count + ", url=" + url.toString() );
+                throw e;
+            }
+            
+            LogService.logIt( "ITextUtils.getITextImage()  count=" + count + ", waiting a moment and trying again. Error=" + e.toString() + ", url=" + (url==null ? "null" : url.toString()) );            
+            Thread.sleep( (long) (Math.random()*2000));            
+            return getITextImage( url, count+1 );
+        }
     }
 
-
-    public static void addThreeSidedOutline( PdfWriter pdfWriter, BaseColor color, float x, float y, float w, float h, float lineW, boolean isUnder ) throws Exception
-    {
-            PdfContentByte cb = isUnder ? pdfWriter.getDirectContentUnder() : pdfWriter.getDirectContent();
-
-            // Rectangle rect = new Rectangle(  );
-
-            cb.saveState();
-            cb.setColorStroke(color);
-            cb.setLineWidth(lineW);
-
-            cb.moveTo( x, y+h );
-            cb.lineTo( x+w, y+h );
-            cb.lineTo( x+w, y );
-            cb.lineTo( x, y );
-
-            cb.stroke();
-            cb.restoreState();
-    }
-
+    
+    
 
 
     public static void addDirectColorRect( PdfWriter pdfWriter, BaseColor color, float x, float y, float w, float h, float r, float opacity, boolean isUnder) throws Exception

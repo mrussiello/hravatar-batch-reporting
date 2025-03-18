@@ -238,6 +238,46 @@ public class Report implements Serializable, Comparable<Report>
     @Column(name="strparam6")
     private String strParam6;
     
+    /**
+     * CT2 Report - Custom Detail Text on cover page (overrides key and default text).
+     */
+    @Column(name="textparam1")
+    private String textParam1;
+
+    /**
+     * CT2 Development Report Text
+     * 
+     */
+    @Column(name="textparam2")
+    private String textParam2;
+
+    
+    /**
+     * Custom Report Prep notes. Removes most system-generated notes.  Delimit with |
+     * 
+     */
+    @Column(name="textparam3")
+    private String textParam3;
+
+    /**
+     * Custom Report notes for the intro to each DETAIL Section. Uses keys using Competency GroupId
+     * 
+     * [DETAILINTRO1]The text with returns ... 
+     * [DETAILINTRO2]The text with returns ... 
+     * 
+    ABILITY(1,"Ability"),
+    PERSONALITY(2,"Personality"),
+    BIODATA(3,"Biodata"),
+    SKILLS(4,"Skills"),
+    EQ( 5, "Emotional Intelligence"),
+    AI( 6, "AI-Derived"),
+    INTERESTS( 7, "Interests")     * 
+     * 
+     */
+    @Column(name="textparam4")
+    private String textParam4;
+    
+    
     
     @Column(name="usernote")
     private String userNote;
@@ -967,6 +1007,38 @@ public class Report implements Serializable, Comparable<Report>
 
     public void setEmailFormatterClass(String emailFormatterClass) {
         this.emailFormatterClass = emailFormatterClass;
+    }
+
+    public String getTextParam1() {
+        return textParam1;
+    }
+
+    public void setTextParam1(String textParam1) {
+        this.textParam1 = textParam1;
+    }
+
+    public String getTextParam2() {
+        return textParam2;
+    }
+
+    public void setTextParam2(String textParam2) {
+        this.textParam2 = textParam2;
+    }
+
+    public String getTextParam3() {
+        return textParam3;
+    }
+
+    public void setTextParam3(String textParam3) {
+        this.textParam3 = textParam3;
+    }
+
+    public String getTextParam4() {
+        return textParam4;
+    }
+
+    public void setTextParam4(String textParam4) {
+        this.textParam4 = textParam4;
     }
 
 

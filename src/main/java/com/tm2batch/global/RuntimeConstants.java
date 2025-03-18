@@ -44,40 +44,56 @@ public class RuntimeConstants
         cache.put( "secretsFile", "/work/hraconfig/hraglobals-cfmain.conf" );
 
         cache.put( "filesroot", "/work/tm2batch2/files" );
-        
+
         cache.put( "httpsONLY", true );
-        
+
         cache.put( "useAwsMediaServer", true);
-        
+
         cache.put( "baselogourl", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_8x1715795136855.png" );
         cache.put( "baseiconurl", "https://cdn.hravatar.com/web/orgimage/zrWvh1uNWrg-/img_21x1717875839610.png" );
-        
+
         cache.put( "logoDarkTextFilename","hralogoblacktext-blue.png");
         cache.put( "logoWhiteTextFilename","hralogowhitetext-blue.png");
         cache.put( "logoDarkTextSmallFilename","hralogoblacktext-small-blue.png");
-        cache.put( "logoWhiteTextSmallFilename","hralogowhitetext-small-blue.png");     
+        cache.put( "logoWhiteTextSmallFilename","hralogowhitetext-small-blue.png");
         
+        cache.put("hraLogoBlackTextFilename","hra-two-color-tagline-logo-trans-800.png");
+        cache.put("hraLogoBlackTextPurpleFilename","hra-two-color-tagline-logo-trans-800.png"); 
+
+        cache.put("hraLogoWhiteTextFilename","hra-white-tagline-logo-trans-800.png"); 
+        cache.put("hraLogoWhiteTextPurpleFilename","hra-white-tagline-logo-trans-800.png"); 
+
+        cache.put("hraLogoBlackTextSmallFilename","hra-two-color-tagline-logo-trans-420.png"); 
+        cache.put("hraLogoBlackTextSmallPurpleFilename","hra-two-color-tagline-logo-trans-420.png"); 
+
+        cache.put("hraLogoWhiteTextSmallFilename","hra-white-tagline-logo-trans-412.png");      
+        cache.put("hraLogoWhiteTextSmallPurpleFilename","hra-white-tagline-logo-trans-412.png"); 
+        
+        cache.put( "hraCoverPageFilename", "https://cfmedia-hravatar-com.s3.us-east-1.amazonaws.com/web/misc/report/cover-bg-2.png" );
+        cache.put( "hraCoverIncludedArrowFilename", "https://cfmedia-hravatar-com.s3.us-east-1.amazonaws.com/web/misc/report/cover-blue-arrow-solid.png");
+        
+
         cache.put( "mediaServerProtocol", "https" );
         cache.put( "mediaServerDomain", "cdn.hravatar.com" );
         cache.put( "mediaServerWebapp", "web" );
 
-        cache.put( "no-reply-email", "no-reply@hravatar.com" );        
-        cache.put( "support-email", "support@hravatar.com" );        
-        cache.put( "system-admin-email", "mike@hravatar.com" );        
-        
-        
-        cache.put( "baseurl", "https://sim.hravatar.com/td" );        
+        cache.put( "no-reply-email", "no-reply@hravatar.com" );
+        cache.put( "support-email", "support@hravatar.com" );
+        cache.put( "system-admin-email", "mike@hravatar.com" );
+
+
+        cache.put( "baseurl", "https://sim.hravatar.com/td" );
         cache.put( "baseadminuri", "https://www.hravatar.com/ta" );
-        
+
         cache.put( "testingappprotocol", "https" );
         cache.put( "testingappbasedomain", "test.hravatar.com" );
         cache.put( "testingappcontextroot", "tt" );
         cache.put( "testingapphttpsOK", true);
 
-        
-        cache.put( "tm2batch_rest_api_username", "" );                
-        cache.put( "tm2batch_rest_api_password", "" );     
-        
+
+        cache.put( "tm2batch_rest_api_username", "" );
+        cache.put( "tm2batch_rest_api_password", "" );
+
         cache.put( "systemerrornotifyemails" , "mike@hravatar.com" );
 
         cache.put( "awsBucket", "cfmedia-hravatar-com" );
@@ -92,46 +108,46 @@ public class RuntimeConstants
 
         cache.put( "awsBaseKeyProctorRecording", "proctorrecordings/" );
         cache.put( "awsBaseKeyProctorRecordingTest", "proctorrecordingstest/" );
-                
+
 
         cache.put( "fileTreeRootDirectory" , "/work/sm1/web" );
         cache.put( "localFsFileUploadPath" , "/ful" );
-        
-        
+
+
         cache.put( "fileUploadDirCF" , "/cf" );
         cache.put( "fileUploadDirTm2" , "/hra" );
-        cache.put( "fileUploadDirLv" , "/lv" );        
+        cache.put( "fileUploadDirLv" , "/lv" );
 
-        
+
         cache.put( "applicationSystemId", (int)( 1405 ) );
 
         cache.put( "stringEncryptorKey",  "" );
         cache.put( "stringEncryptorKeyFileSafe",  "" );
-        
+
         cache.put( "disableCertificateVerification", true );
-        
+
         // ////////////////////////////////////////////////////////////////////////////
         // LV Live
         // ////////////////////////////////////////////////////////////////////////////
-        
+
         cache.put( "AdminSiteBaseUrl", "https://www.hravatar.com/ta" );
         cache.put( "LiveVideoBaseUrl", "https://www.hravatar.com/ti" );
-        
+
         // ////////////////////////////////////////////////////////////////////////////
         // RC Checks
         // ////////////////////////////////////////////////////////////////////////////
-        
+
         cache.put( "RefCheckContactPermissionRcItemIds", "178" );
         cache.put( "RefCheckContactRecruitingRcItemIds", "180" );
         cache.put( "RefCheckPriorRoleRcItemIds", "174" );
-        
-        
+
+
         // ////////////////////////////////////////////////////////////////////////////
         // Batch Reports
         // ////////////////////////////////////////////////////////////////////////////
-        
-        cache.put( "autoReportBatchesOk", true );  
-                
+
+        cache.put( "autoReportBatchesOk", true );
+
         cache.put( "twilio.textingon", true );
         cache.put( "twilio.sid", "" );
         cache.put( "twilio.auhtoken", "" );
@@ -142,20 +158,26 @@ public class RuntimeConstants
         cache.put( "twilio.useSandbox", false );
         cache.put( "twilio.sandboxphonenumber", "(415) 599-2671" );
 
-        cache.put( "useTwilioDevelopmentNumber",  false );                
-        cache.put( "twilioDevelopmentNumber",  "7036353077" );        
-        cache.put( "twilioDevelopmentNumberFormatted",  "+1 703-635-3077" );        
-        
-        
+        cache.put( "useTwilioDevelopmentNumber",  false );
+        cache.put( "twilioDevelopmentNumber",  "7036353077" );
+        cache.put( "twilioDevelopmentNumberFormatted",  "+1 703-635-3077" );
+
+
         // ////////////////////////////////////////////////////////////////////////////
         // Org Justice
         // ////////////////////////////////////////////////////////////////////////////
-        
-        cache.put( "orgJusticeProductIds",  "6510" );        
-        cache.put( "orgJusticeReportId",  105 );      
+
+        cache.put( "orgJusticeProductIds",  "6510" );
+        cache.put( "orgJusticeReportId",  105 );
         cache.put( "Uminn_OrgJustice_Dev", false );
 
-        
+        // ////////////////////////////////////////////////////////////////////////////
+        // DISC
+        // ////////////////////////////////////////////////////////////////////////////
+
+        cache.put( "discProductIds",  "7861" );
+        cache.put( "discGroupReportId",  122 );
+
         // ////////////////////////////////////////////////////////////////////////////
 
         // load properties from file. File overlays everything.
@@ -166,14 +188,14 @@ public class RuntimeConstants
         propertiesFile = (String) cache.get( "secretsFile" );
         if( propertiesFile != null && !propertiesFile.isBlank() )
             loadProperties( propertiesFile );
-        convertSecretsToSealedObjects();                
+        convertSecretsToSealedObjects();
     }
-    
+
     private static synchronized void convertSecretsToSealedObjects()
     {
         if( sealedObjectSecretKey!=null )
             return;
-        
+
         try
         {
             sealedObjectSecretKey = KeyGenerator.getInstance("DES").generateKey();
@@ -190,12 +212,12 @@ public class RuntimeConstants
             LogService.logIt( e, "RuntimeConstants.convertSecretsToSealedObjects()" );
         }
     }
-    
+
     private static String getStringValueFromSealedObject( String cacheKey, SealedObject so )
     {
         if( cacheKey==null || cacheKey.isBlank() )
             return null;
-        
+
         try
         {
             if( so==null )
@@ -208,7 +230,7 @@ public class RuntimeConstants
                 else if( o instanceof SealedObject )
                     so = (SealedObject)o;
                 else
-                    throw new Exception( "Cache value for key=" + cacheKey + " is not a String or SealedObject: " + o.getClass().getName() );                
+                    throw new Exception( "Cache value for key=" + cacheKey + " is not a String or SealedObject: " + o.getClass().getName() );
             }
             Cipher dcipher = Cipher.getInstance("DES");
             dcipher.init(Cipher.DECRYPT_MODE, sealedObjectSecretKey);
@@ -216,11 +238,11 @@ public class RuntimeConstants
         }
         catch( Exception e )
         {
-            LogService.logIt("RuntimeConstants.getStringValueFromSealedObject() NONFATAL " + e.toString() + ", cacheKey=" + cacheKey ); 
+            LogService.logIt("RuntimeConstants.getStringValueFromSealedObject() NONFATAL " + e.toString() + ", cacheKey=" + cacheKey );
         }
         return null;
     }
-    
+
     private static void substituteStringWithSealedObject( String cacheKey, Cipher cipher )
     {
         try
@@ -230,24 +252,24 @@ public class RuntimeConstants
                 LogService.logIt( "RuntimeConstants.substituteStringWithSealedObject() cacheKey is invalid (null or empty). Skipping." );
                 return;
             }
-            
+
             Object o = cache.get(cacheKey );
             if( o==null )
                 throw new Exception( "no entry found for CacheKey " + cacheKey );
-            
+
             if( !(o instanceof String) )
                 throw new Exception( "Value for CacheKey " + cacheKey + " is not a String. Class="  + (o.getClass().getName()) );
-            
+
             SealedObject so = new SealedObject((String)o, cipher);
             cache.put( cacheKey, so );
-            
+
         }
         catch( Exception e )
         {
             LogService.logIt("RuntimeConstants.substituteStringWithSealedObject() NONFATAL " + e.toString() + ", cacheKey=" + cacheKey );
         }
     }
-    
+
     private static void loadProperties( String propertiesFile )
     {
         try
@@ -293,16 +315,16 @@ public class RuntimeConstants
                         if( currentValue!=null )
                         {
                             if( currentValue instanceof Integer )
-                                cache.put( name, Integer.parseInt( strValue ) );
+                                cache.put(name, Integer.valueOf( strValue ) );
 
                             else if( currentValue instanceof Float )
-                                cache.put( name, Float.parseFloat(strValue ) );
+                                cache.put(name, Float.valueOf(strValue ) );
 
                             else if( currentValue instanceof Long )
-                                cache.put( name, Long.parseLong(strValue ) );
+                                cache.put(name, Long.valueOf(strValue ) );
 
                             else if( currentValue instanceof Boolean )
-                                cache.put( name, Boolean.parseBoolean(strValue ) );
+                                cache.put(name, Boolean.valueOf(strValue ) );
 
                             else
                                 cache.put( name, strValue );
@@ -312,15 +334,15 @@ public class RuntimeConstants
                     }
                 }
                 LogService.logIt( "RuntimeConstants.loadProperties() Updated " + props.size() + " keys from " + propertiesFile );
-            }        
+            }
         }
         catch( Exception e )
         {
             LogService.logIt( e, "RuntimeConstants.loadProperties() reading properties file=" + propertiesFile );
-        }        
+        }
     }
 
-    
+
     public static String dumpAllValues()
     {
         StringBuilder sb = new StringBuilder( "RuntimeConstants:\n" );
@@ -349,9 +371,9 @@ public class RuntimeConstants
     {
         return RuntimeConstants.getBooleanValue("httpsONLY");
     }
-    
-    
-    
+
+
+
     /**
      * Gets a value from the environment. Returns null if not found.
      */
@@ -372,12 +394,12 @@ public class RuntimeConstants
     public static String getStringValue( String theKey )
     {
         Object o = cache.get( theKey );
-        
+
         if( o==null )
             return null;
         if( o instanceof SealedObject )
             return RuntimeConstants.getStringValueFromSealedObject(theKey, (SealedObject)o);
-        
+
         return (String)o;
     }
 
@@ -411,9 +433,9 @@ public class RuntimeConstants
     public static int[] getIntArrayForString(String s, String delimiter )
     {
         List<Integer> ll = new ArrayList<>();
-        
+
         int[] out = null;
-        
+
         try
         {
             if( s==null || s.isEmpty() )
@@ -426,9 +448,9 @@ public class RuntimeConstants
                 if( t!=null && !t.trim().isEmpty() )
                     ll.add( Integer.parseInt(t) );
             }
-            
+
             out = new int[ll.size()];
-            
+
             for( int i=0; i<ll.size(); i++ )
             {
                 out[i] = ll.get(i).intValue();
@@ -438,15 +460,15 @@ public class RuntimeConstants
         {
             LogService.logIt( e, "RuntimeConstants.getIntArrayForString() s=" + s + ", delim=" + delimiter );
         }
-        
-        return out;        
+
+        return out;
     }
-    
+
     public static int[] getIntArray( String key, String delimiter )
     {
         return getIntArrayForString( getStringValue( key ),  delimiter );
     }
-    
+
     public static List<Integer> getIntList( String key, String delimiter ) throws Exception
     {
         List<Integer> idl = new ArrayList<>();
@@ -464,7 +486,7 @@ public class RuntimeConstants
             idl.add( i );
         return idl;
     }
-    
+
 
     public static char getPathSeparator()
     {

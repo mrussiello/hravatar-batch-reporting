@@ -3,6 +3,7 @@ package com.tm2batch.entity.autoreport;
 import com.tm2batch.entity.user.Org;
 import com.tm2batch.entity.user.Suborg;
 import com.tm2batch.entity.user.User;
+import com.tm2batch.service.LogService;
 import com.tm2batch.util.I18nUtils;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -99,9 +100,10 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     
     /**
      * StandardResultReport - this userId as authorizing user only
+     * StandardUnfinishedTestKeyReport - this userId as authorizing user only
      * StandardLiveVideoReport - this userId as initiating user only
      * StandardRefCheckReport - this userId as admin user only
-     * StandardRefCheckReferralsReport - this userId as admin user only
+     * UminnOrgJustice - force reportId
      * DiscGroupReport - this userId as authorizing user only
      */
     @Column(name="intparam1")
@@ -229,6 +231,9 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     
     /**
      * StandardResultReport - product name keyword
+     * StandardUnfinishedTestKeyReport - product name keyword
+     * UminnOrgJustice - force productIds Str
+     * DiscGroupReport - Custom Field 1
      * 
      */
     @Column(name="strparam1")
@@ -236,17 +241,24 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     
     /**
      * StandardResultReport - Custom fields in order 1, 2, 2 separated by commas
+     * DiscGroupReport - Custom Field 2
      * 
      */
     @Column(name="strparam2")
     private String strParam2;
 
+    /*
+     * DiscGroupReport - Custom Field 3    
+    */
     @Column(name="strparam3")
     private String strParam3;
 
+    /*
+     Alt Identifier Value
+    */
     @Column(name="strparam4")
     private String strParam4;
-
+    
     @Column(name="textparam1")
     private String textParam1;
 
@@ -401,7 +413,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         if( yearsBack!=0 )
         {
             cal.add( Calendar.YEAR, -1*yearsBack );
-            if( this.wholeTimeUnitsOnly==1 )
+            if( this.wholeTimeUnitsOnly==1 && monthsBack<=0 && weeksBack<=0 && daysBack<=0 && hoursBack<=0 )
             {
                 cal.set( Calendar.MONTH, 0 );
                 cal.set( Calendar.DAY_OF_MONTH, 1);
@@ -414,7 +426,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         if( monthsBack!=0 )
         {
             cal.add( Calendar.MONTH, -1*monthsBack );
-            if( this.wholeTimeUnitsOnly==1 )
+            if( this.wholeTimeUnitsOnly==1 && weeksBack<=0 && daysBack<=0 && hoursBack<=0)
             {
                 cal.set( Calendar.DAY_OF_MONTH, 1);
                 cal.set( Calendar.HOUR_OF_DAY, 0);
@@ -426,7 +438,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         if( weeksBack!=0 )
         {
             cal.add( Calendar.WEEK_OF_YEAR, -1*weeksBack );
-            if( this.wholeTimeUnitsOnly==1 )
+            if( this.wholeTimeUnitsOnly==1 && daysBack<=0 && hoursBack<=0)
             {
                 cal.set( Calendar.HOUR_OF_DAY, 0);
                 cal.set( Calendar.MINUTE, 0);
@@ -437,7 +449,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         if( daysBack!=0 )
         {
             cal.add( Calendar.DAY_OF_YEAR, -1*daysBack );
-            if( this.wholeTimeUnitsOnly==1 )
+            if( this.wholeTimeUnitsOnly==1  && hoursBack<=0)
             {
                 cal.set( Calendar.HOUR_OF_DAY, 0);
                 cal.set( Calendar.MINUTE, 0);
@@ -467,8 +479,9 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         {
             cal = new GregorianCalendar();
     
-            if( yearsBack>0 )
+            if( yearsBack>0 && monthsBack<=0 && weeksBack<=0 && daysBack<=0 && hoursBack<=0 )
             {
+                LogService.logIt( "BatchReport.getDates() yearsBack=" + yearsBack + ", daysBack=" + daysBack );
                 cal.set( Calendar.MONTH, 0 );
                 cal.set( Calendar.DAY_OF_MONTH, 1);
                 cal.set( Calendar.HOUR_OF_DAY, 0);
@@ -477,7 +490,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
 
             }
             
-            if( monthsBack>0 )
+            if( monthsBack>0 && weeksBack<=0 && daysBack<=0 && hoursBack<=0 )
             {
                 cal.set( Calendar.DAY_OF_MONTH, 1);
                 cal.set( Calendar.HOUR_OF_DAY, 0);
@@ -485,7 +498,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
                 cal.set( Calendar.SECOND, 0);                
             }
             
-            if( daysBack>0 )
+            if( daysBack>0 && hoursBack<=0 )
             {
                 // cal.set( Calendar.HOUR_OF_DAY, 0);
                 cal.set( Calendar.MINUTE, 0);

@@ -52,6 +52,17 @@ public class StringUtils
 
     }
     
+    public static boolean isCurlyBracketed( String inStr )
+    {
+        if( inStr == null || inStr.trim().isEmpty() )
+            return false;
+
+        inStr = inStr.trim();
+
+        return inStr.indexOf('{')==0 && inStr.lastIndexOf('}')==inStr.length()-1;
+    }
+    
+    
     public static boolean isValidNameMatch( String n1, String ne1, String n2, String ne2 )
     {
         if( n1==null )
