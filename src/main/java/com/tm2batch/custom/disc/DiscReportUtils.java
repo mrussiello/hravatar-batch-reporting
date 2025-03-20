@@ -500,7 +500,7 @@ public class DiscReportUtils {
 
             for( TestEventScore tes : te.getTestEventScoreList( TestEventScoreType.COMPETENCY.getTestEventScoreTypeId()) )
             {
-                LogService.logIt( "DiscReportUtils.getDiscScoreVals() testing " + tes.getName() + ", " + tes.getNameEnglish() + ", against " + nameEnglish );
+                // LogService.logIt( "DiscReportUtils.getDiscScoreVals() testing " + tes.getName() + ", " + tes.getNameEnglish() + ", against " + nameEnglish );
                 if( (tes.getName()!=null && tes.getName().toLowerCase().equals(nameEnglish )) ||
                     (tes.getNameEnglish()!=null && tes.getNameEnglish().toLowerCase().equals(nameEnglish )) )
                 {
