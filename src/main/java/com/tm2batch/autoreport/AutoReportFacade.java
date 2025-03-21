@@ -47,7 +47,7 @@ public class AutoReportFacade
     {
         try
         {
-            return (BatchReport) em.createNamedQuery( "BatchReport.findById" ).setParameter( "batchReportId", batchReportId ).getSingleResult();
+            return (BatchReport) em.createNamedQuery( "BatchReport.findById" ).setParameter( "batchReportId", batchReportId ).setHint( "jakarta.persistence.cache.retrieveMode", "BYPASS" ).getSingleResult();
         }
         catch( NoResultException e )
         {
