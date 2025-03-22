@@ -31,12 +31,15 @@ import com.tm2batch.custom.disc.DiscReportUtils;
 import com.tm2batch.custom.disc.DiscResult;
 import com.tm2batch.custom.disc.DiscResultTwoLevelScoreComparator;
 import com.tm2batch.custom.disc.DiscResultUserNameComparator;
+import com.tm2batch.entity.user.Suborg;
+import com.tm2batch.entity.user.User;
 import com.tm2batch.format.TableBackgroundEvent;
 import com.tm2batch.global.RuntimeConstants;
 import com.tm2batch.global.STException;
 import com.tm2batch.pdf.ITextUtils;
 import com.tm2batch.pdf.ReportData;
 import com.tm2batch.pdf.ReportTemplate;
+import com.tm2batch.report.SampleReportUtils;
 import com.tm2batch.service.LogService;
 import com.tm2batch.util.HttpUtils;
 import com.tm2batch.util.I18nUtils;
@@ -449,6 +452,11 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
             boolean coverInfoOk = !reportData.getReportRuleAsBoolean( "omitcoverinfopdf" );
 
             String reportCompanyName = reportData.getOrgName();
+            if( getSampleReport() )
+            {
+                reportCompanyName = SampleReportUtils.getCompanyName();
+                // custLogo = SampleReportUtils.getCustLogoImage();
+            }
 
             //if( reportCompanyName==null || reportCompanyName.isEmpty() )
             //    reportCompanyName = reportData.getOrgName();
@@ -514,6 +522,12 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
             }
 
             boolean clientLogoInHeader = reportData.getReportRuleAsBoolean( "clientlogopdfhdr" ) && (includeCompanyInfo || compNameForAdmin) && reportData.hasCustLogo();
+
+            if( !clientLogoInHeader && getSampleReport() )
+            {
+                custLogo = SampleReportUtils.getCustLogoImage();
+            }
+
             if( clientLogoInHeader )
             {
                 //float lwid = custLogo.getScaledWidth();
@@ -621,12 +635,12 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
             if( coverInfoOk )
             {
                 t.addCell(new Phrase( lmsg( "g.Org" ) + ":" , cpFont ) );
-                t.addCell(new Phrase( discDataSet.getOrg().getName(), cpFont ) );
+                t.addCell(new Phrase( getSampleReport() ? SampleReportUtils.getCompanyName() : discDataSet.getOrg().getName(), cpFont ) );
 
                 if( discDataSet.getSuborg()!=null )
                 {
                     t.addCell(new Phrase( lmsg( "g.Suborg" ) + ":" , cpFont ) );
-                    t.addCell(new Phrase( discDataSet.getSuborg().getName(), cpFont ) );
+                    t.addCell(new Phrase( getSampleReport() ? SampleReportUtils.getRandomSuborg() : discDataSet.getSuborg().getName(), cpFont ) );
                 }
                 
                 if( discDataSet.getProduct()!=null )
@@ -1028,12 +1042,12 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
             Font cpFont = fontLm;
             
             touter.addCell(new Phrase( lmsg( "g.Org" ) + ":" , cpFont ) );
-            touter.addCell(new Phrase( discDataSet.getOrg().getName(), cpFont ) );
+            touter.addCell(new Phrase( getSampleReport() ? SampleReportUtils.getCompanyName() : discDataSet.getOrg().getName(), cpFont ) );
 
             if( discDataSet.getSuborg()!=null )
             {
                 touter.addCell(new Phrase( lmsg( "g.Suborg" ) + ":" , cpFont ) );
-                touter.addCell(new Phrase( discDataSet.getSuborg().getName(), cpFont ) );
+                touter.addCell(new Phrase( getSampleReport() ? SampleReportUtils.getRandomSuborg() : discDataSet.getSuborg().getName(), cpFont ) );
             }
 
             if( discDataSet.getProduct()!=null )
@@ -1337,6 +1351,25 @@ public abstract class BaseDiscGroupReportTemplate extends DiscGroupReportSetting
                 drl.addAll( discDataSet.getDiscResultList());
                 drl.addAll( discDataSet.getDiscResultList());
                 
+            }
+            
+            if( getSampleReport() )
+            {
+                for( DiscResult dr : drl )
+                {
+                    User uu = (User) dr.getUser().clone(); 
+                    uu.setUserId(0);
+                    uu.setFirstName(SampleReportUtils.getRandomFirst());
+                    uu.setLastName( SampleReportUtils.getRandomLast() );
+                    uu.setEmail(SampleReportUtils.getRandomEmail() );                    
+                    dr.setUser(uu);
+                    if( uu.getSuborg()!=null )
+                    {
+                        uu.setSuborg( (Suborg)uu.getSuborg().clone() );
+                        uu.getSuborg().setSuborgId(0);
+                        uu.getSuborg().setName( SampleReportUtils.getRandomSuborg());
+                    }
+                }
             }
             
             // sort by doubletrait 

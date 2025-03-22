@@ -15,6 +15,8 @@ public interface ReportTemplate
     void init( ReportData reportData ) throws Exception;
     
     byte[] generateReport() throws Exception;
+    
+    void setSampleReport( boolean sampleReport);
 
     Locale getReportLocale();
     

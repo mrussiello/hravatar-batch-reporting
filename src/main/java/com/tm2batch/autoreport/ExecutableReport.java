@@ -15,6 +15,8 @@ public interface ExecutableReport {
     
     public void setBatchReport( BatchReport br );
     
+    public void setSampleReport( boolean sampleReport );
+    
     public void setOverrideSendFreq( boolean overrideSendFreq );
     
     public void validateBatchReportForExecution() throws Exception;

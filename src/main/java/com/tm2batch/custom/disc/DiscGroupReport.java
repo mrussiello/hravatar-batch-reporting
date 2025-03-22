@@ -136,6 +136,7 @@ public class DiscGroupReport extends BaseExecutableReport implements ExecutableR
                 throw new Exception( "Could not generate template class instance: " + tmpltClassname );
 
             rt.init( reportData );
+            rt.setSampleReport(sampleReport);
 
             if( !rt.getIsReportGenerationPossible() )
                 throw new Exception( "Report generation not possible." );

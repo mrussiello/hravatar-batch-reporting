@@ -33,6 +33,7 @@ import java.util.Locale;
  */
 public class BaseExecutableReport {
     
+    public boolean sampleReport = false;
     public BatchReport batchReport;
     public boolean overrideSendFreq;
     
@@ -192,6 +193,14 @@ public class BaseExecutableReport {
         }
         
         return emailsSentTo;        
+    }
+
+    public boolean getSampleReport() {
+        return sampleReport;
+    }
+
+    public void setSampleReport(boolean sampleReport) {
+        this.sampleReport = sampleReport;
     }
 
 

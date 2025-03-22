@@ -105,6 +105,7 @@ public class BatchRequestResource extends BaseBatchRestResource {
                 
                 AutoReportThread art = new AutoReportThread( br ); 
                 art.setOverrideSendFreq(true);
+                art.setSampleReport(false);
                 new Thread(art).start();                
             }
             

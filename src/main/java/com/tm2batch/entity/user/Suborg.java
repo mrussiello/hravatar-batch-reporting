@@ -27,7 +27,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @NamedQuery ( name="Suborg.findForOrgid", query="SELECT o FROM Suborg AS o WHERE o.orgId=:orgId" ),
 @NamedQuery ( name="Suborg.findActiveForOrgid", query="SELECT o FROM Suborg AS o WHERE o.orgId=:orgId AND o.suborgStatusTypeId=0" )
 })
-public class Suborg implements Serializable, Comparable<Suborg>
+public class Suborg implements Serializable, Comparable<Suborg>, Cloneable
 {
     @Transient
     private static final long serialVersionUID = 1L;
@@ -104,6 +104,13 @@ public class Suborg implements Serializable, Comparable<Suborg>
 
     @Column(name="testkeysmsmsg")
     private String testKeySmsMsg;
+
+    
+    @Override
+    public Object clone() throws CloneNotSupportedException 
+    {
+        return (Suborg) super.clone(); 
+    }
 
     
     

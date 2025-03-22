@@ -90,7 +90,11 @@
                         <h:panelGroup></h:panelGroup>
 
                         <h:outputText value="BatchReportId"/>
+                        <h:panelGroup>
                         <p:inputText size="6" value="#{adminAutoReportBean.batchReportId}"/>
+                        &#160;
+                        <p:selectBooleanCheckbox value="#{adminAutoReportBean.sampleReport}" />&#160;Sample Report.
+                        </h:panelGroup>
                         <p:commandButton ajax="false" action="#{adminAutoReportUtils.processExecuteBatchReport}" value="Run Batch Report"/>
                                                    
                         <h:panelGroup rendered="#{fn:length(adminAutoReportBean.reportBytes) gt 0}">Download Report:</h:panelGroup>

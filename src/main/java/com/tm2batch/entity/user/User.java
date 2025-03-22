@@ -33,7 +33,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
     @NamedQuery ( name="User.findByEmailAndOrgId", query="SELECT o FROM User AS o WHERE o.email = :uemail AND o.orgId=:orgId" ),
     @NamedQuery ( name="User.findByUsername", query="SELECT o FROM User AS o  WHERE o.username = :uname" )
 })
-public class User implements Serializable, Comparable<User>
+public class User implements Serializable, Comparable<User>, Cloneable
 {
     @Transient
     private static final long serialVersionUID = 1L;
@@ -175,6 +175,14 @@ public class User implements Serializable, Comparable<User>
     private UserReportOptions userReportOptions;
 
     
+    @Override
+    public Object clone() throws CloneNotSupportedException 
+    {
+        return (User) super.clone(); 
+    }
+
+    
+   
     
     public RoleType getRoleType()
     {

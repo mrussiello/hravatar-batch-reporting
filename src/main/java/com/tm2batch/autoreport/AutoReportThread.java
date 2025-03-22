@@ -16,6 +16,7 @@ public class AutoReportThread implements Runnable {
     
     BatchReport batchReport;
     boolean overrideSendFreq=false;
+    boolean sampleReport;
     BatchReportManager brm;
     
     public AutoReportThread( BatchReport batchReport )
@@ -53,7 +54,7 @@ public class AutoReportThread implements Runnable {
     {
         brm = new BatchReportManager();
         
-        byte[] bytes = brm.executeSingleBatchReport(batchReport, overrideSendFreq);
+        byte[] bytes = brm.executeSingleBatchReport(batchReport, overrideSendFreq, sampleReport );
         
         LogService.logIt( "AutoReportThread.doAutoReport() Process Completed. Success=" + (bytes==null || bytes.length<=0 ? "false" : "true") );        
         
@@ -63,6 +64,10 @@ public class AutoReportThread implements Runnable {
     public String getFilename()
     {
         return brm==null ? null : brm.getFilename();
+    }
+
+    public void setSampleReport(boolean sampleReport) {
+        this.sampleReport = sampleReport;
     }
     
     

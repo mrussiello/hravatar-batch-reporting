@@ -191,6 +191,7 @@ public class AdminAutoReportUtils extends FacesUtils implements Serializable {
         LogService.logIt("AutoReportUtils.processExecuteBatchReport() START" );
         
         int batchReportId = adminAutoReportBean.getBatchReportId();
+        boolean sampleReport = adminAutoReportBean.getSampleReport();
             
         try
         {
@@ -230,6 +231,8 @@ public class AdminAutoReportUtils extends FacesUtils implements Serializable {
                         
             AutoReportThread art = new AutoReportThread( br ); 
             art.setOverrideSendFreq(true);
+            art.setSampleReport(sampleReport);
+            
             byte[] bytes = art.runInline();
 
             if( bytes!=null && bytes.length>0 )

@@ -212,7 +212,7 @@ public class BatchReportManager
                 LogService.logIt("BatchReportManager.reportBatch() CCC.4 BatchReport is Ready for Execution. " + batchReport.getTitle() + " (" + batchReport.getBatchReportId() + ")" );
 
                 out[1]++;
-                byte[] bytes = executeSingleBatchReport(  batchReport, false );
+                byte[] bytes = executeSingleBatchReport(batchReport, false, false );
 
                 if( bytes==null && batchReport.getSpecialProcessingCheck() )
                 {
@@ -345,7 +345,7 @@ public class BatchReportManager
     }
 
 
-    public byte[] executeSingleBatchReport( BatchReport br, boolean overrideSendFreq ) throws Exception
+    public byte[] executeSingleBatchReport( BatchReport br, boolean overrideSendFreq, boolean sampleReport) throws Exception
     {
         if( !OK_TO_START_ANY )
             return null;
@@ -375,7 +375,7 @@ public class BatchReportManager
                 n += ((new Date()).toString()) + " User must be a valid Account user. Batch Report has been disabled.";
                 br.setNote(n);
                 autoReportFacade.saveBatchReport(br);
-                LogService.logIt( "BatchReportManager.executeSingleBatchReport() batchReportId=" + br.getBatchReportId() + ", Originating user must be a valid account user for this org. Batch Report has been disabled. batchReport.userId=" + br.getUserId() );
+                LogService.logIt("BatchReportManager.executeSingleBatchReport() batchReportId=" + br.getBatchReportId() + ", Originating user must be a valid account user for this org. Batch Report has been disabled. batchReport.userId=" + br.getUserId() );
                 return null;
             }
 
@@ -386,7 +386,7 @@ public class BatchReportManager
                 n += ((new Date()).toString()) + " User must be a valid Account user. Batch Report has been disabled.";
                 br.setNote(n);
                 autoReportFacade.saveBatchReport(br);
-                LogService.logIt( "BatchReportManager.executeSingleBatchReport() batchReportId=" + br.getBatchReportId() + ", User must be Named. Batch Report has been disabled. batchReport.userId=" + br.getUserId() );
+                LogService.logIt("BatchReportManager.executeSingleBatchReport() batchReportId=" + br.getBatchReportId() + ", User must be Named. Batch Report has been disabled. batchReport.userId=" + br.getUserId() );
                 return null;
             }
 
@@ -419,13 +419,13 @@ public class BatchReportManager
 
             Tracker.addBatchReportStarted();
 
-            er = ExecutableReportFactory.getExecutableReport( br, overrideSendFreq );
+            er = ExecutableReportFactory.getExecutableReport(br, overrideSendFreq, sampleReport );
 
             LogService.logIt("BatchReportManager.executeSingleBatchReport() AAA.1 Have ExecutableReport. " + er.toString() + ", Starting. " );
 
             // Check that there is nothing stopping execution.
             er.validateBatchReportForExecution();
-
+            
             // out[0]==1 for success
             int[] out = er.executeReport();
 
@@ -470,7 +470,7 @@ public class BatchReportManager
             e.printStackTrace( pw );
             logIt( msg + "\n" + sw.toString() );
 
-            sendEmailToAdmin( "BatchReport Failure " + br.getTitle() + " (" + br.getBatchReportId() + ")", msg );
+            sendEmailToAdmin("BatchReport Failure " + br.getTitle() + " (" + br.getBatchReportId() + ")", msg );
 
             if( FAILURES>=MAX_FAILURES )
                 throw e;

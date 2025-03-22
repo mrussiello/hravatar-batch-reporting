@@ -34,6 +34,7 @@ public class AdminAutoReportBean implements Serializable {
     
     byte[] reportBytes = null;
     String reportName = null;
+    boolean sampleReport;
     
 
     public static AdminAutoReportBean getInstance()
@@ -130,6 +131,14 @@ public class AdminAutoReportBean implements Serializable {
 
     public void setReportName(String reportName) {
         this.reportName = reportName;
+    }
+
+    public boolean getSampleReport() {
+        return sampleReport;
+    }
+
+    public void setSampleReport(boolean sampleReport) {
+        this.sampleReport = sampleReport;
     }
     
 

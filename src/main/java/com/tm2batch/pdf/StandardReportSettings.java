@@ -19,6 +19,8 @@ import java.util.Locale;
  */
 public class StandardReportSettings implements ReportSettings
 {
+    boolean sampleReport;
+        
     public static float CT2_MARGIN = 20;
     public static float CT2_TEXT_EXTRAMARGIN = 25;
     public static float CT2_BOX_EXTRAMARGIN = 25;
@@ -1369,6 +1371,14 @@ public class StandardReportSettings implements ReportSettings
 
     public Image getHraCoverPageBlueArrowImage() {
         return hraCoverPageBlueArrowImage;
+    }
+
+    public boolean getSampleReport() {
+        return sampleReport;
+    }
+
+    public void setSampleReport(boolean sampleReport) {
+        this.sampleReport = sampleReport;
     }
 
     

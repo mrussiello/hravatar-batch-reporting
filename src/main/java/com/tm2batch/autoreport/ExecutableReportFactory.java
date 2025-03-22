@@ -14,7 +14,7 @@ import java.lang.reflect.Constructor;
  */
 public class ExecutableReportFactory {
     
-    public static ExecutableReport getExecutableReport( BatchReport br, boolean overrideSendFreq ) throws Exception
+    public static ExecutableReport getExecutableReport( BatchReport br, boolean overrideSendFreq, boolean sampleReport) throws Exception
     {
         BatchReportContentType brct = BatchReportContentType.getValue( br.getBatchReportContentTypeId() );
         
@@ -24,6 +24,7 @@ public class ExecutableReportFactory {
         ExecutableReport er = (ExecutableReport) ctor.newInstance(); 
         er.setBatchReport(br);
         er.setOverrideSendFreq(overrideSendFreq);
+        er.setSampleReport(sampleReport);
         return er;
     }
 }
