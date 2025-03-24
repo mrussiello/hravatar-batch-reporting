@@ -91,6 +91,12 @@ public enum BatchReportContentType
     {
         return equals(DISC_GROUP);
     }
+    
+    public boolean getRoundDateTimes()
+    {
+        return !equals(DISC_GROUP) && !equals(CUST_UMINNORGJUSTICE);
+        
+    }
 
     
     

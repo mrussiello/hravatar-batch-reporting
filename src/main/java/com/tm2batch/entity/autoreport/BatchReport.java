@@ -1,5 +1,6 @@
 package com.tm2batch.entity.autoreport;
 
+import com.tm2batch.autoreport.BatchReportContentType;
 import com.tm2batch.entity.user.Org;
 import com.tm2batch.entity.user.Suborg;
 import com.tm2batch.entity.user.User;
@@ -397,15 +398,22 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         return raw.trim().split(",");        
     }
     
+    public BatchReportContentType getBatchReportContentType()
+    {
+        return BatchReportContentType.getValue(this.batchReportContentTypeId);
+    }
+    
     /*
      
     */
     public Date[] getDates()
     {
+        boolean roundDateTimes = getBatchReportContentType().getRoundDateTimes();
+        
+        
         TimeZone tz = getTimeZone();
-        ZoneId zoneId = tz.toZoneId();
-        
-        
+        // ZoneId zoneId = tz.toZoneId();
+                
         Calendar cal = new GregorianCalendar();
         TimeZone ctz = cal.getTimeZone();
         ZoneId czoneId = ctz.toZoneId();
@@ -413,7 +421,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         if( yearsBack!=0 )
         {
             cal.add( Calendar.YEAR, -1*yearsBack );
-            if( this.wholeTimeUnitsOnly==1 && monthsBack<=0 && weeksBack<=0 && daysBack<=0 && hoursBack<=0 )
+            if( roundDateTimes && wholeTimeUnitsOnly==1 && monthsBack<=0 && weeksBack<=0 && daysBack<=0 && hoursBack<=0 )
             {
                 cal.set( Calendar.MONTH, 0 );
                 cal.set( Calendar.DAY_OF_MONTH, 1);
@@ -426,7 +434,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         if( monthsBack!=0 )
         {
             cal.add( Calendar.MONTH, -1*monthsBack );
-            if( this.wholeTimeUnitsOnly==1 && weeksBack<=0 && daysBack<=0 && hoursBack<=0)
+            if( roundDateTimes && wholeTimeUnitsOnly==1 && weeksBack<=0 && daysBack<=0 && hoursBack<=0)
             {
                 cal.set( Calendar.DAY_OF_MONTH, 1);
                 cal.set( Calendar.HOUR_OF_DAY, 0);
@@ -438,7 +446,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         if( weeksBack!=0 )
         {
             cal.add( Calendar.WEEK_OF_YEAR, -1*weeksBack );
-            if( this.wholeTimeUnitsOnly==1 && daysBack<=0 && hoursBack<=0)
+            if( roundDateTimes && wholeTimeUnitsOnly==1 && daysBack<=0 && hoursBack<=0)
             {
                 cal.set( Calendar.HOUR_OF_DAY, 0);
                 cal.set( Calendar.MINUTE, 0);
@@ -449,7 +457,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         if( daysBack!=0 )
         {
             cal.add( Calendar.DAY_OF_YEAR, -1*daysBack );
-            if( this.wholeTimeUnitsOnly==1  && hoursBack<=0)
+            if( roundDateTimes && wholeTimeUnitsOnly==1  && hoursBack<=0)
             {
                 cal.set( Calendar.HOUR_OF_DAY, 0);
                 cal.set( Calendar.MINUTE, 0);
@@ -460,7 +468,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         if( hoursBack!=0 )
         {
             cal.add( Calendar.HOUR, -1*hoursBack );
-            if( this.wholeTimeUnitsOnly==1 )
+            if( roundDateTimes &&  wholeTimeUnitsOnly==1 )
             {
                 cal.set( Calendar.MINUTE, 0);
                 cal.set( Calendar.SECOND, 0);
@@ -475,7 +483,7 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         
         Date eDate = new Date();        
 
-        if( wholeTimeUnitsOnly==1 )
+        if(  roundDateTimes && wholeTimeUnitsOnly==1 )
         {
             cal = new GregorianCalendar();
     
