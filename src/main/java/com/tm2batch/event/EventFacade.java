@@ -413,6 +413,7 @@ public class EventFacade
                                         int consumerProductTypeId, // testResultBean.getConsumerProductTypeId(),
                                         int batteryId, // testResultBean.getBatteryId(),
                                         int orgAutoTestId, // testResultBean.getProductId(),
+                                        List<Long> userIdList,
                                         Date startDate, // testResultBean.getCompletedAfter(),
                                         Date endDate, // testResultBean.getCompletedBefore(),
                                         int sortTypeId, // testResultBean.getTestResultSortTypeId(),
@@ -442,6 +443,22 @@ public class EventFacade
         {
             whereStr += " AND t.authorizinguserid=" + authUserId + " ";                
         }
+        
+        if( userIdList!=null && !userIdList.isEmpty() )
+        {
+            StringBuilder sb = new StringBuilder();
+            for( Long uid : userIdList )
+            {
+                if( !sb.isEmpty() )
+                    sb.append(",");
+                sb.append( uid.toString());
+            }
+            if( !sb.isEmpty() )
+            {
+                whereStr += " AND t.userid IN (" + sb.toString() + ") ";
+            }
+        }
+        
 
         if( productNameKeyword != null && !productNameKeyword.isBlank() )
         {
@@ -557,6 +574,7 @@ public class EventFacade
                                             String pin,
                                             String langStr,
                                             String[] customs,
+                                            List<Long> userIdList,
                                             Date completedAfter,
                                             Date completedBefore,
                                             int testResultSortTypeId,
@@ -620,12 +638,27 @@ public class EventFacade
         {
             whereStr += " AND tk.orgautotestid=" + orgAutoTestId + " ";
         }
-
+        
         if( authUserId > 0 )
         {
             whereStr += " AND tk.authorizinguserid=" + authUserId + " ";                
         }
 
+        if( userIdList!=null && !userIdList.isEmpty() )
+        {
+            StringBuilder sb = new StringBuilder();
+            for( Long uid : userIdList )
+            {
+                if( !sb.isEmpty() )
+                    sb.append(",");
+                sb.append( uid.toString());
+            }
+            if( !sb.isEmpty() )
+            {
+                whereStr += " AND t.userid IN (" + sb.toString() + ") ";
+            }
+        }
+        
         if( productNameKeyword != null && !productNameKeyword.isEmpty() )
         {
             productNameKeyword = StringUtils.sanitizeForSqlQuery( productNameKeyword );
@@ -680,7 +713,7 @@ public class EventFacade
             if( cc!=null && !cc.isEmpty() )
                 whereStr += " AND tk.custom3='" + cc + "' ";
         }
-
+        
         //if( productId > 0 )
         //{
         //    whereStr += " AND t.productid=" + productId;

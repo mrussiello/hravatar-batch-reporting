@@ -54,6 +54,29 @@ public class BaseExecutableReport {
     }
     
         
+    public List<Long> getUserIdListFromEmailListStr() throws Exception
+    {
+        if( !batchReport.getBatchReportContentType().getUsesCandidateEmails() || batchReport.getTextParam1()==null || batchReport.getTextParam1().isBlank()  )
+            return null;
+        
+        List<String> emailList = new ArrayList<>();
+                    
+        String s = batchReport.getTextParam1().replace(";", ",");
+        s = s.replaceAll("\\r?\\n", ",");
+
+        for( String em : s.split(","))
+        {
+            if( em.isBlank() )
+                continue;
+            emailList.add(em);
+        }
+        
+        if( userFacade==null )
+            userFacade = UserFacade.getInstance();
+        
+        return userFacade.getUserIdListForEmailList(emailList, batchReport.getOrgId() );
+    }
+    
     public void validateBatchReportForExecution() throws Exception
     {
         if( batchReport==null )

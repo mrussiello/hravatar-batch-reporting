@@ -84,6 +84,7 @@ public class StandardUnfinishedTestKeyReport extends BaseExecutableReport implem
             
             Date[] dates = batchReport.getDates();
             
+            List<Long> userIdList = this.getUserIdListFromEmailListStr();
             
             List<TestKey> trl = testReportingUtils.getTestKeyList( batchReport, 
                                                batchReport.getIntParam1()==1, // boolean thisUserIdOnly, 
@@ -94,6 +95,7 @@ public class StandardUnfinishedTestKeyReport extends BaseExecutableReport implem
                                                batchReport.getIntParam5(), // int consumerProductTypeId,
                                                batchReport.getIntParam7(), // int batteryId,
                                                0,
+                                               userIdList,
                                                dates[0], // Date startDate, 
                                                dates[1], // Date endDate, 
                                                0, // int testResultSortTypeId,

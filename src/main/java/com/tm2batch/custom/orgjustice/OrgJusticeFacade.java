@@ -53,6 +53,7 @@ public class OrgJusticeFacade
                                             int suborgId,
                                             long authUserId,
                                             List<Integer> productIdList,
+                                            List<Long> userIdList,
                                             Date completedAfter,
                                             Date completedBefore,
                                             int testResultSortTypeId,
@@ -82,6 +83,21 @@ public class OrgJusticeFacade
             whereStr += " AND tk.authorizinguserid=" + authUserId + " ";                
         }
 
+        if( userIdList!=null && !userIdList.isEmpty() )
+        {
+            StringBuilder sb = new StringBuilder();
+            for( Long uid : userIdList )
+            {
+                if( !sb.isEmpty() )
+                    sb.append(",");
+                sb.append( uid.toString());
+            }
+            if( !sb.isEmpty() )
+            {
+                whereStr += " AND t.userid IN (" + sb.toString() + ") ";
+            }
+        }
+        
         if( productIdList != null && !productIdList.isEmpty() )
         {
             if( productIdList.size()==1 )

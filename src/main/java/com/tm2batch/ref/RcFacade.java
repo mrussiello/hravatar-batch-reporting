@@ -78,6 +78,7 @@ public class RcFacade
                                             int suborgId, 
                                             String lastNameKey,
                                             String emailKey,
+                                            List<Long> userIdList,
                                             Date startDate,
                                             Date endDate,
                                             String candidateAccessCode, 
@@ -111,6 +112,22 @@ public class RcFacade
                 whereStr += " AND ";            
             whereStr += " rc.userid=" + userId + " ";
         }
+
+        else if( userIdList!=null && !userIdList.isEmpty() )
+        {
+            StringBuilder sb = new StringBuilder();
+            for( Long uid : userIdList )
+            {
+                if( !sb.isEmpty() )
+                    sb.append(",");
+                sb.append( uid.toString());
+            }
+            if( !sb.isEmpty() )
+            {
+                whereStr += " AND rc.userid IN (" + sb.toString() + ") ";
+            }
+        }        
+        
         
         if( candidateAccessCode!=null && !candidateAccessCode.isBlank() )
         {

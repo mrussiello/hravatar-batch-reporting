@@ -260,6 +260,9 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     @Column(name="strparam4")
     private String strParam4;
     
+    /*
+     * DISC Report, Test, Ref Check, Org Justice, and LVI - candidate emails to include, semicolor or comma delimited or 1 per line.    
+    */
     @Column(name="textparam1")
     private String textParam1;
 

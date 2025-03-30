@@ -90,6 +90,8 @@ public class StandardLiveVideoReport extends BaseExecutableReport implements Exe
             if( lvFacade==null )
                 lvFacade = LvFacade.getInstance();
             
+            List<Long> userIdList = getUserIdListFromEmailListStr();
+            
             List<LvCall> lvcl = lvFacade.findLvCallList( batchReport.getIntParam1()==1 ? batchReport.getUserId() : 0, 
                                         0, // long userId, 
                                         batchReport.getOrgId(), // int orgId, 
@@ -97,6 +99,7 @@ public class StandardLiveVideoReport extends BaseExecutableReport implements Exe
                                         0, // long recipientUserId,
                                         null, // String lastNameKey,
                                         null, // String emailKey,
+                                        userIdList,
                                         dates[0],
                                         dates[1],
                                         null, // List<Long> lvCallIdList,

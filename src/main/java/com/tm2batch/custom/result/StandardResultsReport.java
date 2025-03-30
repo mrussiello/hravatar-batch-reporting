@@ -82,6 +82,7 @@ public class StandardResultsReport extends BaseExecutableReport implements Execu
             
             Date[] dates = batchReport.getDates();
             
+            List<Long> userIdList = getUserIdListFromEmailListStr();
             
             List<TestResult> trl = testReportingUtils.getTestResultList( batchReport, 
                                                batchReport.getIntParam1()==1, // boolean thisUserIdOnly, 
@@ -93,6 +94,7 @@ public class StandardResultsReport extends BaseExecutableReport implements Execu
                                                batchReport.getIntParam7(), // int batteryId,
                                                batchReport.getStringArray(2), // String[] customsArray,
                                                batchReport.getIntParam6(), // int userCompanyStatusTypeId, 
+                                               userIdList,
                                                dates[0], // Date startDate, 
                                                dates[1], // Date endDate, 
                                                batchReport.getIntParam7(), // int testResultSortTypeId,

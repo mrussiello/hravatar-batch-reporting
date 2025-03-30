@@ -92,12 +92,15 @@ public class StandardRefCheckReport extends BaseExecutableReport implements Exec
             if( rcFacade==null )
                 rcFacade=RcFacade.getInstance();
             
+            List<Long> userIdList = getUserIdListFromEmailListStr();
+            
             List<RcCheck> rcl = rcFacade.findRcCheckList( batchReport.getIntParam1()==1 ? batchReport.getUserId() : 0, // long adminUserId, 
                                                 0, // long userId, 
                                                 batchReport.getOrgId(), // int orgId, 
                                                 batchReport.getSuborgId(), // int suborgId, 
                                                 null, //String lastNameKey,
                                                 null, //String emailKey,
+                                                userIdList,
                                                 dates[0], //Date startDate,
                                                 dates[1], //Date endDate,
                                                 null, // String candidateAccessCode, 

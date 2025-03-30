@@ -97,9 +97,11 @@ public enum BatchReportContentType
         return !equals(DISC_GROUP) && !equals(CUST_UMINNORGJUSTICE);
         
     }
-
     
-    
+    public boolean getUsesCandidateEmails()
+    {
+        return equals( DISC_GROUP) || equals( STD_TEST ) || equals( CUST_UMINNORGJUSTICE ) ||  equals(STD_REFCHECK) || equals(STD_LIVEVIDEO) || equals(STD_UNFINISHED_TK);
+    }
     
 
     public static BatchReportContentType getValue( int id )

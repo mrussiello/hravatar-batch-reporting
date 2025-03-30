@@ -145,6 +145,7 @@ public class LvFacade
                                         long recipientUserId,
                                         String lastNameKey,
                                         String emailKey,
+                                        List<Long> userIdList,
                                         Date startDate,
                                         Date endDate,
                                         List<Long> lvCallIdList,
@@ -173,6 +174,22 @@ public class LvFacade
             
             whereStr += " lvi.userid=" + userId + " ";
         }
+        
+        else if( userIdList!=null && !userIdList.isEmpty() )
+        {
+            StringBuilder sb = new StringBuilder();
+            for( Long uid : userIdList )
+            {
+                if( !sb.isEmpty() )
+                    sb.append(",");
+                sb.append( uid.toString());
+            }
+            if( !sb.isEmpty() )
+            {
+                whereStr += " AND lvi.userid IN (" + sb.toString() + ") ";
+            }
+        }        
+        
         
         if( orgId>0 )
         {

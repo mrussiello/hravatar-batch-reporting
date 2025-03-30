@@ -107,6 +107,28 @@ public class UserFacade
     }
     
     
+    public List<Long> getUserIdListForEmailList( List<String> emailList, int orgId ) throws Exception
+    {
+        List<Long> out = new ArrayList<>();
+        
+        if( emailList==null || emailList.isEmpty() || orgId<=0 )
+            return out;
+        
+        User u;
+        for( String ex : emailList )
+        {
+            u = getUserByEmailAndOrgId(ex, orgId);
+            if( u==null )
+                continue;
+            
+            if( out.contains(u.getUserId() ))
+                continue;
+            out.add( u.getUserId() );
+        }
+        
+        return out;
+    }
+    
 
     public Date getLastLogonDate( long userId, long logonHistoryId ) throws Exception
     {

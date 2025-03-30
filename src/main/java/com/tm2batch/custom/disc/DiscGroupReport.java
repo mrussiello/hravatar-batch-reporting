@@ -191,6 +191,8 @@ public class DiscGroupReport extends BaseExecutableReport implements ExecutableR
             discDataSet.setStartDate(dates[0]);
             discDataSet.setEndDate(dates[1]);
             
+            List<Long> userIdList = getUserIdListFromEmailListStr();
+            
             if( userFacade==null )
                 userFacade=UserFacade.getInstance();
 
@@ -288,6 +290,7 @@ public class DiscGroupReport extends BaseExecutableReport implements ExecutableR
                                                                   null, 
                                                                   null, 
                                                                   hasCustoms ? discDataSet.getCustomsArray() : null, 
+                                                                  userIdList,
                                                                   discDataSet.getStartDate(), 
                                                                   discDataSet.getEndDate(),
                                                                   0, 

@@ -200,7 +200,9 @@ public class OrgJusticeReport extends BaseExecutableReport implements Executable
         if( batchReport.getStrParam1()!=null && !batchReport.getStrParam1().isBlank() )
             forceProductIds = RuntimeConstants.getIntListForString( batchReport.getStrParam1(), ",");
 
-        List<OrgJusticeTestEvent> tel = orgJusticeUtils.findOrgJusticeTestEvents(batchReport.getOrgId(),  dates[0],  dates[1], forceProductIds );
+        List<Long> userIdList = this.getUserIdListFromEmailListStr();
+        
+        List<OrgJusticeTestEvent> tel = orgJusticeUtils.findOrgJusticeTestEvents(batchReport.getOrgId(), userIdList,  dates[0],  dates[1], forceProductIds );
 
         LogService.logIt( "OrgJusticeReport.executeReport() BBB.1 found " + tel.size() + " testEvents for orgId=" + batchReport.getOrgId() );
 

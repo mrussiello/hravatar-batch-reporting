@@ -45,7 +45,7 @@ public class OrgJusticeUtils {
     }
     
     
-    public List<OrgJusticeTestEvent> findOrgJusticeTestEvents( int orgId, Date startDate, Date endDate, List<Integer> forceProductIds) throws Exception
+    public List<OrgJusticeTestEvent> findOrgJusticeTestEvents( int orgId, List<Long> userIdList, Date startDate, Date endDate, List<Integer> forceProductIds) throws Exception
     {
         List<OrgJusticeTestEvent> out = new ArrayList<>();
             
@@ -68,7 +68,7 @@ public class OrgJusticeUtils {
             if( forceProductIds!=null && !forceProductIds.isEmpty() )
                 productIdList = forceProductIds;
             
-            List<Long> teidl = orgJusticeFacade.findTestEventIds(orgId, -1, 0, productIdList, startDate, endDate, TestResultSortType.MOST_RECENT_ACCESS_DESC.getTestResultSortTypeId(), 2000, 0);
+            List<Long> teidl = orgJusticeFacade.findTestEventIds(orgId, -1, 0, productIdList, userIdList, startDate, endDate, TestResultSortType.MOST_RECENT_ACCESS_DESC.getTestResultSortTypeId(), 2000, 0);
             LogService.logIt("OrgJusticeUtils.findOrgJusticeTestEvents() found " + teidl.size() + " testeventids for orgId=" + orgId + ", startDate=" + (startDate==null ? "null" : startDate.toString()) + ", endDate=" + (endDate==null ? "null" : endDate.toString()) );
             
             if( teidl.isEmpty() )
