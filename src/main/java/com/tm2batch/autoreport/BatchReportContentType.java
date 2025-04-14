@@ -14,7 +14,8 @@ public enum BatchReportContentType
     STD_REFCHECK(20,"Std Ref Check","brctn.StdRc", "com.tm2batch.custom.ref.StandardRefCheckReport", true ),
     STD_REFCHECK_REFERRALS(30,"Std Ref Check Referrals","brctn.StdRcReferrals", "com.tm2batch.custom.ref.StandardRefCheckReferralReport", true ),
     CUST_UMINNORGJUSTICE(60,"Uminn Org Justice","brctn.UminnOrgJustice", "com.tm2batch.custom.orgjustice.OrgJusticeReport", false ),
-    DISC_GROUP(61,"DISC Group Report","brctn.DiscGroup", "com.tm2batch.custom.disc.DiscGroupReport", true );
+    DISC_GROUP(61,"DISC Group Report","brctn.DiscGroup", "com.tm2batch.custom.disc.DiscGroupReport", true ),
+    LEADER_STYLE_GROUP(62,"Leadership Style Group Report","brctn.LeaderStyleGroup", "com.tm2batch.custom.leaderstyle.LeaderStyleGroupReport", true );
 
     private final int batchReportContentTypeId;
 
@@ -84,23 +85,23 @@ public enum BatchReportContentType
 
     public boolean getUsesSuborgs()
     {
-        return equals(DISC_GROUP);
+        return equals(LEADER_STYLE_GROUP) ||  equals(DISC_GROUP);
     }
 
     public boolean getUsesOrgAutoTest()
     {
-        return equals(DISC_GROUP);
+        return equals(LEADER_STYLE_GROUP) || equals(DISC_GROUP);
     }
     
     public boolean getRoundDateTimes()
     {
-        return !equals(DISC_GROUP) && !equals(CUST_UMINNORGJUSTICE);
+        return !equals(LEADER_STYLE_GROUP) && !equals(DISC_GROUP) && !equals(CUST_UMINNORGJUSTICE);
         
     }
     
     public boolean getUsesCandidateEmails()
     {
-        return equals( DISC_GROUP) || equals( STD_TEST ) || equals( CUST_UMINNORGJUSTICE ) ||  equals(STD_REFCHECK) || equals(STD_LIVEVIDEO) || equals(STD_UNFINISHED_TK);
+        return equals(LEADER_STYLE_GROUP) || equals( DISC_GROUP) || equals( STD_TEST ) || equals( CUST_UMINNORGJUSTICE ) ||  equals(STD_REFCHECK) || equals(STD_LIVEVIDEO) || equals(STD_UNFINISHED_TK);
     }
     
 

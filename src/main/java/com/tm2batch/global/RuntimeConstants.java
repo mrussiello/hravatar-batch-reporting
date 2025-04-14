@@ -181,6 +181,15 @@ public class RuntimeConstants
         cache.put( "discProductIds",  "7861" );
         cache.put( "discGroupReportId",  122 );
 
+        
+        // ////////////////////////////////////////////////////////////////////////////
+        // Leader Style
+        // ////////////////////////////////////////////////////////////////////////////
+
+        cache.put( "leaderStyleProductIds",  "8141" );
+        cache.put( "leaderStyleGroupReportId",  125 );
+        
+        
         // ////////////////////////////////////////////////////////////////////////////
 
         // load properties from file. File overlays everything.

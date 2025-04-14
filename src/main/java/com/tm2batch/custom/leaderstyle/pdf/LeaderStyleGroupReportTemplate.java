@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tm2batch.custom.disc.pdf;
+package com.tm2batch.custom.leaderstyle.pdf;
 
 import com.tm2batch.global.STException;
 import com.tm2batch.pdf.ReportTemplate;
@@ -15,9 +15,9 @@ import com.tm2batch.service.LogService;
  *
  * @author Mike
  */
-public class DiscGroupReportTemplate extends BaseDiscGroupReportTemplate implements ReportTemplate
+public class LeaderStyleGroupReportTemplate extends BaseLeaderStyleGroupReportTemplate implements ReportTemplate
 {    
-    public DiscGroupReportTemplate()
+    public LeaderStyleGroupReportTemplate()
     {
         super();
     }
@@ -36,7 +36,7 @@ public class DiscGroupReportTemplate extends BaseDiscGroupReportTemplate impleme
             
             addReportInfoHeader();   
             
-            addDiscStylesExplained();
+            //addDiscStylesExplained();
             
             addFooterBar( lmsg( "g.ScoreBreakdown").toUpperCase(), true, fontXLargeBoldWhite );
                         
@@ -55,51 +55,38 @@ public class DiscGroupReportTemplate extends BaseDiscGroupReportTemplate impleme
             
             if( currentYLevel > 250 )
                 addFooterBar( lmsg( "g.Scores").toUpperCase(), true, fontXLargeBoldWhite );
-                        
-            addNewPage();
-            
-            addDiscEducationSection();
-
-            addFooterBar( lmsg( "g.LearnMore").toUpperCase(), true, fontXLargeBoldWhite );
-                
-            addNewPage(); 
-            
-            for( int i=0;i<4;i++ )
-            {
-                addHowToWorkWithYSection( i );                
-                addFooterBar( lmsg( "g.Teamwork").toUpperCase(), false, fontXLargeBoldWhite );
-                addNewPage();             
-            }
-            
-            addKeyActionsToTakeSection();
-            
-            addFooterBar( lmsg( "g.KeyActions").toUpperCase(), false, fontXLargeBoldWhite );
-                
-            addNewPage();            
-
-            addDiscBuildYourTeamSection();
-                        
-            addFooterBar( lmsg( "g.Activities").toUpperCase(), true, fontXLargeBoldWhite );
-            
-            addNewPage();
-            
-            addHowBuildTeamsWithDiscSection();
-
-            addBlueBar();
-            
-            addAvoidSterotypingSection();
-            
-            addFooterBar( lmsg( "g.NextSteps").toUpperCase(), false, fontXLargeBoldWhite );
 
             addNewPage();
             
+            addInterpretationSection();
+
+            if( currentYLevel > 250 )
+                addFooterBar( lmsg( "g.Interpretation").toUpperCase(), true, fontXLargeBoldWhite );
+            
+            addNewPage();
+            
+            addPurposeOfAssessment();
                         
+            addFooterBar( lmsg( "g.Purpose").toUpperCase(), true, fontXLargeBoldWhite );
+                        
+            
+            addNewPage();
+            
+            addLeaderStyleStylesExplained();
+
+            //if( currentYLevel > 250 )
+            //    addFooterBar( lmsg_spec( "ls.StylesExpl").toUpperCase(), true, fontXLargeBoldWhite );
+
+            //addNewPage();
+                        
+            addCitationsSection();
+                        
+            addMinimalPrepNotesSection();            
+            
             addNotesSection();
 
             addFooterBar( lmsg( "g.Notes").toUpperCase(), false, fontXLargeBoldWhite );
                         
-            addMinimalPrepNotesSection();            
-            
             closeDoc();
 
             return getDocumentBytes();
@@ -112,8 +99,7 @@ public class DiscGroupReportTemplate extends BaseDiscGroupReportTemplate impleme
 
         catch( Exception e )
         {
-            LogService.logIt( e, "DiscGroupReportTemplate.generateReport() " );
-
+            LogService.logIt( e, "LeaderStyleGroupReportTemplate.generateReport() " );
             throw new STException( e );
         }
     }

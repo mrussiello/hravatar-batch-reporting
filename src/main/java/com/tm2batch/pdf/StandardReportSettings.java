@@ -82,6 +82,7 @@ public class StandardReportSettings implements ReportSettings
 
     public Font fontLarge;
     public Font fontLargeWhiteBold;
+    public Font fontLargeBoldDarkBlue;
     public Font fontLargeBlueBold;
     public Font fontLargeWhite;
     public Font fontLargeLight;
@@ -306,6 +307,7 @@ public class StandardReportSettings implements ReportSettings
 
             fontLarge = new Font( baseFont, LFONTSZ );
             fontLargeWhiteBold = new Font( baseFont, LFONTSZ );
+            fontLargeBoldDarkBlue = new Font( baseFont, LFONTSZ );
             fontLargeBlueBold = new Font( baseFont, LFONTSZ );
             fontLargeWhite = new Font( baseFont, LFONTSZ );
             fontLargeLight = new Font( baseFont, LFONTSZ );
@@ -396,6 +398,7 @@ public class StandardReportSettings implements ReportSettings
             fontXLargeBoldWhite.setColor( whiteFontColor );
 
             fontLarge.setColor( baseFontColor  );
+            fontLargeBoldDarkBlue.setColor(new BaseColor( 0x0b, 0x50, 0x8b));
             fontLargeWhiteBold.setColor(whiteFontColor);
             fontLargeWhite.setColor( whiteFontColor  );
             fontLargeLight.setColor( lightFontColor  );
