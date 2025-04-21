@@ -17,6 +17,7 @@ $proddistdir="/backup/dist/$DateTime"
 
 
 # Copy static files
+echo "Copying static files"
 scp -i "${identityfile}" -r "${basedir}/deploytemp/webmod"  ec2-user@${baseurl}:/work/${app}
 
 
