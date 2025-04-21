@@ -10,7 +10,6 @@ import com.tm2batch.faces.FacesUtils;
 import com.tm2batch.global.RuntimeConstants;
 import com.tm2batch.global.STException;
 import com.tm2batch.service.AutoBatchService;
-import static com.tm2batch.service.AutoBatchService.STARTED;
 import com.tm2batch.service.AutoBatchStarter;
 import com.tm2batch.service.LogService;
 import com.tm2batch.service.Tracker;
