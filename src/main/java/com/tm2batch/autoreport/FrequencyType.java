@@ -45,7 +45,7 @@ public enum FrequencyType
         this.weeks=w;
         this.days=d;
     }
-    
+        
     public boolean isThisHourOkToSend( int hourToSendGmt, Date lastSendDate, TimeZone tz )
     {
         if( hourToSendGmt<0 )

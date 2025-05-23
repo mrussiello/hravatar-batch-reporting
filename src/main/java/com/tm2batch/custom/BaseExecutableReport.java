@@ -88,6 +88,26 @@ public class BaseExecutableReport {
         if( batchReport.getBatchReportStatusTypeId()!=BatchReportStatusType.ACTIVE.getBatchReportStatusTypeId() )
             throw new BatchReportException( batchReport.getBatchReportId(), "BatchReport.status is inactive" );
                  
+        // specific checks
+        if( batchReport.getUseDateRange() )
+        {
+            if( batchReport.getStartDate()==null )
+            {
+                Calendar cal = new GregorianCalendar();
+                cal.add(Calendar.YEAR,-1);
+                batchReport.setStartDate(cal.getTime());
+            }
+            if( batchReport.getEndDate()==null )
+            {
+                Calendar cal = new GregorianCalendar();
+                batchReport.setEndDate(cal.getTime());
+                if( autoReportFacade==null )
+                    autoReportFacade=AutoReportFacade.getInstance();
+                autoReportFacade.saveBatchReport(batchReport);                
+            }
+        }
+        
+        
         if( batchReport.getScheduleDate()!=null && batchReport.getScheduleDate().before( new Date()) )
             return;
         

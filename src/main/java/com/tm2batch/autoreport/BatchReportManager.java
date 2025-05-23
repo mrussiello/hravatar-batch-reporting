@@ -17,7 +17,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -130,7 +129,7 @@ public class BatchReportManager
                 autoReportFacade = AutoReportFacade.getInstance();
 
             // get all Batch Reports that have a defined freq and are in active status.
-            List<BatchReport> brl = autoReportFacade.getActiveBatchReportList();
+            List<BatchReport> brl = autoReportFacade.getActiveNonOneTimeBatchReportList();
 
             // all active batch reports that have a valid send date (before now).
             List<BatchReport> brl2 = autoReportFacade.getOneTimeActiveBatchReportList();

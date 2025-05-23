@@ -27,7 +27,9 @@ import com.tm2batch.service.LogService;
 import com.tm2batch.user.UserFacade;
 import com.tm2batch.util.I18nUtils;
 import java.lang.reflect.Constructor;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -372,8 +374,7 @@ public class DiscGroupReport extends BaseExecutableReport implements ExecutableR
         // check core
         super.validateBatchReportForExecution();
         
-        // specific checks
-        if( batchReport.getYearsBack()<=0 && batchReport.getMonthsBack()<=0 && batchReport.getDaysBack()<=0 && batchReport.getHoursBack()<=0 )
+        if( !batchReport.getUseDateRange() && batchReport.getYearsBack()<=0 && batchReport.getMonthsBack()<=0 && batchReport.getDaysBack()<=0 && batchReport.getHoursBack()<=0 )
         {
             LogService.logIt( "DiscGroupReport.validateBatchReportForExecution() BatchReport id=" + batchReport.getBatchReportId() + " does not look back at least one day or one hour or month or year. daysBack=" + batchReport.getDaysBack() + ", hoursBack=" + batchReport.getHoursBack() + ", setting to 1 month back." );
             batchReport.setMonthsBack(1);

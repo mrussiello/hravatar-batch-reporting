@@ -166,7 +166,7 @@ public class StandardCreditUsageReport extends BaseExecutableReport implements E
         super.validateBatchReportForExecution();
         
         // specific checks
-        //if( batchReport.getYearsBack()<=0 && batchReport.getMonthsBack()<=0 && batchReport.getDaysBack()<=0 && batchReport.getHoursBack()<=0 )
+        //if( !batchReport.getUseDateRange() && batchReport.getYearsBack()<=0 && batchReport.getMonthsBack()<=0 && batchReport.getDaysBack()<=0 && batchReport.getHoursBack()<=0 )
         //{
         //    LogService.logIt( "StandardCreditUsageReport.validateBatchReportForExecution() BatchReport id=" + batchReport.getBatchReportId() + " does not look back at least one day or one hour or month or year. daysBack=" + batchReport.getDaysBack() + ", hoursBack=" + batchReport.getHoursBack() + ", setting to 1 day back." );
         //    batchReport.setDaysBack(1);

@@ -90,7 +90,7 @@ public class AutoReportFacade
         }        
     }
     
-    public List<BatchReport> getActiveBatchReportList() throws Exception
+    public List<BatchReport> getActiveNonOneTimeBatchReportList() throws Exception
     {
         try
         {
@@ -99,7 +99,7 @@ public class AutoReportFacade
         }
         catch( Exception e )
         {
-            LogService.logIt( e, "AutoReportFacade.getActiveBatchReportList() " );
+            LogService.logIt( e, "AutoReportFacade.getActiveNonOneTimeBatchReportList() " );
             throw new STException( e );
         }        
     }

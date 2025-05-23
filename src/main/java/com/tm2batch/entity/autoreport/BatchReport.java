@@ -1,6 +1,7 @@
 package com.tm2batch.entity.autoreport;
 
 import com.tm2batch.autoreport.BatchReportContentType;
+import com.tm2batch.autoreport.FrequencyType;
 import com.tm2batch.entity.user.Org;
 import com.tm2batch.entity.user.Suborg;
 import com.tm2batch.entity.user.User;
@@ -303,6 +304,14 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     private Date lastUpdate;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="startdate")
+    private Date startDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="enddate")
+    private Date endDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name="lastsenddate")
     private Date lastSendDate;
 
@@ -329,6 +338,12 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
         return "BatchReport{" + "batchReportId=" + batchReportId + '}';
     }
 
+    public boolean getUseDateRange()
+    {
+        return intParam9==1;
+    }    
+    
+    
     @Override
     public int hashCode() {
         int hash = 7;
@@ -411,6 +426,9 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
     */
     public Date[] getDates()
     {
+        if( getUseDateRange() )
+            return new Date[]{startDate,endDate};
+        
         boolean roundDateTimes = getBatchReportContentType().getRoundDateTimes();
         
         
@@ -985,6 +1003,22 @@ public class BatchReport implements Serializable, Comparable<BatchReport>
 
     public void setSpecialProcessingCheck(boolean specialProcessingCheck) {
         this.specialProcessingCheck = specialProcessingCheck;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     
