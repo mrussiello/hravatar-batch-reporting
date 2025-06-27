@@ -178,7 +178,7 @@ public class RuntimeConstants
         // DISC
         // ////////////////////////////////////////////////////////////////////////////
 
-        cache.put( "discProductIds",  "7861" );
+        cache.put( "discProductIds",  "7861,8568" );
         cache.put( "discGroupReportId",  122 );
 
         
