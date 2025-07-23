@@ -4,16 +4,17 @@
  */
 package com.tm2batch.service;
 
+import jakarta.annotation.PreDestroy;
 import java.util.Map;
 import java.util.Set;
 
 import jakarta.annotation.Resource;
 import jakarta.ejb.Stateless;
-import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSContext;
 import jakarta.jms.JMSException;
+import jakarta.jms.JMSProducer;
 import jakarta.jms.MapMessage;
-import jakarta.jms.MessageProducer;
 import jakarta.jms.Queue;
 import jakarta.jms.Session;
 
@@ -22,6 +23,14 @@ import javax.naming.InitialContext;
 @Stateless
 public class EmailerFacade
 {
+    @Resource(mappedName = "jms/ConnectionFactory")
+    protected ConnectionFactory connectionFactory;
+
+    @Resource(mappedName = "jms/seenthatemailqueue")
+    protected Queue queue;
+
+    static JMSContext context = null;
+    JMSProducer  messageProducer = null;
 
     public EmailerFacade( ConnectionFactory cf, Queue q )
     {
@@ -48,29 +57,20 @@ public class EmailerFacade
         }
     }
 
-    @Resource( mappedName = "jms/ConnectionFactory" )
-    protected ConnectionFactory connectionFactory;
-
-    @Resource( mappedName = "jms/seenthatemailqueue" )
-    protected Queue queue;
 
     public void sendEmail( Map<String, Object> messageInfoMap ) throws Exception
     {
-        Connection connection = null;
-        Session session = null;
-        MessageProducer messageProducer = null;
         MapMessage message = null;
 
         try
         {
-            // JMS connection
-            connection = connectionFactory.createConnection();
+            if( context==null )
+                context = connectionFactory.createContext();
 
-            session = connection.createSession( false, Session.AUTO_ACKNOWLEDGE );
+            if( messageProducer==null )
+                messageProducer = context.createProducer();
 
-            messageProducer = session.createProducer( queue );
-
-            message = session.createMapMessage();
+            message = context.createMapMessage();
 
             // now copy all keys to MapMessage
 
@@ -91,27 +91,15 @@ public class EmailerFacade
                     message.setBytes( key, (byte[]) obj );
             }
 
-            messageProducer.send( message );
+            messageProducer.send(queue,message);
         }
 
-        catch( JMSException e )
+        catch( Exception e )
         {
             LogService.logIt( e, "EmailerBean.sendEmail()" );
 
         }
 
-        finally
-        {
-            if( connection != null )
-            {
-                try
-                {
-                    connection.close();
-                }
-                catch( JMSException e )
-                {}
-            } // if
-
-        } // finally
     }
+    
 }
