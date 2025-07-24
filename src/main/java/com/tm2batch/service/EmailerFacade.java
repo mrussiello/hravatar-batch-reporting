@@ -4,23 +4,23 @@
  */
 package com.tm2batch.service;
 
-import jakarta.annotation.PreDestroy;
 import java.util.Map;
 import java.util.Set;
 
 import jakarta.annotation.Resource;
 import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSContext;
-import jakarta.jms.JMSException;
 import jakarta.jms.JMSProducer;
 import jakarta.jms.MapMessage;
 import jakarta.jms.Queue;
-import jakarta.jms.Session;
 
 import javax.naming.InitialContext;
 
 @Stateless
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class EmailerFacade
 {
     @Resource(mappedName = "jms/ConnectionFactory")
@@ -31,16 +31,6 @@ public class EmailerFacade
 
     static JMSContext context = null;
     JMSProducer  messageProducer = null;
-
-    public EmailerFacade( ConnectionFactory cf, Queue q )
-    {
-        this.connectionFactory=cf;
-        this.queue=q;
-    }
-
-    public EmailerFacade()
-    {}
-
 
     public static EmailerFacade getInstance()
     {
@@ -58,6 +48,7 @@ public class EmailerFacade
     }
 
 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void sendEmail( Map<String, Object> messageInfoMap ) throws Exception
     {
         MapMessage message = null;
